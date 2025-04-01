@@ -12,7 +12,6 @@ server/obj/
 # General
 .DS_Store
 .env
-server/.env
 
 #Connection string 
 server/appsettings.json
