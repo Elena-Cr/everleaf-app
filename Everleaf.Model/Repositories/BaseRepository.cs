@@ -1,5 +1,8 @@
+using System;
+using Everleaf.Model.Entities;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
-
+using NpgsqlTypes;
 public class BaseRepository
 {
 protected string ConnectionString {get;}

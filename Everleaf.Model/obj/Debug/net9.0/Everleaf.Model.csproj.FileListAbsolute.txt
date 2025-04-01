@@ -1,0 +1,6 @@
+C:\Users\Dragos\Documents\GitHub\everleaf-app\Everleaf.Model\obj\Debug\net9.0\Everleaf.Model.csproj.AssemblyReference.cache
+C:\Users\Dragos\Documents\GitHub\everleaf-app\Everleaf.Model\obj\Debug\net9.0\Everleaf.Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Dragos\Documents\GitHub\everleaf-app\Everleaf.Model\obj\Debug\net9.0\Everleaf.Model.AssemblyInfoInputs.cache
+C:\Users\Dragos\Documents\GitHub\everleaf-app\Everleaf.Model\obj\Debug\net9.0\Everleaf.Model.AssemblyInfo.cs
+C:\Users\Dragos\Documents\GitHub\everleaf-app\Everleaf.Model\obj\Debug\net9.0\Everleaf.Model.csproj.CoreCompileInputs.cache
+C:\Users\Dragos\Documents\GitHub\everleaf-app\Everleaf.Model\obj\Debug\net9.0\Everleaf.Model.sourcelink.json
