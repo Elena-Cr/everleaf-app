@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Everleaf.Model")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+434163462dfa5374836f4ce72835baad8b1f0e44")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+43d87fefc0cc5f16f1bce6e0060af4d9bf43f0c9")]
 [assembly: System.Reflection.AssemblyProductAttribute("Everleaf.Model")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Everleaf.Model")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
