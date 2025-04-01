@@ -8,10 +8,12 @@ client/.angular/
 # .NET build files
 server/bin/
 server/obj/
+**/[Dd]ebug/
+**/[Dd]ebugPublic/
 
 # General
 .DS_Store
 .env
 
-#Connection string 
+# Connection string
 server/appsettings.json
