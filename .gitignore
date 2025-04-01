@@ -8,8 +8,10 @@ client/.angular/
 # .NET build files
 server/bin/
 server/obj/
-**/[Dd]ebug/
-**/[Dd]ebugPublic/
+
+
+Everleaf.Model/obj/
+Everleaf.Model/bin/
 
 # General
 .DS_Store
