@@ -1,3 +1,5 @@
+using Npgsql;
+
 public class BaseRepository
 {
 protected string ConnectionString {get;}
