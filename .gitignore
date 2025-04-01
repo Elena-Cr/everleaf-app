@@ -14,3 +14,5 @@ server/obj/
 .env
 server/.env
 
+#Connection string 
+server/appsettings.json
