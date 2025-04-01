@@ -1,0 +1,15 @@
+# Node.js
+client/node_modules/
+
+# Angular build files
+client/dist/
+client/.angular/
+
+# .NET build files
+server/bin/
+server/obj/
+
+# General
+.DS_Store
+.env
+
