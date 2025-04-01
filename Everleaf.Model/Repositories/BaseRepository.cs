@@ -2,7 +2,7 @@ public class BaseRepository
 {
 protected string ConnectionString {get;}
 public BaseRepository(IConfiguration configuration) {
-ConnectionString = configuration.GetConnectionString("AppProgDb");
+ConnectionString = configuration.GetConnectionString("EverleafDb");
 }
 protected NpgsqlDataReader GetData(NpgsqlConnection conn, NpgsqlCommand cmd)
 {
