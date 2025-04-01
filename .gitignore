@@ -12,4 +12,5 @@ server/obj/
 # General
 .DS_Store
 .env
+server/.env
 
