@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Dragos\\Documents\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj": {}
+    "C:\\Users\\isabe\\OneDrive\\Documentos\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Dragos\\Documents\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj": {
+    "C:\\Users\\isabe\\OneDrive\\Documentos\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Dragos\\Documents\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj",
+        "projectUniqueName": "C:\\Users\\isabe\\OneDrive\\Documentos\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj",
         "projectName": "Everleaf.Model",
-        "projectPath": "C:\\Users\\Dragos\\Documents\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj",
-        "packagesPath": "C:\\Users\\Dragos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Dragos\\Documents\\GitHub\\everleaf-app\\Everleaf.Model\\obj\\",
+        "projectPath": "C:\\Users\\isabe\\OneDrive\\Documentos\\GitHub\\everleaf-app\\Everleaf.Model\\Everleaf.Model.csproj",
+        "packagesPath": "C:\\Users\\isabe\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\isabe\\OneDrive\\Documentos\\GitHub\\everleaf-app\\Everleaf.Model\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Dragos\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\isabe\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
