@@ -1,5 +1,5 @@
 using System;
-using Everleaf.Model.Entities;
+using Everleaf.Model;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
