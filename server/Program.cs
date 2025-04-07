@@ -19,7 +19,7 @@ builder.Services.AddScoped<UserRepository, UserRepository>();
 var app = builder.Build();
 
 // Middleware pipeline
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers(); // Enables routing to your controllers
 

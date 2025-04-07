@@ -16,7 +16,7 @@ namespace Everleaf.Model.Repositories
             {
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM CareLogs WHERE id = @id";
+                cmd.CommandText = "SELECT * FROM CareLog WHERE id = @id";
                 _ = cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
                 var data = GetData(dbConn, cmd);
@@ -45,7 +45,7 @@ namespace Everleaf.Model.Repositories
             {
                 dbConn = new NpgsqlConnection(ConnectionString);
                 var cmd = dbConn.CreateCommand();
-                cmd.CommandText = "SELECT * FROM CareLogs";
+                cmd.CommandText = "SELECT * FROM CareLog";
 
                 var data = GetData(dbConn, cmd);
                 while (data.Read())
@@ -70,7 +70,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO CareLogs (plantid, date, type)
+                INSERT INTO CareLog (plantid, date, type)
                 VALUES (@plantid, @date, @type)";
             _ = cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, log.PlantId);
             _ = cmd.Parameters.AddWithValue("@date", NpgsqlDbType.Date, log.Date);
@@ -84,7 +84,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                UPDATE CareLogs
+                UPDATE CareLog
                 SET plantid = @plantid, date = @date, type = @type
                 WHERE id = @id";
             _ = cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, log.PlantId);
@@ -99,7 +99,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "DELETE FROM CareLogs WHERE id = @id";
+            cmd.CommandText = "DELETE FROM CareLog WHERE id = @id";
             _ = cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             return DeleteData(dbConn, cmd);
