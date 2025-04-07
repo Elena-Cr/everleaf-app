@@ -17,7 +17,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM PlantTypes WHERE id = @id";
+            cmd.CommandText = "SELECT * FROM PlantType WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             var data = GetData(dbConn, cmd);
@@ -36,12 +36,12 @@ namespace Everleaf.Model.Repositories
             return null;
         }
 
-        public List<PlantType> GetAllPlantTypes()
+        public List<PlantType> GetAllPlantType()
         {
             var types = new List<PlantType>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM PlantTypes";
+            cmd.CommandText = "SELECT * FROM PlantType";
 
             var data = GetData(dbConn, cmd);
             while (data.Read())
@@ -64,7 +64,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO PlantTypes (commonname, scientificname, wateringfrequencydays, fertilizingfrequencydays, sunlightneeds)
+                INSERT INTO PlantType (commonname, scientificname, wateringfrequencydays, fertilizingfrequencydays, sunlightneeds)
                 VALUES (@commonname, @scientificname, @wateringfrequencydays, @fertilizingfrequencydays, @sunlightneeds)";
 
             cmd.Parameters.AddWithValue("@commonname", NpgsqlDbType.Text, pt.CommonName ?? "");
@@ -81,7 +81,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                UPDATE PlantTypes SET
+                UPDATE PlantType SET
                     commonname = @commonname,
                     scientificname = @scientificname,
                     wateringfrequencydays = @wateringfrequencydays,
@@ -103,7 +103,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "DELETE FROM PlantTypes WHERE id = @id";
+            cmd.CommandText = "DELETE FROM PlantType WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             return DeleteData(dbConn, cmd);

@@ -17,7 +17,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Plants WHERE id = @id";
+            cmd.CommandText = "SELECT * FROM Plant WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             var data = GetData(dbConn, cmd);
@@ -42,7 +42,7 @@ namespace Everleaf.Model.Repositories
             var plants = new List<Plant>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Plants";
+            cmd.CommandText = "SELECT * FROM Plant";
 
             var data = GetData(dbConn, cmd);
             while (data.Read())
@@ -66,7 +66,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO Plants (name, nickname, species, imageurl, dateadded, userid)
+                INSERT INTO Plant (name, nickname, species, imageurl, dateadded, userid)
                 VALUES (@name, @nickname, @species, @imageurl, @dateadded, @userid)";
 
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, plant.Name ?? "");
@@ -84,7 +84,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                UPDATE Plants SET
+                UPDATE Plant SET
                     name = @name,
                     nickname = @nickname,
                     species = @species,
@@ -108,7 +108,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "DELETE FROM Plants WHERE id = @id";
+            cmd.CommandText = "DELETE FROM Plant WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             return DeleteData(dbConn, cmd);

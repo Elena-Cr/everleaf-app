@@ -13,24 +13,24 @@ namespace Everleaf.Model.Repositories
         {
         }
 
-        public List<PlantTag> GetAllPlantTags()
+        public List<PlantTag> GetAllPlantTag()
         {
-            var plantTags = new List<PlantTag>();
+            var plantTag = new List<PlantTag>();
 
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM PlantTags";
+            cmd.CommandText = "SELECT * FROM PlantTag";
 
             var data = GetData(dbConn, cmd);
             while (data.Read())
             {
-                plantTags.Add(new PlantTag(
+                plantTag.Add(new PlantTag(
                     Convert.ToInt32(data["plantid"]),
                     Convert.ToInt32(data["tagid"])
                 ));
             }
 
-            return plantTags;
+            return plantTag;
         }
 
         public bool InsertPlantTag(PlantTag pt)
@@ -38,7 +38,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO PlantTags (plantid, tagid)
+                INSERT INTO PlantTag (plantid, tagid)
                 VALUES (@plantid, @tagid)";
 
             cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, pt.PlantId);
@@ -52,7 +52,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                DELETE FROM PlantTags
+                DELETE FROM PlantTag
                 WHERE plantid = @plantid AND tagid = @tagid";
 
             cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, plantId);

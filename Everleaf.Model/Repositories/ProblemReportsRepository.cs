@@ -17,7 +17,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM ProblemReports WHERE id = @id";
+            cmd.CommandText = "SELECT * FROM ProblemReport WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             var data = GetData(dbConn, cmd);
@@ -40,7 +40,7 @@ namespace Everleaf.Model.Repositories
             var reports = new List<ProblemReport>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM ProblemReports";
+            cmd.CommandText = "SELECT * FROM ProblemReport";
 
             var data = GetData(dbConn, cmd);
             while (data.Read())
@@ -62,7 +62,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO ProblemReports (plantid, datereported, description, severity)
+                INSERT INTO ProblemReport (plantid, datereported, description, severity)
                 VALUES (@plantid, @datereported, @description, @severity)";
 
             cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, report.PlantId);
@@ -78,7 +78,7 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                UPDATE ProblemReports SET
+                UPDATE ProblemReport SET
                     plantid = @plantid,
                     datereported = @datereported,
                     description = @description,
@@ -98,7 +98,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "DELETE FROM ProblemReports WHERE id = @id";
+            cmd.CommandText = "DELETE FROM ProblemReport WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             return DeleteData(dbConn, cmd);

@@ -17,7 +17,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Tags WHERE id = @id";
+            cmd.CommandText = "SELECT * FROM Tag WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             var data = GetData(dbConn, cmd);
@@ -32,30 +32,30 @@ namespace Everleaf.Model.Repositories
             return null;
         }
 
-        public List<Tag> GetAllTags()
+        public List<Tag> GetAllTag()
         {
-            var tags = new List<Tag>();
+            var tag = new List<Tag>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Tags";
+            cmd.CommandText = "SELECT * FROM Tag";
 
             var data = GetData(dbConn, cmd);
             while (data.Read())
             {
-                tags.Add(new Tag(Convert.ToInt32(data["id"]))
+                tag.Add(new Tag(Convert.ToInt32(data["id"]))
                 {
                     Name = data["name"].ToString()
                 });
             }
 
-            return tags;
+            return tag;
         }
 
         public bool InsertTag(Tag tag)
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "INSERT INTO Tags (name) VALUES (@name)";
+            cmd.CommandText = "INSERT INTO Tag (name) VALUES (@name)";
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, tag.Name ?? "");
 
             return InsertData(dbConn, cmd);
@@ -65,7 +65,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "UPDATE Tags SET name = @name WHERE id = @id";
+            cmd.CommandText = "UPDATE Tag SET name = @name WHERE id = @id";
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, tag.Name ?? "");
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, tag.Id);
 
@@ -76,7 +76,7 @@ namespace Everleaf.Model.Repositories
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "DELETE FROM Tags WHERE id = @id";
+            cmd.CommandText = "DELETE FROM Tag WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             return DeleteData(dbConn, cmd);
