@@ -3,13 +3,11 @@ using Everleaf.Model;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-public class BaseRepository
+public class BaseRepository(IConfiguration configuration)
 {
-protected string ConnectionString {get;}
-public BaseRepository(IConfiguration configuration) {
-ConnectionString = configuration.GetConnectionString("EverleafDb");
-}
-protected NpgsqlDataReader GetData(NpgsqlConnection conn, NpgsqlCommand cmd)
+    protected string ConnectionString { get; } = configuration.GetConnectionString("EverleafDb");
+
+    protected NpgsqlDataReader GetData(NpgsqlConnection conn, NpgsqlCommand cmd)
 {
 conn.Open();
 return cmd.ExecuteReader();
@@ -17,19 +15,19 @@ return cmd.ExecuteReader();
 protected bool InsertData(NpgsqlConnection conn, NpgsqlCommand cmd)
 {
 conn.Open();
-cmd.ExecuteNonQuery();
+        _ = cmd.ExecuteNonQuery();
 return true;
 }
 protected bool UpdateData(NpgsqlConnection conn, NpgsqlCommand cmd)
 {
 conn.Open();
-cmd.ExecuteNonQuery();
+        _ = cmd.ExecuteNonQuery();
 return true;
 }
 protected bool DeleteData(NpgsqlConnection conn, NpgsqlCommand cmd)
 {
 conn.Open();
-cmd.ExecuteNonQuery();
+        _ = cmd.ExecuteNonQuery();
 return true;
 }
 }

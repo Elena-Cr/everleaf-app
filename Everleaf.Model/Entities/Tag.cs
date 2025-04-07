@@ -1,6 +1,4 @@
-public class Tag
+public class Tag(int id)
 {
-    public Tag(int id) { Id = id; }
-    public int Id { get; set; }
-    public string Name { get; set; }
+    public int Id { get; set; } = id; public string? Name { get; set; }
 }
