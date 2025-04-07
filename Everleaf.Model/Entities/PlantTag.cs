@@ -1,5 +1,13 @@
-public class PlantTag(int plantId, int tagId)
+namespace Everleaf.Model.Entities;
+
+public class PlantTag
 {
-    public int PlantId { get; set; } = plantId;
-    public int TagId { get; set; } = tagId;
+    public PlantTag(int plantId, int tagId)
+    {
+        PlantId = plantId;
+        TagId = tagId;
+    }
+
+    public int PlantId { get; set; }
+    public int TagId { get; set; }
 }

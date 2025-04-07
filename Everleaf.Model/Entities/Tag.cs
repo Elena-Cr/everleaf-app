@@ -1,4 +1,12 @@
-public class Tag(int id)
+namespace Everleaf.Model.Entities;
+
+public class Tag
 {
-    public int Id { get; set; } = id; public string? Name { get; set; }
+    public Tag(int id)
+    {
+        Id = id;
+    }
+
+    public int Id { get; set; }
+    public string? Name { get; set; }
 }
