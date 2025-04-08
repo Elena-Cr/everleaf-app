@@ -21,6 +21,14 @@ namespace Everleaf.Model
 
             // CreatePlantDTO → Plant (for POST)
             CreateMap<CreatePlantDTO, Plant>();
+
+            // User
+            CreateMap<Users, UserDTO>().ReverseMap();
+            CreateMap<CreateUserDTO, Users>();
+
+            // ProblemReport
+            CreateMap<ProblemReport, ProblemReportDTO>().ReverseMap();
+            CreateMap<CreateProblemReportDTO, ProblemReport>();
         }
     }
 }

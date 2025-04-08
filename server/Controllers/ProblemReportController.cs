@@ -1,5 +1,7 @@
+using AutoMapper;
 using Everleaf.Model.Entities;
 using Everleaf.Model.Repositories;
+using Everleaf.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Everleaf.API.Controllers
@@ -8,39 +10,48 @@ namespace Everleaf.API.Controllers
     [ApiController]
     public class ProblemReportController : ControllerBase
     {
-        protected ProblemReportRepository Repository { get; }
+        private readonly ProblemReportRepository _repository;
+        private readonly IMapper _mapper;
 
-        public ProblemReportController(ProblemReportRepository repository)
+        public ProblemReportController(ProblemReportRepository repository, IMapper mapper)
         {
-            Repository = repository;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ProblemReport> GetById([FromRoute] int id)
+        public ActionResult<ProblemReportDTO> GetById([FromRoute] int id)
         {
-            var report = Repository.GetReportById(id);
+            var report = _repository.GetReportById(id);
             if (report == null)
             {
                 return NotFound();
             }
-            return Ok(report);
+
+            var dto = _mapper.Map<ProblemReportDTO>(report);
+            return Ok(dto);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProblemReport>> GetAll()
+        public ActionResult<IEnumerable<ProblemReportDTO>> GetAll()
         {
-            return Ok(Repository.GetAllReports());
+            var reports = _repository.GetAllReports();
+            var dtos = _mapper.Map<IEnumerable<ProblemReportDTO>>(reports);
+            return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] ProblemReport report)
+        public ActionResult Post([FromBody] CreateProblemReportDTO dto)
         {
-            if (report == null)
+            if (dto == null)
             {
                 return BadRequest("ProblemReport info is missing or malformed.");
             }
 
-            bool status = Repository.InsertReport(report);
+            var report = _mapper.Map<ProblemReport>(dto);
+            report.DateReported = DateTime.Now;
+
+            bool status = _repository.InsertReport(report);
             if (status)
             {
                 return Ok();
@@ -50,20 +61,22 @@ namespace Everleaf.API.Controllers
         }
 
         [HttpPut]
-        public ActionResult Update([FromBody] ProblemReport report)
+        public ActionResult Update([FromBody] ProblemReportDTO dto)
         {
-            if (report == null)
+            if (dto == null)
             {
                 return BadRequest("ProblemReport info is missing or malformed.");
             }
 
-            var existing = Repository.GetReportById(report.Id);
+            var existing = _repository.GetReportById(dto.Id);
             if (existing == null)
             {
-                return NotFound($"ProblemReport with id {report.Id} not found.");
+                return NotFound($"ProblemReport with id {dto.Id} not found.");
             }
 
-            bool status = Repository.UpdateReport(report);
+            var report = _mapper.Map<ProblemReport>(dto);
+            bool status = _repository.UpdateReport(report);
+
             if (status)
             {
                 return Ok();
@@ -75,13 +88,13 @@ namespace Everleaf.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var existing = Repository.GetReportById(id);
+            var existing = _repository.GetReportById(id);
             if (existing == null)
             {
                 return NotFound($"ProblemReport with id {id} not found.");
             }
 
-            bool status = Repository.DeleteReport(id);
+            bool status = _repository.DeleteReport(id);
             if (status)
             {
                 return NoContent();

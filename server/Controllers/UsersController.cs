@@ -1,3 +1,5 @@
+using AutoMapper;
+using Everleaf.Model.DTOs;
 using Everleaf.Model.Entities;
 using Everleaf.Model.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -8,40 +10,47 @@ namespace Everleaf.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        protected UserRepository Repository { get; }
+        private readonly UserRepository _repository;
+        private readonly IMapper _mapper;
 
-        public UsersController(UserRepository repository)
+        public UsersController(UserRepository repository, IMapper mapper)
         {
-            Repository = repository;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Users> GetUser([FromRoute] int id)
+        public ActionResult<UserDTO> GetUser([FromRoute] int id)
         {
-            var user = Repository.GetUserById(id);
+            var user = _repository.GetUserById(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(user);
+            var dto = _mapper.Map<UserDTO>(user);
+            return Ok(dto);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Users>> GetUsers()
+        public ActionResult<IEnumerable<UserDTO>> GetUsers()
         {
-            return Ok(Repository.GetAllUsers());
+            var users = _repository.GetAllUsers();
+            var dtos = _mapper.Map<IEnumerable<UserDTO>>(users);
+            return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] Users user)
+        public ActionResult Post([FromBody] CreateUserDTO dto)
         {
-            if (user == null)
+            if (dto == null)
             {
                 return BadRequest("User info is missing or malformed.");
             }
 
-            bool status = Repository.InsertUser(user);
+            var user = _mapper.Map<Users>(dto);
+
+            bool status = _repository.InsertUser(user);
             if (status)
             {
                 return Ok();
@@ -51,20 +60,23 @@ namespace Everleaf.API.Controllers
         }
 
         [HttpPut]
-        public ActionResult Update([FromBody] Users user)
+        public ActionResult Update([FromBody] UserDTO dto)
         {
-            if (user == null)
+            if (dto == null)
             {
                 return BadRequest("User info is missing or malformed.");
             }
 
-            var existing = Repository.GetUserById(user.Id);
+            var existing = _repository.GetUserById(dto.Id);
             if (existing == null)
             {
-                return NotFound($"User with id {user.Id} not found.");
+                return NotFound($"User with id {dto.Id} not found.");
             }
 
-            bool status = Repository.UpdateUser(user);
+            var updatedUser = _mapper.Map<Users>(dto);
+            updatedUser.PasswordHash = existing.PasswordHash; // Keep the old password (not sent in DTO)
+
+            bool status = _repository.UpdateUser(updatedUser);
             if (status)
             {
                 return Ok();
@@ -76,13 +88,13 @@ namespace Everleaf.API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var existing = Repository.GetUserById(id);
+            var existing = _repository.GetUserById(id);
             if (existing == null)
             {
                 return NotFound($"User with id {id} not found.");
             }
 
-            bool status = Repository.DeleteUser(id);
+            bool status = _repository.DeleteUser(id);
             if (status)
             {
                 return NoContent();
