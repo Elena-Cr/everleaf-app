@@ -1,0 +1,123 @@
+using Everleaf.Model.Entities;
+using Everleaf.Model.Repositories;
+using Everleaf.Model.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+
+namespace Everleaf.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PlantController : ControllerBase
+    {
+        private readonly PlantRepository _repository;
+        private readonly IMapper _mapper;
+
+        public PlantController(PlantRepository repository, IMapper mapper)
+        {
+            _repository = repository;
+            _mapper = mapper;
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<PlantDTO> GetPlant([FromRoute] int id)
+        {
+            var plant = _repository.GetPlantById(id);
+            if (plant == null)
+            {
+                return NotFound();
+            }
+
+            var dto = _mapper.Map<PlantDTO>(plant);
+            return Ok(dto);
+        }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<PlantDTO>> GetPlants()
+        {
+            var plants = _repository.GetAllPlants();
+            var dtos = _mapper.Map<IEnumerable<PlantDTO>>(plants);
+            return Ok(dtos);
+        }
+
+        [HttpPost]
+        public ActionResult Post([FromBody] PlantDTO dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("Plant info not correct");
+            }
+
+            var plant = _mapper.Map<Plant>(dto);
+            bool status = _repository.InsertPlant(plant);
+
+            if (status)
+            {
+                return Ok();
+            }
+
+            return BadRequest("Insert failed");
+        }
+
+        [HttpPut]
+        public ActionResult Update([FromBody] PlantDTO dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("Plant info not correct");
+            }
+
+            var existingPlant = _repository.GetPlantById(dto.Id);
+            if (existingPlant == null)
+            {
+                return NotFound($"Plant with id {dto.Id} not found");
+            }
+
+            var plant = _mapper.Map<Plant>(dto);
+            bool status = _repository.UpdatePlant(plant);
+
+            if (status)
+            {
+                return Ok();
+            }
+
+            return BadRequest("Update failed");
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            var existingPlant = _repository.GetPlantById(id);
+            if (existingPlant == null)
+            {
+                return NotFound($"Plant with id {id} not found");
+            }
+
+            bool status = _repository.DeletePlant(id);
+            if (status)
+            {
+                return NoContent();
+            }
+
+            return BadRequest($"Unable to delete plant with id {id}");
+        }
+
+        // [HttpGet("test")]
+        // public ActionResult<PlantDTO> GetMappedPlantTest()
+        // {
+        //     var plant = new Plant(1)
+        //     {
+        //         Name = "Snake Plant",
+        //         Nickname = "Snakey",
+        //         Species = 2,
+        //         ImageUrl = "https://example.com/snake.png",
+        //         DateAdded = DateTime.Now,
+        //         UserId = 1
+        //     };
+
+        //     var dto = _mapper.Map<PlantDTO>(plant);
+        //     return Ok(dto);
+        // }
+
+    }
+}

@@ -1,41 +1,42 @@
+using Everleaf.Model.Repositories;
+using Everleaf.Model;
+
+// Initialize the application builder
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+#region Service Registration
+// Add controllers for handling HTTP requests
+builder.Services.AddControllers();
 
+// Register repositories with dependency injection
+// Each repository is scoped to the HTTP request lifetime
+builder.Services.AddScoped<CareLogRepository>();
+builder.Services.AddScoped<PlantRepository>();
+builder.Services.AddScoped<PlantTagRepository>();
+builder.Services.AddScoped<PlantTypeRepository>();
+builder.Services.AddScoped<ProblemReportRepository>();
+builder.Services.AddScoped<TagRepository>();
+builder.Services.AddScoped<UserRepository>();
+
+// Configure AutoMapper for object-to-object mapping
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+#endregion
+
+// Build the application
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+#region Middleware Configuration
+// Configure the HTTP request pipeline
 
-app.UseHttpsRedirection();
+// Uncomment the following line to enforce HTTPS
+//app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Enable authorization middleware
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+// Enable endpoint routing for controllers
+app.MapControllers();
+#endregion
 
+// Start the application
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
