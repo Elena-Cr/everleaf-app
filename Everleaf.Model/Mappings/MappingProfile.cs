@@ -16,11 +16,11 @@ namespace Everleaf.Model
         /// </summary>
         public MappingProfile()
         {
-            // Configure bidirectional mapping between Plant entity and PlantDTO
-            // ReverseMap() allows mapping in both directions (Plant ↔ PlantDTO)
+             // Plant ↔ PlantDTO (for GET and PUT)
             CreateMap<Plant, PlantDTO>().ReverseMap();
-            
-            
+
+            // CreatePlantDTO → Plant (for POST)
+            CreateMap<CreatePlantDTO, Plant>();
         }
     }
 }

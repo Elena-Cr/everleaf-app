@@ -41,7 +41,7 @@ namespace Everleaf.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] PlantDTO dto)
+        public ActionResult Post([FromBody] CreatePlantDTO dto)
         {
             if (dto == null)
             {
