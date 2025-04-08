@@ -65,6 +65,34 @@ namespace Everleaf.Model.Repositories
             }
         }
 
+        public List<CareLog> GetLogsByUserId(int userId)
+        {
+            var logs = new List<CareLog>();
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            var cmd = dbConn.CreateCommand();
+
+            cmd.CommandText = @"
+                SELECT cl.*
+                FROM CareLog cl
+                INNER JOIN Plant p ON cl.PlantId = p.Id
+                WHERE p.UserId = @userId";
+
+            cmd.Parameters.AddWithValue("@userId", NpgsqlDbType.Integer, userId);
+
+            var data = GetData(dbConn, cmd);
+            while (data.Read())
+            {
+                logs.Add(new CareLog(Convert.ToInt32(data["id"]))
+                {
+                    PlantId = Convert.ToInt32(data["plantid"]),
+                    Date = Convert.ToDateTime(data["date"]),
+                    Type = data["type"].ToString()
+                });
+            }
+
+            return logs;
+        }
+
         public bool InsertCareLog(CareLog log)
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);

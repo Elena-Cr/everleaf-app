@@ -1,3 +1,5 @@
+using AutoMapper;
+using Everleaf.Model.DTOs;
 using Everleaf.Model.Entities;
 using Everleaf.Model.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -8,83 +10,95 @@ namespace Everleaf.API.Controllers
     [ApiController]
     public class CareLogController : ControllerBase
     {
-        protected CareLogRepository Repository { get; }
+        private readonly CareLogRepository _repository;
+        private readonly IMapper _mapper;
 
-        public CareLogController(CareLogRepository repository)
+        public CareLogController(CareLogRepository repository, IMapper mapper)
         {
-            Repository = repository;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
         public ActionResult<CareLog> GetCareLog([FromRoute] int id)
         {
-            var careLog = Repository.GetCareLogById(id);
+            var careLog = _repository.GetCareLogById(id);
             if (careLog == null)
             {
                 return NotFound();
             }
-            return Ok(careLog);
+
+            var dto = _mapper.Map<CareLog>(careLog);
+            return Ok(dto);
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<CareLog>> GetCareLogs()
         {
-            return Ok(Repository.GetAllCareLogs());
+            var logs = _repository.GetAllCareLogs();
+            var dtos = _mapper.Map<IEnumerable<CareLog>>(logs);
+            return Ok(dtos);
+        }
+
+        [HttpGet("user/{userId}")]
+        public ActionResult<IEnumerable<CareLog>> GetByUserId(int userId)
+        {
+            var logs = _repository.GetLogsByUserId(userId);
+            var dtos = _mapper.Map<IEnumerable<CareLog>>(logs);
+            return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] CareLog log)
+        public ActionResult Post([FromBody] CareLog dto)
         {
-            if (log == null)
+            if (dto == null)
             {
                 return BadRequest("CareLog info not correct");
             }
 
-            bool status = Repository.InsertCareLog(log);
+            var log = _mapper.Map<CareLog>(dto);
+            log.Date = DateTime.Now;
+
+            bool status = _repository.InsertCareLog(log);
             if (status)
             {
                 return Ok();
             }
+
             return BadRequest("Insert failed");
         }
 
         [HttpPut]
-        public ActionResult Update([FromBody] CareLog log)
+        public ActionResult Update([FromBody] CareLog dto)
         {
-            if (log == null)
+            if (dto == null)
             {
                 return BadRequest("CareLog info not correct");
             }
 
-            var existingLog = Repository.GetCareLogById(log.Id);
-            if (existingLog == null)
+            var existing = _repository.GetCareLogById(dto.Id);
+            if (existing == null)
             {
-                return NotFound($"CareLog with id {log.Id} not found");
+                return NotFound($"CareLog with id {dto.Id} not found");
             }
 
-            bool status = Repository.UpdateCareLog(log);
-            if (status)
-            {
-                return Ok();
-            }
-            return BadRequest("Update failed");
+            var updated = _mapper.Map<CareLog>(dto);
+            bool status = _repository.UpdateCareLog(updated);
+
+            return status ? Ok() : BadRequest("Update failed");
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var existingLog = Repository.GetCareLogById(id);
-            if (existingLog == null)
+            var existing = _repository.GetCareLogById(id);
+            if (existing == null)
             {
                 return NotFound($"CareLog with id {id} not found");
             }
 
-            bool status = Repository.DeleteCareLog(id);
-            if (status)
-            {
-                return NoContent();
-            }
-            return BadRequest($"Unable to delete CareLog with id {id}");
+            bool status = _repository.DeleteCareLog(id);
+            return status ? NoContent() : BadRequest("Delete failed");
         }
     }
 }
