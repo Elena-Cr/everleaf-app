@@ -1,26 +1,42 @@
 using Everleaf.Model.Repositories;
+using Everleaf.Model;
 
+// Initialize the application builder
 var builder = WebApplication.CreateBuilder(args);
 
-// Register services and repositories
-builder.Services.AddControllers(); // Enables API controllers
-builder.Services.AddScoped<CareLogRepository, CareLogRepository>();
-builder.Services.AddScoped<PlantRepository, PlantRepository>();
-builder.Services.AddScoped<PlantTagRepository, PlantTagRepository>();
-builder.Services.AddScoped<PlantTypeRepository, PlantTypeRepository>();
-builder.Services.AddScoped<ProblemReportRepository, ProblemReportRepository>();
-builder.Services.AddScoped<TagRepository, TagRepository>();
-builder.Services.AddScoped<UserRepository, UserRepository>();
+#region Service Registration
+// Add controllers for handling HTTP requests
+builder.Services.AddControllers();
 
+// Register repositories with dependency injection
+// Each repository is scoped to the HTTP request lifetime
+builder.Services.AddScoped<CareLogRepository>();
+builder.Services.AddScoped<PlantRepository>();
+builder.Services.AddScoped<PlantTagRepository>();
+builder.Services.AddScoped<PlantTypeRepository>();
+builder.Services.AddScoped<ProblemReportRepository>();
+builder.Services.AddScoped<TagRepository>();
+builder.Services.AddScoped<UserRepository>();
 
+// Configure AutoMapper for object-to-object mapping
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+#endregion
 
-
-
+// Build the application
 var app = builder.Build();
 
-// Middleware pipeline
-//app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers(); // Enables routing to your controllers
+#region Middleware Configuration
+// Configure the HTTP request pipeline
 
+// Uncomment the following line to enforce HTTPS
+//app.UseHttpsRedirection();
+
+// Enable authorization middleware
+app.UseAuthorization();
+
+// Enable endpoint routing for controllers
+app.MapControllers();
+#endregion
+
+// Start the application
 app.Run();
