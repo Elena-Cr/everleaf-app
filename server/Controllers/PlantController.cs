@@ -1,6 +1,8 @@
 using Everleaf.Model.Entities;
 using Everleaf.Model.Repositories;
+using Everleaf.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace Everleaf.API.Controllers
 {
@@ -8,83 +10,114 @@ namespace Everleaf.API.Controllers
     [ApiController]
     public class PlantController : ControllerBase
     {
-        protected PlantRepository Repository { get; }
+        private readonly PlantRepository _repository;
+        private readonly IMapper _mapper;
 
-        public PlantController(PlantRepository repository)
+        public PlantController(PlantRepository repository, IMapper mapper)
         {
-            Repository = repository;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Plant> GetPlant([FromRoute] int id)
+        public ActionResult<PlantDTO> GetPlant([FromRoute] int id)
         {
-            var plant = Repository.GetPlantById(id);
+            var plant = _repository.GetPlantById(id);
             if (plant == null)
             {
                 return NotFound();
             }
-            return Ok(plant);
+
+            var dto = _mapper.Map<PlantDTO>(plant);
+            return Ok(dto);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Plant>> GetPlants()
+        public ActionResult<IEnumerable<PlantDTO>> GetPlants()
         {
-            return Ok(Repository.GetAllPlants());
+            var plants = _repository.GetAllPlants();
+            var dtos = _mapper.Map<IEnumerable<PlantDTO>>(plants);
+            return Ok(dtos);
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] Plant plant)
+        public ActionResult Post([FromBody] PlantDTO dto)
         {
-            if (plant == null)
+            if (dto == null)
             {
                 return BadRequest("Plant info not correct");
             }
 
-            bool status = Repository.InsertPlant(plant);
+            var plant = _mapper.Map<Plant>(dto);
+            bool status = _repository.InsertPlant(plant);
+
             if (status)
             {
                 return Ok();
             }
+
             return BadRequest("Insert failed");
         }
 
         [HttpPut]
-        public ActionResult Update([FromBody] Plant plant)
+        public ActionResult Update([FromBody] PlantDTO dto)
         {
-            if (plant == null)
+            if (dto == null)
             {
                 return BadRequest("Plant info not correct");
             }
 
-            var existingPlant = Repository.GetPlantById(plant.Id);
+            var existingPlant = _repository.GetPlantById(dto.Id);
             if (existingPlant == null)
             {
-                return NotFound($"Plant with id {plant.Id} not found");
+                return NotFound($"Plant with id {dto.Id} not found");
             }
 
-            bool status = Repository.UpdatePlant(plant);
+            var plant = _mapper.Map<Plant>(dto);
+            bool status = _repository.UpdatePlant(plant);
+
             if (status)
             {
                 return Ok();
             }
+
             return BadRequest("Update failed");
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var existingPlant = Repository.GetPlantById(id);
+            var existingPlant = _repository.GetPlantById(id);
             if (existingPlant == null)
             {
                 return NotFound($"Plant with id {id} not found");
             }
 
-            bool status = Repository.DeletePlant(id);
+            bool status = _repository.DeletePlant(id);
             if (status)
             {
                 return NoContent();
             }
+
             return BadRequest($"Unable to delete plant with id {id}");
         }
+
+        // [HttpGet("test")]
+        // public ActionResult<PlantDTO> GetMappedPlantTest()
+        // {
+        //     var plant = new Plant(1)
+        //     {
+        //         Name = "Snake Plant",
+        //         Nickname = "Snakey",
+        //         Species = 2,
+        //         ImageUrl = "https://example.com/snake.png",
+        //         DateAdded = DateTime.Now,
+        //         UserId = 1
+        //     };
+
+        //     var dto = _mapper.Map<PlantDTO>(plant);
+        //     return Ok(dto);
+        // }
+
     }
 }
