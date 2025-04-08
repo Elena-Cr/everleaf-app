@@ -61,6 +61,31 @@ namespace Everleaf.Model.Repositories
             return plants;
         }
 
+        public List<Plant> GetPlantsByUserId(int userId)
+        {
+            var plants = new List<Plant>();
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            var cmd = dbConn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM Plant WHERE userid = @userId";
+            cmd.Parameters.AddWithValue("@userId", NpgsqlDbType.Integer, userId);
+
+            var data = GetData(dbConn, cmd);
+            while (data.Read())
+            {
+                plants.Add(new Plant(Convert.ToInt32(data["id"]))
+                {
+                    Name = data["name"].ToString(),
+                    Nickname = data["nickname"].ToString(),
+                    Species = Convert.ToInt32(data["species"]),
+                    ImageUrl = data["imageurl"].ToString(),
+                    DateAdded = Convert.ToDateTime(data["dateadded"]),
+                    UserId = Convert.ToInt32(data["userid"])
+                });
+            }
+
+            return plants;
+        }
+
         public bool InsertPlant(Plant plant)
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);

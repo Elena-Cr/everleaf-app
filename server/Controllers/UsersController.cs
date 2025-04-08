@@ -102,5 +102,37 @@ namespace Everleaf.API.Controllers
 
             return BadRequest("Delete failed.");
         }
+
+        [HttpPost("register")]
+        public ActionResult Register([FromBody] UserRegisterDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.PasswordHash))
+                return BadRequest("Username and password are required.");
+
+            var existing = _repository.GetUserByUsername(dto.Username);
+            if (existing != null)
+                return Conflict("Username already exists.");
+
+            var user = new Users(0)
+            {
+                Username = dto.Username,
+                PasswordHash = dto.PasswordHash, // optionally hash this later
+                Email = dto.Email
+            };
+
+            var status = _repository.InsertUser(user);
+            return status ? Ok("User registered") : BadRequest("Failed to register.");
+        }
+
+        [HttpPost("login")]
+        public ActionResult<UserDTO> Login([FromBody] UserLoginDTO dto)
+        {
+            var user = _repository.GetUserByUsername(dto.Username);
+            if (user == null || user.PasswordHash != dto.PasswordHash)
+                return Unauthorized("Invalid credentials.");
+
+            var userDto = _mapper.Map<UserDTO>(user);
+            return Ok(userDto);
+        }
     }
 }

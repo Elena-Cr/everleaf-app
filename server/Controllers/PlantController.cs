@@ -1,8 +1,8 @@
+using AutoMapper;
+using Everleaf.Model.DTOs;
 using Everleaf.Model.Entities;
 using Everleaf.Model.Repositories;
-using Everleaf.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 
 namespace Everleaf.API.Controllers
 {
@@ -33,9 +33,9 @@ namespace Everleaf.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PlantDTO>> GetPlants()
+        public ActionResult<IEnumerable<PlantDTO>> GetPlants([FromQuery] int userId)
         {
-            var plants = _repository.GetAllPlants();
+            var plants = _repository.GetPlantsByUserId(userId);
             var dtos = _mapper.Map<IEnumerable<PlantDTO>>(plants);
             return Ok(dtos);
         }
@@ -101,23 +101,5 @@ namespace Everleaf.API.Controllers
 
             return BadRequest($"Unable to delete plant with id {id}");
         }
-
-        // [HttpGet("test")]
-        // public ActionResult<PlantDTO> GetMappedPlantTest()
-        // {
-        //     var plant = new Plant(1)
-        //     {
-        //         Name = "Snake Plant",
-        //         Nickname = "Snakey",
-        //         Species = 2,
-        //         ImageUrl = "https://example.com/snake.png",
-        //         DateAdded = DateTime.Now,
-        //         UserId = 1
-        //     };
-
-        //     var dto = _mapper.Map<PlantDTO>(plant);
-        //     return Ok(dto);
-        // }
-
     }
 }

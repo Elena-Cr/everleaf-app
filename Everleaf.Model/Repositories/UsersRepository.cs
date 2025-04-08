@@ -34,6 +34,27 @@ namespace Everleaf.Model.Repositories
             return null;
         }
 
+        public Users? GetUserByUsername(string username)
+        {
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            var cmd = dbConn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM Users WHERE username = @username";
+            cmd.Parameters.AddWithValue("@username", NpgsqlDbType.Text, username);
+
+            var data = GetData(dbConn, cmd);
+            if (data != null && data.Read())
+            {
+                return new Users(Convert.ToInt32(data["id"]))
+                {
+                    Username = data["username"].ToString(),
+                    PasswordHash = data["passwordhash"].ToString(),
+                    Email = data["email"].ToString()
+                };
+            }
+
+            return null;
+        }
+
         public List<Users> GetAllUsers()
         {
             var users = new List<Users>();
