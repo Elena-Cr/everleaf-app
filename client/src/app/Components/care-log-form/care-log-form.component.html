@@ -1,13 +1,13 @@
+<p>🌱 CareLog Form Component Loaded</p>
 <form [formGroup]="careLogForm" (ngSubmit)="submitCareLog()">
   <mat-card>
     <mat-card-title>Log Care Activity</mat-card-title>
     <mat-card-content>
       <mat-form-field appearance="fill">
-        <mat-label>Action</mat-label>
-        <mat-select formControlName="action">
-          <mat-option value="watering">Watering</mat-option>
-          <mat-option value="pruning">Pruning</mat-option>
-          <mat-option value="fertilizing">Fertilizing</mat-option>
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="Water">Water</mat-option>
+          <mat-option value="Fertilizer">Fertilizer</mat-option>
         </mat-select>
       </mat-form-field>
 

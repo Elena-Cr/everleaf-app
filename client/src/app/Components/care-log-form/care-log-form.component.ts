@@ -31,7 +31,7 @@ import { CareLog } from '../../Models/care-log';
     MatButtonModule,
   ],
   templateUrl: './care-log-form.component.html',
-  styleUrl: './care-log-form.component.css',
+  styleUrls: ['./care-log-form.component.css'],
 })
 export class CareLogFormComponent implements OnInit {
   @Input() plantId!: number;
@@ -46,14 +46,15 @@ export class CareLogFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.careLogForm = this.fb.group({
-      action: ['', Validators.required],
-      date: ['', Validators.required],
+      type: ['', Validators.required],
+      date: [new Date(), Validators.required],
       notes: [''],
       plantId: [this.plantId, Validators.required],
     });
   }
 
   submitCareLog(): void {
+    console.log('Submitted care log:', this.careLogForm.value);
     if (this.careLogForm.valid) {
       const formValue: CareLog = this.careLogForm.value;
       this.careLogService.createCareLog(formValue).subscribe({

@@ -4,6 +4,17 @@ using Everleaf.Model;
 // Initialize the application builder
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 #region Service Registration
 // Add controllers for handling HTTP requests
 builder.Services.AddControllers();
@@ -24,6 +35,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Build the application
 var app = builder.Build();
+app.UseCors("AllowFrontend");
+
 
 #region Middleware Configuration
 // Configure the HTTP request pipeline

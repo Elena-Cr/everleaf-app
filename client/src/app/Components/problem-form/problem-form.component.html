@@ -1,1 +1,42 @@
-<p>problem-form works!</p>
+<mat-card>
+  <mat-card-title>Report a Problem</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="problemForm" (ngSubmit)="submitProblem()">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Severity</mat-label>
+        <mat-select formControlName="severity">
+          <mat-option value="Low">Low</mat-option>
+          <mat-option value="Medium">Medium</mat-option>
+          <mat-option value="High">High</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="4"></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Date Reported</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="dateReported"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="problemForm.invalid"
+      >
+        Submit Report
+      </button>
+    </form>
+
+    <p *ngIf="statusMessage">{{ statusMessage }}</p>
+  </mat-card-content>
+</mat-card>
