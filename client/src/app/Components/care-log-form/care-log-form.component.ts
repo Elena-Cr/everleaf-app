@@ -47,17 +47,29 @@ export class CareLogFormComponent implements OnInit {
   ngOnInit(): void {
     this.careLogForm = this.fb.group({
       type: ['', Validators.required],
-      date: [new Date(), Validators.required],
+      date: [new Date(), Validators.required], // ✅ set current date
       notes: [''],
       plantId: [this.plantId, Validators.required],
     });
   }
 
+  toLocalDate(date: Date): string {
+    const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+      .toISOString()
+      .split('T')[0];
+    return `${localISO}T00:00:00`;
+  }
+
   submitCareLog(): void {
-    console.log('Submitted care log:', this.careLogForm.value);
     if (this.careLogForm.valid) {
-      const formValue: CareLog = this.careLogForm.value;
-      this.careLogService.createCareLog(formValue).subscribe({
+      const formValue = this.careLogForm.value;
+
+      const payload: CareLog = {
+        ...formValue,
+        date: this.toLocalDate(formValue.date), // ✅ convert the selected date properly
+      };
+
+      this.careLogService.createCareLog(payload).subscribe({
         next: () => (this.statusMessage = '✅ Care log submitted!'),
         error: () => (this.statusMessage = '❌ Failed to submit care log.'),
       });

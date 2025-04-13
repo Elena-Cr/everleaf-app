@@ -17,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { ProblemService } from '../../Services/problem.service';
 import { ProblemReport } from '../../Models/problem-reports';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-problem-form',
@@ -50,15 +51,28 @@ export class ProblemFormComponent implements OnInit {
     this.problemForm = this.fb.group({
       severity: ['', Validators.required],
       description: ['', [Validators.required, Validators.minLength(5)]],
-      dateReported: [new Date(), Validators.required],
+      dateReported: [new Date(), Validators.required], // ✅ default to today
       plantId: [this.plantId, Validators.required],
     });
   }
 
+  toLocalDate(date: Date): string {
+    const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+      .toISOString()
+      .split('T')[0]; // → returns "2025-04-01"
+    return `${localISO}T00:00:00`; // normalized to midnight local time
+  }
+
   submitProblem(): void {
     if (this.problemForm.valid) {
-      const report: ProblemReport = this.problemForm.value;
-      this.problemService.createProblem(report).subscribe({
+      const formValue = this.problemForm.value;
+
+      const payload = {
+        ...formValue,
+        dateReported: this.toLocalDate(formValue.dateReported),
+      };
+
+      this.problemService.createProblem(payload).subscribe({
         next: () => (this.statusMessage = '✅ Problem reported!'),
         error: () => (this.statusMessage = '❌ Failed to submit report.'),
       });

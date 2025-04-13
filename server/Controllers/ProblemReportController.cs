@@ -57,7 +57,7 @@ namespace Everleaf.API.Controllers
             }
 
             var report = _mapper.Map<ProblemReport>(dto);
-            report.DateReported = DateTime.Now;
+            report.DateReported = dto.DateReported ?? DateTime.Today;
 
             bool status = _repository.InsertReport(report);
             if (status)

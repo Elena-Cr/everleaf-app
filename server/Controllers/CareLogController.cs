@@ -57,7 +57,7 @@ namespace Everleaf.API.Controllers
             }
 
             var log = _mapper.Map<CareLog>(dto);
-            log.Date = DateTime.Now;
+            log.Date = dto.Date != default ? dto.Date : DateTime.Now;
 
             bool status = _repository.InsertCareLog(log);
             if (status)
