@@ -1,15 +1,43 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
 import { CareLogService } from '../../Services/carelog.service';
+import { CareLog } from '../../Models/care-log';
 
 @Component({
   selector: 'app-care-log-form',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCardModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatButtonModule,
+  ],
   templateUrl: './care-log-form.component.html',
+  styleUrl: './care-log-form.component.css',
 })
 export class CareLogFormComponent implements OnInit {
   @Input() plantId!: number;
+
   careLogForm!: FormGroup;
-  statusMessage: string = '';
+  statusMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -27,9 +55,10 @@ export class CareLogFormComponent implements OnInit {
 
   submitCareLog(): void {
     if (this.careLogForm.valid) {
-      this.careLogService.createCareLog(this.careLogForm.value).subscribe({
-        next: () => (this.statusMessage = 'Care activity logged successfully!'),
-        error: () => (this.statusMessage = 'Failed to log care activity.'),
+      const formValue: CareLog = this.careLogForm.value;
+      this.careLogService.createCareLog(formValue).subscribe({
+        next: () => (this.statusMessage = '✅ Care log submitted!'),
+        error: () => (this.statusMessage = '❌ Failed to submit care log.'),
       });
     }
   }
