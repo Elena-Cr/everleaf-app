@@ -5,6 +5,15 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+
+import {
+  trigger,
+  state,
+  style,
+  transition,
+  animate,
+} from '@angular/animations';
+
 import { CommonModule } from '@angular/common';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,6 +44,12 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   ],
   templateUrl: './problem-form.component.html',
   styleUrls: ['./problem-form.component.css'],
+  animations: [
+    trigger('fadeIn', [
+      state('void', style({ opacity: 0 })),
+      transition(':enter', [animate('300ms ease-in')]),
+    ]),
+  ],
 })
 export class ProblemFormComponent implements OnInit {
   @Input() plantId!: number;
@@ -44,7 +59,8 @@ export class ProblemFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private problemService: ProblemService
+    private problemService: ProblemService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -73,8 +89,22 @@ export class ProblemFormComponent implements OnInit {
       };
 
       this.problemService.createProblem(payload).subscribe({
-        next: () => (this.statusMessage = '✅ Problem reported!'),
-        error: () => (this.statusMessage = '❌ Failed to submit report.'),
+        next: () => {
+          this.snackBar.open('✅ Problem reported!', 'Close', {
+            duration: 3000,
+          });
+          this.problemForm.reset({
+            issueType: '',
+            description: '',
+            dateReported: new Date(),
+            plantId: this.plantId,
+          });
+        },
+        error: () => {
+          this.snackBar.open('❌ Failed to submit problem.', 'Close', {
+            duration: 3000,
+          });
+        },
       });
     }
   }

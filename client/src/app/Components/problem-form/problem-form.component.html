@@ -1,7 +1,17 @@
-<mat-card>
-  <mat-card-title>Report a Problem</mat-card-title>
-  <mat-card-content>
-    <form [formGroup]="problemForm" (ngSubmit)="submitProblem()">
+<form
+  [formGroup]="problemForm"
+  (ngSubmit)="submitProblem()"
+  class="problem-form"
+>
+  <mat-card class="problem-card" [@fadeIn]>
+    <mat-card-header>
+      <mat-card-title>🛠️ Report a Problem</mat-card-title>
+      <mat-card-subtitle
+        >Log plant issues like pests, disease, or damage</mat-card-subtitle
+      >
+    </mat-card-header>
+
+    <mat-card-content>
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Severity</mat-label>
         <mat-select formControlName="severity">
@@ -9,15 +19,26 @@
           <mat-option value="Medium">Medium</mat-option>
           <mat-option value="High">High</mat-option>
         </mat-select>
+        <mat-error *ngIf="problemForm.get('severity')?.hasError('required')">
+          Severity is required.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Description</mat-label>
-        <textarea matInput formControlName="description" rows="4"></textarea>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+        <mat-error *ngIf="problemForm.get('description')?.hasError('required')">
+          Description is required.
+        </mat-error>
+        <mat-error
+          *ngIf="problemForm.get('description')?.hasError('minlength')"
+        >
+          Description must be at least 5 characters.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Date Reported</mat-label>
+        <mat-label>Date</mat-label>
         <input
           matInput
           [matDatepicker]="picker"
@@ -25,18 +46,23 @@
         />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <mat-error
+          *ngIf="problemForm.get('dateReported')?.hasError('required')"
+        >
+          Date is required.
+        </mat-error>
       </mat-form-field>
+    </mat-card-content>
 
+    <mat-card-actions class="form-actions">
       <button
         mat-raised-button
-        color="primary"
+        color="warn"
         type="submit"
         [disabled]="problemForm.invalid"
       >
-        Submit Report
+        Report
       </button>
-    </form>
-
-    <p *ngIf="statusMessage">{{ statusMessage }}</p>
-  </mat-card-content>
-</mat-card>
+    </mat-card-actions>
+  </mat-card>
+</form>
