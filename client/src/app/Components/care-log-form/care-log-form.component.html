@@ -1,1 +1,47 @@
-<p>care-log-form works!</p>
+<form
+  [formGroup]="careLogForm"
+  (ngSubmit)="submitCareLog()"
+  class="care-log-form"
+>
+  <mat-card class="care-log-card" [@fadeIn]>
+    <mat-card-header>
+      <mat-card-title>🌱 Log Care Activity</mat-card-title>
+      <mat-card-subtitle
+        >Track watering, fertilizing, and more</mat-card-subtitle
+      >
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="Water">Water</mat-option>
+          <mat-option value="Fertilizer">Fertilizer</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Notes (optional)</mat-label>
+        <textarea matInput rows="3" formControlName="notes"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="careLogForm.invalid"
+      >
+        Submit
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

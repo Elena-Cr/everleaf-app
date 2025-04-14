@@ -2,6 +2,7 @@ namespace Everleaf.Model.Entities;
 
 public class ProblemReport
 {
+    public ProblemReport() {} 
     public ProblemReport(int id)
     {
         Id = id;
