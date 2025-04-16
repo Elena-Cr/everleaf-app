@@ -1,8 +1,9 @@
 namespace Everleaf.Model.Entities;
 using System;
-public class Plant(int id)
+public class Plant
 {
-    public int Id { get; set; } = id; 
+    public Plant() {} 
+    public int Id { get; set; } 
     public string? Name { get; set; }
     public string? Nickname { get; set; }
     public int Species { get; set; }  // FK to PlantType

@@ -18,5 +18,6 @@ namespace Everleaf.Model.DTOs
         public int Species { get; set; }
         public string? ImageUrl { get; set; }
         public int UserId { get; set; }
+        public DateTime DateAdded { get; set; }
     }
 }
