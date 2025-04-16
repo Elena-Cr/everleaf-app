@@ -16,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { CareLogFormComponent } from './Components/care-log-form/care-log-form.component';
 import { ProblemFormComponent } from './Components/problem-form/problem-form.component';
+import { PlantFormComponent } from './Components/plant-form/plant-form.component';
 
 @NgModule({
   imports: [

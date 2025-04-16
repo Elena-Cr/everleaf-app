@@ -5,10 +5,16 @@
   </p>
 
   <!-- Display the CareLogFormComponent -->
+  <h2> Submit a CareLog Report (plantid 1)</h2>
   <app-care-log-form [plantId]="1"></app-care-log-form>
 
-  <h2>🛠️ Submit a Problem Report</h2>
+  <h2>🛠️ Submit a Problem Report (userid 1)</h2>
   <app-problem-form [plantId]="1"></app-problem-form>
+
+  <!-- app.component.html -->
+  <h2> Adding a new plant (userid 1)!</h2>
+  <app-plant-form></app-plant-form>
+
 </div>
 
 <router-outlet />

@@ -1,0 +1,52 @@
+<form [formGroup]="plantForm" (ngSubmit)="onSubmit()" class="plant-form">
+  <mat-card class="plant-form-card" [@fadeIn]>
+    <mat-card-header>
+      <mat-card-title>🌿 Add a New Plant</mat-card-title>
+      <mat-card-subtitle>
+        Enter details about your plant
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Plant Name -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Plant Name</mat-label>
+        <input matInput formControlName="name" placeholder="Enter plant name" />
+        <mat-error *ngIf="plantForm.get('name')?.hasError('required')">
+          Name is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Planted Date -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Planted Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="plantedDate" placeholder="Choose a date" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="plantForm.get('plantedDate')?.hasError('required')">
+          Date is required.
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Plant Type -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Plant Type</mat-label>
+        <mat-select formControlName="plantType">
+          <mat-option value="">Select a type</mat-option>
+          <mat-option *ngFor="let type of plantTypes$ | async" [value]="type">
+            {{ type.commonName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="plantForm.get('plantType')?.hasError('required')">
+          Plant type is required.
+        </mat-error>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-card-actions class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="plantForm.invalid">
+        Submit
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</form>

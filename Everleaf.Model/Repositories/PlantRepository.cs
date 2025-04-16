@@ -23,7 +23,7 @@ namespace Everleaf.Model.Repositories
             var data = GetData(dbConn, cmd);
             if (data != null && data.Read())
             {
-                return new Plant(Convert.ToInt32(data["id"]))
+                return new Plant()
                 {
                     Name = data["name"].ToString(),
                     Nickname = data["nickname"].ToString(),
@@ -47,7 +47,7 @@ namespace Everleaf.Model.Repositories
             var data = GetData(dbConn, cmd);
             while (data.Read())
             {
-                plants.Add(new Plant(Convert.ToInt32(data["id"]))
+                plants.Add(new Plant()
                 {
                     Name = data["name"].ToString(),
                     Nickname = data["nickname"].ToString(),
@@ -72,7 +72,7 @@ namespace Everleaf.Model.Repositories
             var data = GetData(dbConn, cmd);
             while (data.Read())
             {
-                plants.Add(new Plant(Convert.ToInt32(data["id"]))
+                plants.Add(new Plant()
                 {
                     Name = data["name"].ToString(),
                     Nickname = data["nickname"].ToString(),
