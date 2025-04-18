@@ -53,7 +53,7 @@ Everleaf is a full-stack web application designed to help students manage their 
     Plant creation and editing
     Logging of plant care activities (watering, fertilizing)
     Reporting plant problems with severity levels
-    Tagging system for categorizing plants
+   
 
 # Folder Structure Guidelines
 

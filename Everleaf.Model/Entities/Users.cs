@@ -6,6 +6,9 @@ public class Users
     {
         Id = id;
     }
+    public Users()
+    {
+    }
 
     public int Id { get; set; }
     public string? Username { get; set; }
