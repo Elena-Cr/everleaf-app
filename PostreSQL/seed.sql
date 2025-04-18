@@ -2,9 +2,20 @@
 -- Everleaf Seed Data
 -- ================================================
 
+
+BEGIN;
+
+-- Clean existing data
+TRUNCATE TABLE carelog RESTART IDENTITY CASCADE;
+TRUNCATE TABLE problemreport RESTART IDENTITY CASCADE;
+TRUNCATE TABLE plant RESTART IDENTITY CASCADE;
+TRUNCATE TABLE planttype RESTART IDENTITY CASCADE;
+TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+
 -------------------------
 -- USERS (4 records)
 -------------------------
+
 INSERT INTO Users (Id, Username, PasswordHash, Email) VALUES
 (1, 'alice', 'hashed_pw_1', 'alice@example.com'),
 (2, 'bob', 'hashed_pw_2', 'bob@example.com'),
