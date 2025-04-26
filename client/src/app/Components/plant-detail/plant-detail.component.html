@@ -1,0 +1,10 @@
+<div *ngIf="!plant">Loading details...</div>
+<div *ngIf="plant">
+  <h2>{{ plant.name }} - {{ plant.species }}</h2>
+  <p><strong>Planted Date:</strong> {{ plant.plantedDate }}</p>
+  <p><strong>Location:</strong> {{ plant.location }}</p>
+  <p><strong>Care Logs:</strong></p>
+  <ul>
+    <li *ngFor="let log of plant.careLogs">{{ log }}</li>
+  </ul>
+</div>
