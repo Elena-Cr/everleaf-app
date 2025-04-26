@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { Observable } from 'rxjs';
 import { Plant } from '../Models/plant';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlantService {
+
   getPlantTypes(): Observable<any[]> | undefined {
     return this.http.get<string[]>(`${this.baseUrl}/api/planttype`);
   }

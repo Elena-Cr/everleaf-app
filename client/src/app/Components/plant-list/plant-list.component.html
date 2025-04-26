@@ -1,0 +1,10 @@
+<div *ngIf="plants.length === 0">Loading plants...</div>
+<div *ngIf="plants.length > 0">
+  <ul>
+    <li *ngFor="let plant of plants">
+      <p>Name: {{ plant.name }}</p>
+      <p>Species: {{ plant.species }}</p>
+      <button (click)="viewDetails(plant)">View Details</button> <!-- Button to view plant details -->
+    </li>
+  </ul>
+</div>
