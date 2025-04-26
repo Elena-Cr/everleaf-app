@@ -1,0 +1,22 @@
+.problem-form {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.problem-card {
+  width: 100%;
+  max-width: 600px;
+  padding: 8px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+}

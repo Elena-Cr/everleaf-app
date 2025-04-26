@@ -1,0 +1,15 @@
+.full-width {
+    width: 100%;
+  }
+  
+  .plant-form-card {
+    margin: 1rem auto;
+    max-width: 600px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 1rem 1rem;
+  }
+  

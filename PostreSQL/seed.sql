@@ -2,9 +2,20 @@
 -- Everleaf Seed Data
 -- ================================================
 
+
+BEGIN;
+
+-- Clean existing data
+TRUNCATE TABLE carelog RESTART IDENTITY CASCADE;
+TRUNCATE TABLE problemreport RESTART IDENTITY CASCADE;
+TRUNCATE TABLE plant RESTART IDENTITY CASCADE;
+TRUNCATE TABLE planttype RESTART IDENTITY CASCADE;
+TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+
 -------------------------
 -- USERS (4 records)
 -------------------------
+
 INSERT INTO Users (Id, Username, PasswordHash, Email) VALUES
 (1, 'alice', 'hashed_pw_1', 'alice@example.com'),
 (2, 'bob', 'hashed_pw_2', 'bob@example.com'),
@@ -25,21 +36,6 @@ INSERT INTO PlantType (Id, CommonName, ScientificName, WateringFrequencyDays, Fe
 (8, 'Boston Fern', 'Nephrolepis exaltata', 3, 30, 'Indirect Light'),
 (9, 'Rubber Plant', 'Ficus elastica', 14, 60, 'Bright, Indirect'),
 (10, 'Orchid', 'Orchidaceae', 7, 30, 'Indirect');
-
--------------------------
--- TAGS (10 records)
--------------------------
-INSERT INTO Tag (Id, Name) VALUES
-(1, 'Low Maintenance'),
-(2, 'Air-Purifying'),
-(3, 'Pet-Friendly'),
-(4, 'Indoor'),
-(5, 'Outdoor'),
-(6, 'Sun-loving'),
-(7, 'Shade-tolerant'),
-(8, 'Drought-resistant'),
-(9, 'Ornamental'),
-(10, 'Exotic');
 
 -------------------------
 -- PLANTS (18 records)
@@ -71,30 +67,6 @@ INSERT INTO Plant (Id, Name, Nickname, Species, ImageUrl, DateAdded, UserId) VAL
 (16, 'Pothos', 'Green', 6, 'https://example.com/pothos2.jpg', NOW(), 4),
 (17, 'ZZ Plant', 'Zester', 7, 'https://example.com/zz2.jpg', NOW(), 4),
 (18, 'Boston Fern', 'Ferna', 8, 'https://example.com/bostonfern2.jpg', NOW(), 4);
-
--------------------------
--- PLANT TAGS (Associations: 1 to 4 tags per plant)
--------------------------
--- For clarity, assignments are made manually per plant:
-INSERT INTO PlantTag (PlantId, TagId) VALUES
-(1, 1), (1, 2),                        -- Plant 1: 2 tags
-(2, 3),                                -- Plant 2: 1 tag
-(3, 1), (3, 4), (3, 5),                -- Plant 3: 3 tags
-(4, 2), (4, 6),                        -- Plant 4: 2 tags
-(5, 1), (5, 3), (5, 7), (5, 8),         -- Plant 5: 4 tags
-(6, 4), (6, 9),                        -- Plant 6: 2 tags
-(7, 2),                                -- Plant 7: 1 tag
-(8, 3), (8, 5), (8, 10),                -- Plant 8: 3 tags
-(9, 1), (9, 7),                        -- Plant 9: 2 tags
-(10, 2), (10, 4), (10, 6), (10, 10),     -- Plant 10: 4 tags
-(11, 5),                               -- Plant 11: 1 tag
-(12, 1), (12, 8), (12, 9),              -- Plant 12: 3 tags
-(13, 3), (13, 7),                      -- Plant 13: 2 tags
-(14, 2),                               -- Plant 14: 1 tag
-(15, 4), (15, 5), (15, 10),             -- Plant 15: 3 tags
-(16, 6), (16, 8),                      -- Plant 16: 2 tags
-(17, 1), (17, 2), (17, 9), (17, 10),     -- Plant 17: 4 tags
-(18, 3), (18, 7);                      -- Plant 18: 2 tags
 
 -------------------------
 -- CARE LOGS
@@ -346,6 +318,5 @@ INSERT INTO ProblemReport (Id, PlantId, DateReported, Description, Severity) VAL
 SELECT setval('users_id_seq', (SELECT MAX(Id) FROM Users));
 SELECT setval('plant_id_seq', (SELECT MAX(Id) FROM Plant));
 SELECT setval('planttype_id_seq', (SELECT MAX(Id) FROM PlantType));
-SELECT setval('tag_id_seq', (SELECT MAX(Id) FROM Tag));
 SELECT setval('carelog_id_seq', (SELECT MAX(Id) FROM CareLog));
 SELECT setval('problemreport_id_seq', (SELECT MAX(Id) FROM ProblemReport));

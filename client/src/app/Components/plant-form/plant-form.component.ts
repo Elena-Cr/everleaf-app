@@ -1,21 +1,19 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
+  ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
-  ReactiveFormsModule,
 } from '@angular/forms';
-
+import { PlantService } from '../../Services/plant.service'; // Adjust path as needed
 import {
-  trigger,
+  animate,
   state,
   style,
   transition,
-  animate,
+  trigger,
 } from '@angular/animations';
-
 import { CommonModule } from '@angular/common';
-
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,13 +21,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
-
-import { ProblemService } from '../../Services/problem.service';
-import { ProblemReport } from '../../Models/problem-reports';
+import { Observable } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-problem-form',
+  selector: 'app-plant-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,8 +38,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatNativeDateModule,
     MatButtonModule,
   ],
-  templateUrl: './problem-form.component.html',
-  styleUrls: ['./problem-form.component.css'],
+  templateUrl: './plant-form.component.html',
+  styleUrls: ['./plant-form.component.css'],
   animations: [
     trigger('fadeIn', [
       state('void', style({ opacity: 0 })),
@@ -51,25 +47,30 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     ]),
   ],
 })
-export class ProblemFormComponent implements OnInit {
-  @Input() plantId!: number;
-
-  problemForm!: FormGroup;
-  statusMessage: string = '';
+export class PlantFormComponent implements OnInit {
+  plantForm!: FormGroup;
+  plantTypes$: Observable<any[]> | undefined;
+  form: any;
 
   constructor(
     private fb: FormBuilder,
-    private problemService: ProblemService,
+    private plantService: PlantService,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
-    this.problemForm = this.fb.group({
-      severity: ['', Validators.required],
-      description: ['', [Validators.required, Validators.minLength(5)]],
-      dateReported: [new Date(), Validators.required], // ✅ default to today
-      plantId: [this.plantId, Validators.required],
+    this.plantForm = this.fb.group({
+      name: ['', Validators.required],
+      plantedDate: ['', Validators.required],
+      plantType: ['', Validators.required],
     });
+
+    this.loadPlantTypes();
+    console.log('this.plantTypes$', this.plantTypes$);
+  }
+
+  loadPlantTypes(): void {
+    this.plantTypes$ = this.plantService.getPlantTypes();
   }
 
   toLocalDate(date: Date): string {
@@ -79,33 +80,37 @@ export class ProblemFormComponent implements OnInit {
     return `${localISO}T00:00:00`; // normalized to midnight local time
   }
 
-  submitProblem(): void {
-    if (this.problemForm.valid) {
-      const formValue = this.problemForm.value;
+  onSubmit(): void {
+    if (this.plantForm.valid) {
+      const plantData = this.plantForm.value;
 
-      const payload = {
-        ...formValue,
-        dateReported: this.toLocalDate(formValue.dateReported),
+      const transformedData = {
+        Name: plantData.plantType.commonName,
+        Nickname: plantData.name,
+        DateAdded: this.toLocalDate(plantData.plantedDate),
+        UserId: 1, // Replace with actual user ID
+        Species: Number(plantData.plantType.id),
       };
 
-      this.problemService.createProblem(payload).subscribe({
+      this.plantService.savePlant(transformedData).subscribe({
         next: () => {
-          this.snackBar.open('✅ Problem reported!', 'Close', {
+          this.snackBar.open('✅ Care log submitted!', 'Close', {
             duration: 3000,
           });
-          this.problemForm.reset({
-            issueType: '',
-            description: '',
-            dateReported: new Date(),
-            plantId: this.plantId,
+          this.plantForm.reset({
+            name: '',
+            plantedDate: '',
+            plantType: '',
           });
         },
         error: () => {
-          this.snackBar.open('❌ Failed to submit problem.', 'Close', {
+          this.snackBar.open('❌ Failed to submit care log.', 'Close', {
             duration: 3000,
           });
         },
       });
+    } else {
+      this.plantForm.markAllAsTouched(); // trigger validations
     }
   }
 }

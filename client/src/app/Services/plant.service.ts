@@ -1,32 +1,38 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';  // Observable = special object that will give the data LATER
+
+import { Observable } from 'rxjs';
+import { Plant } from '../Models/plant';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlantService {
 
+  getPlantTypes(): Observable<any[]> | undefined {
+    return this.http.get<string[]>(`${this.baseUrl}/api/planttype`);
+  }
+  private baseUrl: string = "http://localhost:5234"; // Adjust as needed
   constructor(private http: HttpClient) {}
 
-  // 🌱 Get ALL plants
-  // Observable<any[]> means: "I will send you a list of plants later (when the server replies)"
-  getPlants(): Observable<any[]> {
-    return this.http.get<any[]>('your-api-url/plants');  // Replace 'your-api-url/plants' with your real URL!
+  getPlants(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.baseUrl}/api/plant`); // Adjust as needed
+  }
+  
+  savePlant(plantData: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/plant`, plantData); // or PUT for edit
   }
 
-  // 🌿 Get ONE specific plant by ID
-  // Observable<any> means: "I will send you ONE plant's data later"
-  getPlantById(id: string): Observable<any> {
-    // Right now, we return fake data instantly for testing
-    return of({
-      id: id,
-      name: 'Example Plant',
-      species: 'Example Species',
-      plantedDate: '2025-04-26',
-      location: 'Greenhouse 1',
-      careLogs: ['Watered yesterday', 'Checked for bugs today'],
-    });
+  deletePlant(id: number): Observable<any> {
+    return this.http.delete(`/api/plants/${id}`); // Adjust as needed
+  }
+
+  updatePlant(id: number, plantData: any): Observable<any> {
+    return this.http.put(`/api/plants/${id}`, plantData); // Adjust as needed
+  }
+
+  getPlantById(id: number): Observable<Plant> {
+    return this.http.get<Plant>(`${this.baseUrl}/${id}`);
   }
 }
-
