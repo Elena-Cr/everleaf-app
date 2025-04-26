@@ -1,10 +1,45 @@
-<div *ngIf="plants.length === 0">Loading plants...</div>
-<div *ngIf="plants.length > 0">
-  <ul>
-    <li *ngFor="let plant of plants">
-      <p>Name: {{ plant.name }}</p>
-      <p>Species: {{ plant.species }}</p>
-      <button (click)="viewDetails(plant)">View Details</button> <!-- Button to view plant details -->
-    </li>
-  </ul>
+<!-- Loading State -->
+<div class="no-plants" *ngIf="loading">
+  <mat-card>
+    <mat-card-content>
+      <p>Loading plants...</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Error State -->
+<div class="no-plants" *ngIf="error && !loading">
+  <mat-card>
+    <mat-card-content>
+      <p class="error-message">{{ error }}</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Plants Grid -->
+<div class="plants-grid" *ngIf="plants.length > 0 && !loading && !error">
+  <mat-card *ngFor="let plant of plants" class="plant-card" [@fadeIn]>
+    <mat-card-header>
+      <mat-card-title>{{ plant.name }}</mat-card-title>
+      <mat-card-subtitle>{{ plant.nickname }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Added: {{ plant.dateAdded | date }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="viewDetails(plant)">
+        <mat-icon>visibility</mat-icon>
+        View Details
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
+
+<!-- No Plants State -->
+<div class="no-plants" *ngIf="plants.length === 0 && !loading && !error">
+  <mat-card>
+    <mat-card-content>
+      <p>No plants found. Add your first plant!</p>
+    </mat-card-content>
+  </mat-card>
 </div>

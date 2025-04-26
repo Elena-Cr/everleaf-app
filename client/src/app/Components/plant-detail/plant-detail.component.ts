@@ -1,36 +1,38 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PlantService } from '../../Services/plant.service'; // Assuming the service is in the services folder
+import { PlantService } from '../../Services/plant.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-plant-detail',
   templateUrl: './plant-detail.component.html',
-  styleUrls: ['./plant-detail.component.css']
+  styleUrls: ['./plant-detail.component.css'],
+  standalone: true,
+  imports: [CommonModule],
 })
 export class PlantDetailComponent implements OnInit {
-  plant: any;  // This will hold the selected plant's data
+  plant: any; // This will hold the selected plant's data
 
   constructor(
     private route: ActivatedRoute,
     private plantService: PlantService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-    const plantId = this.route.snapshot.paramMap.get('id');  // Get the plant ID from the route parameter
+    const plantId = this.route.snapshot.paramMap.get('id'); // Get the plant ID from the route parameter
     if (plantId) {
-      this.getPlantDetails(plantId);  // Call the function to get plant details
+      this.getPlantDetails(Number(plantId)); // Convert string to number
     }
   }
 
-  // Function to get the plant details using the plant's ID
-  getPlantDetails(id: string): void {
-    this.plantService.getPlantById(id).subscribe(
-      data => {
-        this.plant = data;  // Store the plant details in the plant object
+  getPlantDetails(id: number): void {
+    this.plantService.getPlantById(id).subscribe({
+      next: (data) => {
+        this.plant = data;
       },
-      error => {
-        console.error('Error fetching plant details:', error);  // Handle errors
-      }
-    );
+      error: (error) => {
+        console.error('Error fetching plant details:', error);
+      },
+    });
   }
 }

@@ -1,1 +1,9 @@
-export interface Plant {}
+export interface Plant {
+  id?: number;
+  name: string;
+  nickname?: string;
+  species: number;
+  imageUrl?: string;
+  dateAdded: Date;
+  userId: number;
+}

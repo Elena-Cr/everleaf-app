@@ -1,20 +1,29 @@
 <div style="padding: 24px">
   <h1>🌿 Everleaf Care Log Demo</h1>
-  <p>
-    This is the root component. Below is the care log form for a test plant.
-  </p>
 
-  <!-- Display the CareLogFormComponent -->
-  <h2> Submit a CareLog Report (plantid 1)</h2>
-  <app-care-log-form [plantId]="1"></app-care-log-form>
+  <!-- Plant List Section -->
+  <section>
+    <h2>🌱 My Plants</h2>
+    <app-plant-list></app-plant-list>
+  </section>
 
-  <h2>🛠️ Submit a Problem Report (userid 1)</h2>
-  <app-problem-form [plantId]="1"></app-problem-form>
+  <!-- Plant Form Section -->
+  <section>
+    <h2>➕ Add a new plant (userid 1)</h2>
+    <app-plant-form></app-plant-form>
+  </section>
 
-  <!-- app.component.html -->
-  <h2> Adding a new plant (userid 1)!</h2>
-  <app-plant-form></app-plant-form>
+  <!-- Care Log Form Section -->
+  <section>
+    <h2>📝 Submit a CareLog Report (plantid 1)</h2>
+    <app-care-log-form [plantId]="1"></app-care-log-form>
+  </section>
 
+  <!-- Problem Report Section -->
+  <section>
+    <h2>🛠️ Submit a Problem Report (plantid 1)</h2>
+    <app-problem-form [plantId]="1"></app-problem-form>
+  </section>
 </div>
 
 <router-outlet />
