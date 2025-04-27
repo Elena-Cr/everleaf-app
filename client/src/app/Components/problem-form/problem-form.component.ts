@@ -47,7 +47,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   animations: [
     trigger('fadeIn', [
       state('void', style({ opacity: 0 })),
-      transition(':enter', [animate('300ms ease-in')]),
+      state('in', style({ opacity: 1 })),
+      transition('void => in', [animate('300ms ease-in')]),
     ]),
   ],
 })

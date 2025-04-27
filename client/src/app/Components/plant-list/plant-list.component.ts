@@ -8,13 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Plant } from '../../Models/plant';
 import { PlantDetailDialogComponent } from '../plant-detail-dialog/plant-detail-dialog.component';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-plant-list',
@@ -31,8 +25,10 @@ import {
   ],
   animations: [
     trigger('fadeIn', [
-      state('void', style({ opacity: 0 })),
-      transition(':enter', [animate('300ms ease-in')]),
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms', style({ opacity: 1 })),
+      ]),
     ]),
   ],
 })
@@ -41,7 +37,7 @@ export class PlantListComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
   currentPage = 0;
-  pageSize = 3; // Changed from 4 to 3 to match the new layout
+  pageSize = 3;
 
   constructor(
     private plantService: PlantService,
@@ -61,6 +57,7 @@ export class PlantListComponent implements OnInit {
       next: (data) => {
         this.plants = data;
         this.loading = false;
+        this.currentPage = 0; // Reset page to first when new plants load
       },
       error: (error) => {
         console.error('Error fetching plants:', error);
@@ -82,13 +79,14 @@ export class PlantListComponent implements OnInit {
   }
 
   get currentPagePlants(): Plant[] {
+    if (!this.plants.length) return [];
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;
     return this.plants.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.plants.length / this.pageSize);
+    return Math.max(1, Math.ceil(this.plants.length / this.pageSize));
   }
 
   nextPage(): void {

@@ -4,29 +4,58 @@
   background-color: #f8faf8;
 }
 
-h1 {
-  color: var(--primary-color);
+/* Top Navigation */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-color);
+  padding: 1rem 2rem;
+  border-radius: 0 0 1.5rem 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  color: white;
   font-family: "Poppins", sans-serif;
-  font-weight: 500;
-  margin: 0;
-  padding: 24px 0;
-  text-align: center;
-  font-size: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
+/* Left side (Logo) */
+.navbar-logo {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Right side (User Icon) */
+.navbar-user {
+  font-size: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main container for content */
 .container {
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 24px;
+  margin: 2rem auto 0 auto;
+  padding: 0 2.4rem;
 }
 
+/* Responsive adjustments */
 @media (max-width: 600px) {
-  h1 {
-    font-size: 1.5rem;
-    padding: 16px 0;
+  .navbar {
+    padding: 0.8rem 1.6rem;
+  }
+
+  .navbar-logo {
+    font-size: 1.6rem;
+  }
+
+  .navbar-user {
+    font-size: 2rem;
   }
 
   .container {
-    padding: 0 16px;
+    padding: 0 1.6rem;
   }
 }
