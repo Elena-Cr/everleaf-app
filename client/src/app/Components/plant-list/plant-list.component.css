@@ -1,35 +1,47 @@
 .plants-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  gap: 24px;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .plant-card {
-  margin-bottom: 16px;
-  transition: transform 0.2s ease-in-out;
+  margin-bottom: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .plant-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.mat-card-actions {
+.mat-mdc-card-content {
+  flex-grow: 1;
+  padding: 16px;
+}
+
+.mat-mdc-card-actions {
   display: flex;
   justify-content: flex-end;
-  padding: 8px;
-}
-
-.mat-card-content {
-  margin: 16px 0;
+  padding: 16px;
+  gap: 8px;
 }
 
 .no-plants {
-  padding: 20px;
+  padding: 32px;
   text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.mat-icon {
-  margin-right: 8px;
+.error-message {
+  color: var(--warn-color);
+}
+
+.mat-mdc-card-header {
+  padding: 16px;
 }

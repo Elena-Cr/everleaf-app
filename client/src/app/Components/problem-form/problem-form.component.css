@@ -2,21 +2,49 @@
   display: flex;
   justify-content: center;
   padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .problem-card {
   width: 100%;
-  max-width: 600px;
-  padding: 8px;
+  padding: 24px;
+  background-color: var(--background-color);
 }
 
 .full-width {
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  padding: 16px;
+  padding: 16px 0 0;
+  gap: 12px;
+}
+
+mat-card-header {
+  margin-bottom: 32px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.mat-warn {
+  background-color: var(--warn-color) !important;
+}
+
+.severity-high {
+  color: var(--warn-color);
+}
+
+.severity-medium {
+  color: #ff9800;
+}
+
+.severity-low {
+  color: var(--primary-color);
 }

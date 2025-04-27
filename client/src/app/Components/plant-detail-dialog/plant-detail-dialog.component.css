@@ -2,6 +2,7 @@
   min-width: 300px;
   max-width: 600px;
   margin: 0 auto;
+  border-radius: 12px;
 }
 
 .dialog-content {
@@ -13,23 +14,28 @@
   align-items: flex-start;
   margin-bottom: 20px;
   gap: 16px;
-}
-
-.detail-row mat-icon {
-  color: #2e7d32;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(200, 230, 201, 0.1);
 }
 
 .care-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   flex: 1;
+}
+
+.care-info strong {
+  color: var(--primary-color);
+  font-weight: 500;
 }
 
 .last-care {
   font-size: 0.9em;
   color: #666;
   margin-left: 4px;
+  font-style: italic;
 }
 
 .loading-state {
@@ -46,13 +52,14 @@
   justify-content: center;
   gap: 16px;
   min-height: 200px;
-  color: #f44336;
+  color: var(--warn-color);
 }
 
 .error-state mat-icon {
   font-size: 48px;
   width: 48px;
   height: 48px;
+  color: var(--warn-color) !important;
 }
 
 mat-card-content {
@@ -60,8 +67,8 @@ mat-card-content {
 }
 
 mat-card-header {
-  margin-bottom: 16px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--primary-lighter);
   padding-bottom: 16px;
 }
 

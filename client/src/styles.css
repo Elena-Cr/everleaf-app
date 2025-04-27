@@ -1,4 +1,60 @@
 /* You can add global styles to this file, and also import other style files */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* Custom theme colors */
+:root {
+  --primary-color: #4caf50;
+  --primary-lighter: #c8e6c9;
+  --primary-darker: #388e3c;
+  --accent-color: #81c784;
+  --warn-color: #f44336;
+  --background-color: #ffffff;
+  --text-color: #333333;
+}
+
+/* Global styles */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Material overrides */
+.mat-mdc-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  background-color: var(--background-color) !important;
+}
+
+.mat-mdc-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.mat-mdc-raised-button.mat-primary:hover {
+  background-color: var(--primary-darker) !important;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field-appearance-outline .mat-mdc-form-field-outline {
+  color: var(--primary-lighter);
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline {
+  color: var(--primary-color);
+}
+
+/* Icon colors */
+.mat-icon {
+  color: var(--primary-color) !important;
+}
 
 /* Dialog Styles */
 .plant-detail-dialog .mat-mdc-dialog-container {
@@ -6,5 +62,37 @@
 }
 
 .plant-detail-dialog .mat-mdc-dialog-surface {
-  border-radius: 8px;
+  border-radius: 12px;
+  background-color: var(--background-color) !important;
+}
+
+/* Card headers */
+.mat-mdc-card-header {
+  border-bottom: 1px solid var(--primary-lighter);
+  margin-bottom: 16px !important;
+  padding-bottom: 16px !important;
+}
+
+.mat-mdc-card-title {
+  color: var(--primary-color) !important;
+  font-weight: 500 !important;
+}
+
+/* Form fields */
+.mat-mdc-form-field-label {
+  color: var(--text-color) !important;
+}
+
+.mat-mdc-select-value {
+  color: var(--text-color) !important;
+}
+
+/* Buttons */
+.mat-mdc-button-base {
+  border-radius: 8px !important;
+}
+
+/* Progress spinner */
+.mat-mdc-progress-spinner circle {
+  stroke: var(--primary-color) !important;
 }

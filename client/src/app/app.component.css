@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #f8faf8;
+}
+
+h1 {
+  color: var(--primary-color);
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  margin: 0;
+  padding: 24px 0;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+    padding: 16px 0;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+}
