@@ -2,8 +2,9 @@
   <div class="navbar-logo">🌿 Everleaf</div>
 
   <div class="navbar-user">
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+    <button mat-button [matMenuTriggerFor]="userMenu">
       <mat-icon>account_circle</mat-icon>
+      <span style="margin-left: 0.5rem">{{ currentUserName$ | async }}</span>
     </button>
     <mat-menu #userMenu="matMenu">
       <button mat-menu-item (click)="selectUser(1)">Alice</button>

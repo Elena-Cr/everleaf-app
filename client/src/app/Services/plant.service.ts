@@ -17,22 +17,43 @@ import { Plant } from '../Models/plant';
 export class PlantService {
   private baseUrl: string = 'http://localhost:5234/api';
 
-  private _currentUserId = new BehaviorSubject<number>(2); // Default: Bob (user id 2)
-  currentUserId$ = this._currentUserId.asObservable(); // Expose as Observable for components
+  // Local users list
+  private users = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' },
+    { id: 3, name: 'Charlie' },
+    { id: 4, name: 'Dave' },
+  ];
+
+  // BehaviorSubject to track current user
+  private currentUserSubject = new BehaviorSubject<{
+    id: number;
+    name: string;
+  }>({
+    id: 2,
+    name: 'Bob',
+  });
+
+  // Observable to expose the current user
+  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  /** Change the currently selected user */
-  setCurrentUserId(userId: number): void {
-    console.log('Switching to user:', userId);
-    this._currentUserId.next(userId);
+  /** Method to change current user */
+  setCurrentUserId(userId: number) {
+    const user = this.users.find((u) => u.id === userId);
+    if (user) {
+      this.currentUserSubject.next(user);
+      console.log('Switched to user:', user);
+    }
   }
 
-  /** Access current user id value (getter) */
+  /** Getter for current user's id */
   get currentUserId(): number {
-    return this._currentUserId.value;
+    return this.currentUserSubject.value.id;
   }
 
+  /** Get plant types */
   getPlantTypes(): Observable<any[]> {
     console.log('Fetching plant types...');
     return this.http.get<any[]>(`${this.baseUrl}/planttype`).pipe(
@@ -41,6 +62,7 @@ export class PlantService {
     );
   }
 
+  /** Get plants for current user */
   getPlants(userId: number = this.currentUserId): Observable<any[]> {
     console.log('Fetching plants for user:', userId);
     return this.http
@@ -53,6 +75,7 @@ export class PlantService {
       );
   }
 
+  /** Get a specific plant by ID */
   getPlantById(id: number): Observable<Plant> {
     console.log('Fetching plant details for ID:', id);
     return this.http.get<Plant>(`${this.baseUrl}/plant/${id}`).pipe(
@@ -61,6 +84,7 @@ export class PlantService {
     );
   }
 
+  /** Get plant type by ID */
   getPlantTypeById(id: number): Observable<any> {
     console.log('Fetching plant type:', id);
     return this.http.get<any>(`${this.baseUrl}/planttype/${id}`).pipe(
@@ -69,6 +93,7 @@ export class PlantService {
     );
   }
 
+  /** Get care logs for a plant */
   getPlantCareLogs(plantId: number): Observable<any[]> {
     console.log('Fetching care logs for plant:', plantId);
     return this.http
@@ -79,13 +104,14 @@ export class PlantService {
       );
   }
 
+  /** Fetch complete plant with type and care logs */
   getPlantWithDetails(plantId: number): Observable<any> {
     if (!plantId) {
       console.error('No plant ID provided to getPlantWithDetails');
       return of(null);
     }
 
-    console.log('Fetching details for plant:', plantId);
+    console.log('Fetching full details for plant:', plantId);
     return this.getPlantById(plantId).pipe(
       switchMap((plant) => {
         const plantType$ = this.getPlantTypeById(plant.species);
@@ -103,6 +129,7 @@ export class PlantService {
     );
   }
 
+  /** Save new plant */
   savePlant(plantData: any): Observable<any> {
     console.log('Saving plant:', plantData);
     return this.http.post(`${this.baseUrl}/plant`, plantData).pipe(
@@ -111,6 +138,7 @@ export class PlantService {
     );
   }
 
+  /** Update existing plant */
   updatePlant(id: number, plantData: any): Observable<any> {
     console.log('Updating plant:', id, plantData);
     return this.http.put(`${this.baseUrl}/plant`, plantData).pipe(
@@ -119,6 +147,7 @@ export class PlantService {
     );
   }
 
+  /** Delete plant */
   deletePlant(id: number): Observable<any> {
     console.log('Deleting plant:', id);
     return this.http.delete(`${this.baseUrl}/plant/${id}`).pipe(

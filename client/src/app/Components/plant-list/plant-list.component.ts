@@ -50,11 +50,13 @@ export class PlantListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // ✅ Listen to user changes and reload plants
-    this.plantService.currentUserId$.subscribe((userId) => {
-      console.log('User changed, loading plants for user:', userId);
-      this.loadPlants(userId);
-    });
+    // Listen to user changes and reload plants
+    this.plantService.currentUser$.subscribe(
+      (user: { id: number; name: string }) => {
+        console.log('User changed, loading plants for user:', user.id);
+        this.loadPlants(user.id);
+      }
+    );
   }
 
   loadPlants(userId: number): void {
