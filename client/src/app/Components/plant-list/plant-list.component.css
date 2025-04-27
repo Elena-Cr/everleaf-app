@@ -1,10 +1,18 @@
+.plants-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px; /* Increased from 32px */
+  padding: 40px; /* Increased from 32px */
+  max-width: 1800px; /* Increased from 1600px */
+  margin: 0 auto;
+}
+
 .plants-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px; /* Increased from 32px */
+  max-width: 1600px; /* Increased from 1400px */
 }
 
 .plant-card {
@@ -13,6 +21,32 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  max-width: 450px; /* Increased from 380px */
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+.plant-image {
+  width: 100%;
+  padding-top: 100%;
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0; /* Increased from 8px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+}
+
+.plant-image img {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .plant-card:hover {
@@ -21,27 +55,39 @@
 
 .mat-mdc-card-content {
   flex-grow: 1;
-  padding: 16px;
+  padding: 24px; /* Increased from 16px */
 }
 
 .mat-mdc-card-actions {
   display: flex;
   justify-content: flex-end;
-  padding: 16px;
-  gap: 8px;
-}
-
-.no-plants {
-  padding: 32px;
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.error-message {
-  color: var(--warn-color);
+  padding: 24px; /* Increased from 16px */
+  gap: 12px; /* Increased from 8px */
 }
 
 .mat-mdc-card-header {
-  padding: 16px;
+  padding: 24px; /* Increased from 16px */
+}
+
+.nav-button {
+  background-color: var(--primary-color);
+  color: white;
+  width: 48px; /* Increased from 40px */
+  height: 48px; /* Increased from 40px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.nav-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.nav-button mat-icon {
+  font-size: 32px; /* Increased from 24px */
+  width: 32px; /* Increased from 24px */
+  height: 32px; /* Increased from 24px */
+  line-height: 32px; /* Increased from 24px */
 }

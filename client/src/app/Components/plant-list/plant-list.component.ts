@@ -40,6 +40,8 @@ export class PlantListComponent implements OnInit {
   plants: Plant[] = [];
   loading: boolean = true;
   error: string | null = null;
+  currentPage = 0;
+  pageSize = 3; // Changed from 4 to 3 to match the new layout
 
   constructor(
     private plantService: PlantService,
@@ -77,5 +79,27 @@ export class PlantListComponent implements OnInit {
       width: '500px',
       panelClass: 'plant-detail-dialog',
     });
+  }
+
+  get currentPagePlants(): Plant[] {
+    const start = this.currentPage * this.pageSize;
+    const end = start + this.pageSize;
+    return this.plants.slice(start, end);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.plants.length / this.pageSize);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+    }
   }
 }
