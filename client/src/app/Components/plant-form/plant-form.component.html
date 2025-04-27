@@ -1,81 +1,81 @@
-<div class="plant-form-container">
-  <mat-card>
+<div class="plant-form-container" cdkTrapFocus>
+  <mat-card class="plant-form-card">
     <mat-card-header>
       <mat-card-title>Add New Plant</mat-card-title>
     </mat-card-header>
+
     <mat-card-content>
       <form [formGroup]="plantForm" (ngSubmit)="onSubmit()">
-        <div class="form-field">
-          <mat-form-field appearance="outline">
-            <mat-label>Nickname</mat-label>
-            <input
-              matInput
-              formControlName="name"
-              placeholder="Give your plant a nickname"
-            />
-            <mat-error *ngIf="plantForm.get('name')?.hasError('required')">
-              Nickname is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <!-- Plant type field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Plant Type</mat-label>
+          <mat-select formControlName="plantType" cdkTrapFocusAutoCapture>
+            <div *ngIf="loading" class="loading-option">
+              <mat-progress-spinner diameter="20" mode="indeterminate">
+              </mat-progress-spinner>
+              Loading...
+            </div>
 
-        <div class="form-field">
-          <mat-form-field appearance="outline">
-            <mat-label>Plant Type</mat-label>
-            <mat-select formControlName="plantType">
-              <ng-container *ngIf="!(loading || error)">
-                <mat-option
-                  *ngFor="let type of plantTypes$ | async"
-                  [value]="type"
-                >
-                  {{ type.commonName }} ({{ type.scientificName }})
-                </mat-option>
-              </ng-container>
-              <mat-option *ngIf="loading" disabled>
-                <mat-spinner diameter="20"></mat-spinner>
-                Loading plant types...
+            <ng-container *ngIf="!loading">
+              <mat-option
+                *ngFor="let type of plantTypes$ | async"
+                [value]="type"
+              >
+                {{ type.CommonName || type.commonName }} ({{
+                  type.ScientificName || type.scientificName
+                }})
               </mat-option>
-            </mat-select>
-            <mat-error *ngIf="plantForm.get('plantType')?.hasError('required')">
-              Plant type is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+            </ng-container>
+          </mat-select>
+          <mat-error *ngIf="plantForm.get('plantType')?.hasError('required')">
+            Plant type is required
+          </mat-error>
+        </mat-form-field>
 
-        <div *ngIf="error" class="error-message">
+        <!-- Error handling -->
+        <div *ngIf="error" class="error-message" role="alert">
           {{ error }}
           <button mat-button color="primary" (click)="loadPlantTypes()">
             Try Again
           </button>
         </div>
 
-        <div class="form-field">
-          <mat-form-field appearance="outline">
-            <mat-label>Planting Date</mat-label>
-            <input
-              matInput
-              [matDatepicker]="picker"
-              formControlName="plantedDate"
-            />
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="picker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <mat-error
-              *ngIf="plantForm.get('plantedDate')?.hasError('required')"
-            >
-              Planting date is required
-            </mat-error>
-          </mat-form-field>
-        </div>
+        <!-- Nickname field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nickname</mat-label>
+          <input
+            matInput
+            formControlName="name"
+            placeholder="Give your plant a nickname"
+          />
+          <mat-error *ngIf="plantForm.get('name')?.hasError('required')">
+            Nickname is required
+          </mat-error>
+        </mat-form-field>
 
+        <!-- Planting date field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Planting Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="plantedDate"
+          />
+          <mat-datepicker-toggle matIconPrefix [for]="picker">
+          </mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="plantForm.get('plantedDate')?.hasError('required')">
+            Planting date is required
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Submit button -->
         <div class="form-actions">
           <button
             mat-raised-button
             color="primary"
             type="submit"
-            [disabled]="!plantForm.valid"
+            [disabled]="!plantForm.valid || loading"
           >
             Add Plant
           </button>

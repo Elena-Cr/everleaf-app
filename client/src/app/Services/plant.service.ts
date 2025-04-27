@@ -2,14 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   Observable,
+  BehaviorSubject,
+  of,
   forkJoin,
   switchMap,
-  of,
   catchError,
   tap,
-  BehaviorSubject,
+  retry,
+  map,
 } from 'rxjs';
 import { Plant } from '../Models/plant';
+import { PlantType } from '../Models/plant-type';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +20,7 @@ import { Plant } from '../Models/plant';
 export class PlantService {
   private baseUrl: string = 'http://localhost:5234/api';
 
-  // Local users list
+  // Dummy user list
   private users = [
     { id: 1, name: 'Alice' },
     { id: 2, name: 'Bob' },
@@ -25,7 +28,7 @@ export class PlantService {
     { id: 4, name: 'Dave' },
   ];
 
-  // BehaviorSubject to track current user
+  // BehaviorSubject to track the currently logged in user
   private currentUserSubject = new BehaviorSubject<{
     id: number;
     name: string;
@@ -34,12 +37,11 @@ export class PlantService {
     name: 'Bob',
   });
 
-  // Observable to expose the current user
   currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  /** Method to change current user */
+  /** Change current user */
   setCurrentUserId(userId: number) {
     const user = this.users.find((u) => u.id === userId);
     if (user) {
@@ -48,21 +50,57 @@ export class PlantService {
     }
   }
 
-  /** Getter for current user's id */
+  /** Get current user ID */
   get currentUserId(): number {
     return this.currentUserSubject.value.id;
   }
 
-  /** Get plant types */
-  getPlantTypes(): Observable<any[]> {
-    console.log('Fetching plant types...');
-    return this.http.get<any[]>(`${this.baseUrl}/planttype`).pipe(
-      tap((types) => console.log('Plant types received:', types)),
-      catchError(this.handleError('fetching plant types'))
+  /** Fetch plant types */
+  getPlantTypes(): Observable<PlantType[]> {
+    console.log('Fetching plant types from:', `${this.baseUrl}/planttype`);
+    return this.http.get<PlantType[]>(`${this.baseUrl}/planttype`).pipe(
+      tap((types) => {
+        console.log(
+          'Raw plant types received:',
+          JSON.stringify(types, null, 2)
+        );
+        if (!types || types.length === 0) {
+          console.warn('No plant types returned from server');
+        } else {
+          console.log('First plant type:', types[0]);
+        }
+      }),
+      map((types) => {
+        // Ensure proper casing of properties
+        return types.map((type) => ({
+          ...type,
+          commonName: type.CommonName || type.commonName,
+          scientificName: type.ScientificName || type.scientificName,
+          wateringFrequencyDays:
+            type.WateringFrequencyDays || type.wateringFrequencyDays,
+          fertilizingFrequencyDays:
+            type.FertilizingFrequencyDays || type.fertilizingFrequencyDays,
+          sunlightNeeds: type.SunlightNeeds || type.sunlightNeeds,
+          id: type.Id || type.id,
+        }));
+      }),
+      retry(1),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error fetching plant types:', error);
+        if (error.status === 0) {
+          throw new Error(
+            'Server is unreachable. Please ensure the server is running.'
+          );
+        } else if (error.status === 404) {
+          throw new Error('No plant types found.');
+        } else {
+          throw new Error(error.error?.message || 'Unknown server error.');
+        }
+      })
     );
   }
 
-  /** Get plants for current user */
+  /** Fetch plants for current user */
   getPlants(userId: number = this.currentUserId): Observable<any[]> {
     console.log('Fetching plants for user:', userId);
     return this.http
@@ -75,7 +113,7 @@ export class PlantService {
       );
   }
 
-  /** Get a specific plant by ID */
+  /** Fetch a specific plant by ID */
   getPlantById(id: number): Observable<Plant> {
     console.log('Fetching plant details for ID:', id);
     return this.http.get<Plant>(`${this.baseUrl}/plant/${id}`).pipe(
@@ -84,18 +122,30 @@ export class PlantService {
     );
   }
 
-  /** Get plant type by ID */
-  getPlantTypeById(id: number): Observable<any> {
-    console.log('Fetching plant type:', id);
-    return this.http.get<any>(`${this.baseUrl}/planttype/${id}`).pipe(
+  /** Fetch plant type by ID */
+  getPlantTypeById(id: number): Observable<PlantType> {
+    console.log('Fetching plant type for ID:', id);
+    return this.http.get<PlantType>(`${this.baseUrl}/planttype/${id}`).pipe(
       tap((type) => console.log('Plant type received:', type)),
-      catchError(this.handleError(`fetching plant type ${id}`))
+      retry(1),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error fetching plant type:', error);
+        if (error.status === 0) {
+          throw new Error(
+            'Server is unreachable. Please ensure the server is running.'
+          );
+        } else if (error.status === 404) {
+          throw new Error(`Plant type with ID ${id} not found.`);
+        } else {
+          throw new Error(error.error?.message || 'Unknown server error.');
+        }
+      })
     );
   }
 
-  /** Get care logs for a plant */
+  /** Fetch care logs for a plant */
   getPlantCareLogs(plantId: number): Observable<any[]> {
-    console.log('Fetching care logs for plant:', plantId);
+    console.log('Fetching care logs for plant ID:', plantId);
     return this.http
       .get<any[]>(`${this.baseUrl}/carelog/plant/${plantId}`)
       .pipe(
@@ -104,14 +154,18 @@ export class PlantService {
       );
   }
 
-  /** Fetch complete plant with type and care logs */
-  getPlantWithDetails(plantId: number): Observable<any> {
+  /** Fetch full plant info: base + type + care logs */
+  getPlantWithDetails(plantId: number): Observable<{
+    plant: Plant;
+    plantType: PlantType;
+    careLogs: any[];
+  } | null> {
     if (!plantId) {
-      console.error('No plant ID provided to getPlantWithDetails');
+      console.error('No plant ID provided for getPlantWithDetails');
       return of(null);
     }
 
-    console.log('Fetching full details for plant:', plantId);
+    console.log('Fetching full plant details for ID:', plantId);
     return this.getPlantById(plantId).pipe(
       switchMap((plant) => {
         const plantType$ = this.getPlantTypeById(plant.species);
@@ -122,34 +176,44 @@ export class PlantService {
           plantType: plantType$,
           careLogs: careLogs$,
         }).pipe(
-          tap((result) => console.log('Combined plant details:', result))
+          tap((result) => console.log('Full plant details received:', result))
         );
       }),
-      catchError(this.handleError(`fetching details for plant ${plantId}`))
+      retry(1),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error fetching plant details:', error);
+        if (error.status === 0) {
+          throw new Error(
+            'Server is unreachable. Please ensure the server is running.'
+          );
+        } else {
+          throw new Error(error.error?.message || 'Unknown server error.');
+        }
+      })
     );
   }
 
-  /** Save new plant */
+  /** Save a new plant */
   savePlant(plantData: any): Observable<any> {
-    console.log('Saving plant:', plantData);
+    console.log('Saving new plant:', plantData);
     return this.http.post(`${this.baseUrl}/plant`, plantData).pipe(
       tap((response) => console.log('Plant saved:', response)),
       catchError(this.handleError('saving plant'))
     );
   }
 
-  /** Update existing plant */
+  /** Update an existing plant */
   updatePlant(id: number, plantData: any): Observable<any> {
-    console.log('Updating plant:', id, plantData);
+    console.log('Updating plant ID:', id);
     return this.http.put(`${this.baseUrl}/plant`, plantData).pipe(
       tap((response) => console.log('Plant updated:', response)),
       catchError(this.handleError(`updating plant ${id}`))
     );
   }
 
-  /** Delete plant */
+  /** Delete a plant */
   deletePlant(id: number): Observable<any> {
-    console.log('Deleting plant:', id);
+    console.log('Deleting plant ID:', id);
     return this.http.delete(`${this.baseUrl}/plant/${id}`).pipe(
       tap((response) => console.log('Plant deleted:', response)),
       catchError(this.handleError(`deleting plant ${id}`))

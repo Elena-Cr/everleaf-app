@@ -1,11 +1,13 @@
+<!-- Top Navbar -->
 <nav class="navbar">
   <div class="navbar-logo">🌿 Everleaf</div>
 
   <div class="navbar-user">
-    <button mat-button [matMenuTriggerFor]="userMenu">
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
       <mat-icon>account_circle</mat-icon>
-      <span style="margin-left: 0.5rem">{{ currentUserName$ | async }}</span>
     </button>
+    <span>{{ currentUserName }}</span>
+
     <mat-menu #userMenu="matMenu">
       <button mat-menu-item (click)="selectUser(1)">Alice</button>
       <button mat-menu-item (click)="selectUser(2)">Bob</button>
@@ -15,6 +17,17 @@
   </div>
 </nav>
 
+<!-- Dashboard Top Section -->
+<div class="dashboard-header">
+  <h2>Hi, {{ currentUserName }}</h2>
+  <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
+    ➕ Add Plant
+  </button>
+</div>
+
+<hr class="dashboard-divider" />
+
+<!-- Plant List -->
 <div class="container">
   <router-outlet></router-outlet>
 </div>

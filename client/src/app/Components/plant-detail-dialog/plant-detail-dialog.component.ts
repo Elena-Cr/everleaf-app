@@ -53,6 +53,12 @@ export class PlantDetailDialogComponent implements OnInit {
 
     this.plantService.getPlantWithDetails(this.plant.id).subscribe({
       next: (data) => {
+        if (!data) {
+          console.error('No plant details received');
+          this.loading = false;
+          return;
+        }
+
         console.log('Plant details received:', data);
         this.plantDetails = data.plant;
         this.plantType = data.plantType;

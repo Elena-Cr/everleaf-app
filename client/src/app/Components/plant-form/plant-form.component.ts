@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { PlantService } from '../../Services/plant.service';
-import { Observable, catchError, finalize, of, tap } from 'rxjs';
+import { Observable, BehaviorSubject, catchError, finalize, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -17,6 +17,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { A11yModule } from '@angular/cdk/a11y';
+import { PlantType } from '../../Models/plant-type';
 
 @Component({
   selector: 'app-plant-form',
@@ -34,78 +37,67 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatNativeDateModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
+    A11yModule,
   ],
 })
 export class PlantFormComponent implements OnInit {
   plantForm: FormGroup;
-  plantTypes$: Observable<any[]>;
+  private plantTypesSubject = new BehaviorSubject<PlantType[]>([]);
+  plantTypes$ = this.plantTypesSubject.asObservable();
   loading = false;
   error: string | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private snackBar: MatSnackBar
   ) {
     this.plantForm = this.formBuilder.group({
       name: ['', Validators.required],
       plantType: ['', Validators.required],
       plantedDate: [new Date(), Validators.required],
     });
-
-    this.plantTypes$ = of([]);
   }
 
   ngOnInit() {
-    this.plantForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      plantType: ['', Validators.required],
-      plantedDate: [new Date(), Validators.required],
-    });
-
     this.loadPlantTypes();
   }
 
+  /** Load plant types from the server */
   loadPlantTypes(): void {
     this.loading = true;
     this.error = null;
-    console.log('Loading plant types...');
+    console.log('Starting to load plant types...');
 
-    this.plantTypes$ = this.plantService.getPlantTypes().pipe(
-      tap((types) => {
-        console.log('Plant types loaded:', types);
-        if (!types || types.length === 0) {
-          console.warn('No plant types returned from the server');
-        }
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error loading plant types:', error);
-        let errorMessage = 'Failed to load plant types. ';
-
-        if (error.error instanceof ErrorEvent) {
-          // Client-side error
-          errorMessage += 'Please check your internet connection.';
-        } else {
-          // Server-side error
-          errorMessage += `Server returned code ${error.status}. `;
-          if (error.status === 404) {
-            errorMessage += 'Plant types not found.';
-          } else if (error.status === 0) {
-            errorMessage += 'Server is unreachable.';
-          } else {
-            errorMessage += error.error?.message || 'Unknown error occurred.';
+    this.plantService
+      .getPlantTypes()
+      .pipe(
+        tap((types) => console.log('Plant types stream received:', types)),
+        finalize(() => {
+          console.log('Plant types loading completed. Loading:', this.loading);
+          this.loading = false;
+        })
+      )
+      .subscribe({
+        next: (types) => {
+          console.log('Plant types loaded:', types);
+          if (!types || types.length === 0) {
+            console.warn('No plant types available');
+            this.error =
+              'No plant types available. Please contact an administrator.';
           }
-        }
-
-        this.error = errorMessage;
-        return of([]);
-      }),
-      finalize(() => {
-        this.loading = false;
-        console.log('Plant types loading complete');
-      })
-    );
+          this.plantTypesSubject.next(types);
+        },
+        error: (error: Error) => {
+          console.error('Error loading plant types:', error);
+          this.error = error.message || 'Failed to load plant types.';
+          this.plantTypesSubject.next([]);
+        },
+      });
   }
 
+  /** Convert date to local ISO format */
   toLocalDate(date: Date): string {
     const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
       .toISOString()
@@ -113,17 +105,18 @@ export class PlantFormComponent implements OnInit {
     return `${localISO}T00:00:00`;
   }
 
+  /** Handle form submission */
   onSubmit(): void {
     if (this.plantForm.valid) {
       console.log('Form submitted with values:', this.plantForm.value);
       const plantData = this.plantForm.value;
+      const selectedPlantType = plantData.plantType as PlantType;
 
       const transformedData = {
-        Name: plantData.plantType.commonName,
-        Nickname: plantData.name,
+        Name: plantData.name,
+        Species: selectedPlantType.Id,
         DateAdded: this.toLocalDate(plantData.plantedDate),
-        UserId: 1, // Replace with actual user ID
-        Species: Number(plantData.plantType.id),
+        UserId: this.plantService.currentUserId,
       };
 
       console.log('Sending transformed data to server:', transformedData);
@@ -131,6 +124,9 @@ export class PlantFormComponent implements OnInit {
       this.plantService.savePlant(transformedData).subscribe({
         next: (response) => {
           console.log('Plant saved successfully:', response);
+          this.snackBar.open('✅ Plant added successfully!', 'Close', {
+            duration: 3000,
+          });
           this.plantForm.reset({
             plantedDate: new Date(),
           });
@@ -138,14 +134,11 @@ export class PlantFormComponent implements OnInit {
         error: (error: HttpErrorResponse) => {
           console.error('Error saving plant:', error);
           let errorMessage = 'Failed to save plant. ';
-
           if (error.error instanceof ErrorEvent) {
             errorMessage += 'Please check your internet connection.';
           } else {
-            errorMessage += `Server returned code ${error.status}. `;
-            errorMessage += error.error?.message || 'Unknown error occurred.';
+            errorMessage += error.error?.message || 'Unknown server error.';
           }
-
           this.error = errorMessage;
         },
       });
