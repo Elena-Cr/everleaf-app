@@ -29,6 +29,7 @@ namespace Everleaf.API.Controllers
             }
 
             var dto = _mapper.Map<PlantDTO>(plant);
+            dto.Id = plant.Id; // Ensure Id is explicitly mapped
             return Ok(dto);
         }
 

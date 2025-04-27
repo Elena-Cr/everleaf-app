@@ -8,21 +8,65 @@
     </mat-card-header>
 
     <mat-card-content>
-      <div class="detail-row">
-        <mat-icon>event</mat-icon>
-        <span><strong>Added:</strong> {{ plant.dateAdded | date }}</span>
+      <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
       </div>
 
-      <div class="detail-row" *ngIf="plant.species">
-        <mat-icon>local_florist</mat-icon>
-        <span><strong>Species:</strong> {{ plant.species }}</span>
+      <div *ngIf="!loading && plantType">
+        <!-- Plant Type Info -->
+        <div class="detail-row">
+          <mat-icon>eco</mat-icon>
+          <div class="care-info">
+            <strong>Scientific Name:</strong> {{ plantType.scientificName }}
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <mat-icon>water_drop</mat-icon>
+          <div class="care-info">
+            <strong>Watering:</strong> Every
+            {{ plantType.wateringFrequencyDays }} days
+            <span class="last-care" *ngIf="lastWatering">
+              Last watered: {{ lastWatering.date | date }}
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <mat-icon>local_florist</mat-icon>
+          <div class="care-info">
+            <strong>Fertilizing:</strong> Every
+            {{ plantType.fertilizingFrequencyDays }} days
+            <span class="last-care" *ngIf="lastFertilizing">
+              Last fertilized: {{ lastFertilizing.date | date }}
+            </span>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <mat-icon>wb_sunny</mat-icon>
+          <div class="care-info">
+            <strong>Sunlight Needs:</strong> {{ plantType.sunlightNeeds }}
+          </div>
+        </div>
+
+        <!-- Date Added -->
+        <div class="detail-row">
+          <mat-icon>calendar_today</mat-icon>
+          <div class="care-info">
+            <strong>Added to Garden:</strong> {{ plant.dateAdded | date }}
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && !plantType" class="error-state">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>Could not load plant details.</p>
       </div>
     </mat-card-content>
   </mat-card>
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
-  <button mat-button color="primary" (click)="close()">
-    <mat-icon>close</mat-icon>
-    Close
-  </button>
+  <button mat-button (click)="close()">Close</button>
 </mat-dialog-actions>

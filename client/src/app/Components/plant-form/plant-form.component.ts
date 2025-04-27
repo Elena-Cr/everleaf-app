@@ -1,87 +1,94 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  ReactiveFormsModule,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { PlantService } from '../../Services/plant.service'; // Adjust path as needed
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
-import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCardModule } from '@angular/material/card';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatButtonModule } from '@angular/material/button';
-import { Observable } from 'rxjs';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PlantService } from '../../Services/plant.service';
+import { Observable, catchError, finalize, of, tap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-plant-form',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatCardModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
-  ],
   templateUrl: './plant-form.component.html',
   styleUrls: ['./plant-form.component.css'],
-  animations: [
-    trigger('fadeIn', [
-      state('void', style({ opacity: 0 })),
-      transition(':enter', [animate('300ms ease-in')]),
-    ]),
-  ],
 })
 export class PlantFormComponent implements OnInit {
-  plantForm!: FormGroup;
-  plantTypes$: Observable<any[]> | undefined;
-  form: any;
+  plantForm: FormGroup;
+  plantTypes$: Observable<any[]>;
+  loading = false;
+  error: string | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private plantService: PlantService,
-    private snackBar: MatSnackBar
-  ) {}
-
-  ngOnInit(): void {
-    this.plantForm = this.fb.group({
+    private formBuilder: FormBuilder,
+    private plantService: PlantService
+  ) {
+    this.plantForm = this.formBuilder.group({
       name: ['', Validators.required],
-      plantedDate: ['', Validators.required],
       plantType: ['', Validators.required],
+      plantedDate: [new Date(), Validators.required],
+    });
+
+    this.plantTypes$ = of([]);
+  }
+
+  ngOnInit() {
+    this.plantForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      plantType: ['', Validators.required],
+      plantedDate: [new Date(), Validators.required],
     });
 
     this.loadPlantTypes();
-    console.log('this.plantTypes$', this.plantTypes$);
   }
 
   loadPlantTypes(): void {
-    this.plantTypes$ = this.plantService.getPlantTypes();
+    this.loading = true;
+    this.error = null;
+    console.log('Loading plant types...');
+
+    this.plantTypes$ = this.plantService.getPlantTypes().pipe(
+      tap((types) => {
+        console.log('Plant types loaded:', types);
+        if (!types || types.length === 0) {
+          console.warn('No plant types returned from the server');
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error loading plant types:', error);
+        let errorMessage = 'Failed to load plant types. ';
+
+        if (error.error instanceof ErrorEvent) {
+          // Client-side error
+          errorMessage += 'Please check your internet connection.';
+        } else {
+          // Server-side error
+          errorMessage += `Server returned code ${error.status}. `;
+          if (error.status === 404) {
+            errorMessage += 'Plant types not found.';
+          } else if (error.status === 0) {
+            errorMessage += 'Server is unreachable.';
+          } else {
+            errorMessage += error.error?.message || 'Unknown error occurred.';
+          }
+        }
+
+        this.error = errorMessage;
+        return of([]);
+      }),
+      finalize(() => {
+        this.loading = false;
+        console.log('Plant types loading complete');
+      })
+    );
   }
 
   toLocalDate(date: Date): string {
     const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
       .toISOString()
-      .split('T')[0]; // → returns "2025-04-01"
-    return `${localISO}T00:00:00`; // normalized to midnight local time
+      .split('T')[0];
+    return `${localISO}T00:00:00`;
   }
 
   onSubmit(): void {
     if (this.plantForm.valid) {
+      console.log('Form submitted with values:', this.plantForm.value);
       const plantData = this.plantForm.value;
 
       const transformedData = {
@@ -92,25 +99,31 @@ export class PlantFormComponent implements OnInit {
         Species: Number(plantData.plantType.id),
       };
 
+      console.log('Sending transformed data to server:', transformedData);
+
       this.plantService.savePlant(transformedData).subscribe({
-        next: () => {
-          this.snackBar.open('✅ Care log submitted!', 'Close', {
-            duration: 3000,
-          });
+        next: (response) => {
+          console.log('Plant saved successfully:', response);
           this.plantForm.reset({
-            name: '',
-            plantedDate: '',
-            plantType: '',
+            plantedDate: new Date(),
           });
         },
-        error: () => {
-          this.snackBar.open('❌ Failed to submit care log.', 'Close', {
-            duration: 3000,
-          });
+        error: (error: HttpErrorResponse) => {
+          console.error('Error saving plant:', error);
+          let errorMessage = 'Failed to save plant. ';
+
+          if (error.error instanceof ErrorEvent) {
+            errorMessage += 'Please check your internet connection.';
+          } else {
+            errorMessage += `Server returned code ${error.status}. `;
+            errorMessage += error.error?.message || 'Unknown error occurred.';
+          }
+
+          this.error = errorMessage;
         },
       });
     } else {
-      this.plantForm.markAllAsTouched(); // trigger validations
+      console.warn('Form is invalid:', this.plantForm.errors);
     }
   }
 }

@@ -20,8 +20,8 @@
 <div class="plants-grid" *ngIf="plants.length > 0 && !loading && !error">
   <mat-card *ngFor="let plant of plants" class="plant-card" [@fadeIn]>
     <mat-card-header>
-      <mat-card-title>{{ plant.name }}</mat-card-title>
-      <mat-card-subtitle>{{ plant.nickname }}</mat-card-subtitle>
+      <mat-card-title>{{ plant.nickname || "No Nickname" }}</mat-card-title>
+      <mat-card-subtitle>{{ plant.name }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <p>Added: {{ plant.dateAdded | date }}</p>

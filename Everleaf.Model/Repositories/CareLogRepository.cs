@@ -65,6 +65,28 @@ namespace Everleaf.Model.Repositories
             }
         }
 
+        public List<CareLog> GetLogsByPlantId(int plantId)
+        {
+            var logs = new List<CareLog>();
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            var cmd = dbConn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM CareLog WHERE plantid = @plantId ORDER BY date DESC";
+            cmd.Parameters.AddWithValue("@plantId", NpgsqlDbType.Integer, plantId);
+
+            var data = GetData(dbConn, cmd);
+            while (data.Read())
+            {
+                logs.Add(new CareLog(Convert.ToInt32(data["id"]))
+                {
+                    PlantId = Convert.ToInt32(data["plantid"]),
+                    Date = Convert.ToDateTime(data["date"]),
+                    Type = data["type"].ToString()
+                });
+            }
+
+            return logs;
+        }
+
         public List<CareLog> GetLogsByUserId(int userId)
         {
             var logs = new List<CareLog>();

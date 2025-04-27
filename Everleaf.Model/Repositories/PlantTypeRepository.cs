@@ -15,6 +15,7 @@ namespace Everleaf.Model.Repositories
 
         public PlantType? GetPlantTypeById(int id)
         {
+            Console.WriteLine($"Getting plant type with ID: {id}");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = "SELECT * FROM PlantType WHERE id = @id";
@@ -23,7 +24,7 @@ namespace Everleaf.Model.Repositories
             var data = GetData(dbConn, cmd);
             if (data != null && data.Read())
             {
-                return new PlantType(Convert.ToInt32(data["id"]))
+                var plantType = new PlantType(Convert.ToInt32(data["id"]))
                 {
                     CommonName = data["commonname"].ToString(),
                     ScientificName = data["scientificname"].ToString(),
@@ -31,31 +32,38 @@ namespace Everleaf.Model.Repositories
                     FertilizingFrequencyDays = Convert.ToInt32(data["fertilizingfrequencydays"]),
                     SunlightNeeds = data["sunlightneeds"].ToString()
                 };
+                Console.WriteLine($"Found plant type: {plantType.CommonName} (ID: {plantType.Id})");
+                return plantType;
             }
 
+            Console.WriteLine($"No plant type found with ID: {id}");
             return null;
         }
 
         public List<PlantType> GetAllPlantType()
         {
+            Console.WriteLine("Getting all plant types");
             var types = new List<PlantType>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM PlantType";
+            cmd.CommandText = "SELECT * FROM PlantType ORDER BY id";
 
             var data = GetData(dbConn, cmd);
             while (data.Read())
             {
-                types.Add(new PlantType(Convert.ToInt32(data["id"]))
+                var plantType = new PlantType(Convert.ToInt32(data["id"]))
                 {
                     CommonName = data["commonname"].ToString(),
                     ScientificName = data["scientificname"].ToString(),
                     WateringFrequencyDays = Convert.ToInt32(data["wateringfrequencydays"]),
                     FertilizingFrequencyDays = Convert.ToInt32(data["fertilizingfrequencydays"]),
                     SunlightNeeds = data["sunlightneeds"].ToString()
-                });
+                };
+                Console.WriteLine($"Found plant type: {plantType.CommonName} (ID: {plantType.Id})");
+                types.Add(plantType);
             }
 
+            Console.WriteLine($"Total plant types found: {types.Count}");
             return types;
         }
 

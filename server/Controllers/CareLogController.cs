@@ -40,6 +40,14 @@ namespace Everleaf.API.Controllers
             return Ok(dtos);
         }
 
+        [HttpGet("plant/{plantId}")]
+        public ActionResult<IEnumerable<CareLog>> GetByPlantId([FromRoute] int plantId)
+        {
+            var logs = _repository.GetLogsByPlantId(plantId);
+            var dtos = _mapper.Map<IEnumerable<CareLog>>(logs);
+            return Ok(dtos);
+        }
+
         [HttpGet("user/{userId}")]
         public ActionResult<IEnumerable<CareLog>> GetByUserId(int userId)
         {

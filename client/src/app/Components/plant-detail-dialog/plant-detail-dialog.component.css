@@ -1,33 +1,70 @@
-.dialog-content {
-  padding: 0;
-  margin: 0;
-  max-height: 85vh;
+.detail-card {
+  min-width: 300px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.detail-card {
-  box-shadow: none !important;
+.dialog-content {
+  padding: 24px;
 }
 
 .detail-row {
   display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.detail-row mat-icon {
+  color: #2e7d32;
+}
+
+.care-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.last-care {
+  font-size: 0.9em;
+  color: #666;
+  margin-left: 4px;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin: 16px 0;
-  gap: 12px;
+  min-height: 200px;
 }
 
-mat-icon {
-  color: #4caf50;
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 200px;
+  color: #f44336;
 }
 
-mat-dialog-content {
-  min-width: 300px;
-}
-
-mat-dialog-actions {
-  margin: 0;
-  padding: 8px 24px;
+.error-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
 }
 
 mat-card-content {
-  margin-top: 16px;
+  margin-top: 24px;
+}
+
+mat-card-header {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+}
+
+:host ::ng-deep .mat-mdc-card-header-text {
+  flex: 1;
 }

@@ -21,7 +21,7 @@ namespace Everleaf.API.Controllers
             var type = Repository.GetPlantTypeById(id);
             if (type == null)
             {
-                return NotFound();
+                return NotFound($"PlantType with id {id} not found");
             }
             return Ok(type);
         }
@@ -29,7 +29,12 @@ namespace Everleaf.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<PlantType>> GetPlantType()
         {
-            return Ok(Repository.GetAllPlantType());
+            var types = Repository.GetAllPlantType();
+            if (types == null || !types.Any())
+            {
+                return NotFound("No plant types found");
+            }
+            return Ok(types);
         }
 
         [HttpPost]
@@ -60,7 +65,7 @@ namespace Everleaf.API.Controllers
             var existing = Repository.GetPlantTypeById(plantType.Id);
             if (existing == null)
             {
-                return NotFound($"PlantType with id {plantType.Id} not found.");
+                return NotFound($"PlantType with id {plantType.Id} not found");
             }
 
             bool status = Repository.UpdatePlantType(plantType);
@@ -78,7 +83,7 @@ namespace Everleaf.API.Controllers
             var existing = Repository.GetPlantTypeById(id);
             if (existing == null)
             {
-                return NotFound($"PlantType with id {id} not found.");
+                return NotFound($"PlantType with id {id} not found");
             }
 
             bool status = Repository.DeletePlantType(id);
@@ -87,7 +92,7 @@ namespace Everleaf.API.Controllers
                 return NoContent();
             }
 
-            return BadRequest("Delete failed.");
+            return BadRequest($"Unable to delete plant type with id {id}");
         }
     }
 }
