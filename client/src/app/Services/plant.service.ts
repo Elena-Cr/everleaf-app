@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, forkJoin, switchMap, of, catchError, tap } from 'rxjs';
+import {
+  Observable,
+  forkJoin,
+  switchMap,
+  of,
+  catchError,
+  tap,
+  BehaviorSubject,
+} from 'rxjs';
 import { Plant } from '../Models/plant';
 
 @Injectable({
@@ -9,20 +17,31 @@ import { Plant } from '../Models/plant';
 export class PlantService {
   private baseUrl: string = 'http://localhost:5234/api';
 
+  private _currentUserId = new BehaviorSubject<number>(2); // Default: Bob (user id 2)
+  currentUserId$ = this._currentUserId.asObservable(); // Expose as Observable for components
+
   constructor(private http: HttpClient) {}
+
+  /** Change the currently selected user */
+  setCurrentUserId(userId: number): void {
+    console.log('Switching to user:', userId);
+    this._currentUserId.next(userId);
+  }
+
+  /** Access current user id value (getter) */
+  get currentUserId(): number {
+    return this._currentUserId.value;
+  }
 
   getPlantTypes(): Observable<any[]> {
     console.log('Fetching plant types...');
     return this.http.get<any[]>(`${this.baseUrl}/planttype`).pipe(
       tap((types) => console.log('Plant types received:', types)),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error fetching plant types:', error);
-        throw error;
-      })
+      catchError(this.handleError('fetching plant types'))
     );
   }
 
-  getPlants(userId: number = 2): Observable<any[]> {
+  getPlants(userId: number = this.currentUserId): Observable<any[]> {
     console.log('Fetching plants for user:', userId);
     return this.http
       .get<any[]>(`${this.baseUrl}/plant`, {
@@ -30,10 +49,7 @@ export class PlantService {
       })
       .pipe(
         tap((plants) => console.log('Plants received:', plants)),
-        catchError((error: HttpErrorResponse) => {
-          console.error('Error fetching plants:', error);
-          throw error;
-        })
+        catchError(this.handleError('fetching plants'))
       );
   }
 
@@ -41,10 +57,7 @@ export class PlantService {
     console.log('Fetching plant details for ID:', id);
     return this.http.get<Plant>(`${this.baseUrl}/plant/${id}`).pipe(
       tap((plant) => console.log('Plant details received:', plant)),
-      catchError((error: HttpErrorResponse) => {
-        console.error(`Error fetching plant ${id}:`, error);
-        throw error;
-      })
+      catchError(this.handleError(`fetching plant ${id}`))
     );
   }
 
@@ -52,10 +65,7 @@ export class PlantService {
     console.log('Fetching plant type:', id);
     return this.http.get<any>(`${this.baseUrl}/planttype/${id}`).pipe(
       tap((type) => console.log('Plant type received:', type)),
-      catchError((error: HttpErrorResponse) => {
-        console.error(`Error fetching plant type ${id}:`, error);
-        throw error;
-      })
+      catchError(this.handleError(`fetching plant type ${id}`))
     );
   }
 
@@ -65,13 +75,7 @@ export class PlantService {
       .get<any[]>(`${this.baseUrl}/carelog/plant/${plantId}`)
       .pipe(
         tap((logs) => console.log('Care logs received:', logs)),
-        catchError((error: HttpErrorResponse) => {
-          console.error(
-            `Error fetching care logs for plant ${plantId}:`,
-            error
-          );
-          throw error;
-        })
+        catchError(this.handleError(`fetching care logs for plant ${plantId}`))
       );
   }
 
@@ -84,7 +88,6 @@ export class PlantService {
     console.log('Fetching details for plant:', plantId);
     return this.getPlantById(plantId).pipe(
       switchMap((plant) => {
-        console.log('Plant data received:', plant);
         const plantType$ = this.getPlantTypeById(plant.species);
         const careLogs$ = this.getPlantCareLogs(plantId);
 
@@ -96,13 +99,7 @@ export class PlantService {
           tap((result) => console.log('Combined plant details:', result))
         );
       }),
-      catchError((error: HttpErrorResponse) => {
-        console.error(
-          `Error in getPlantWithDetails for plant ${plantId}:`,
-          error
-        );
-        throw error;
-      })
+      catchError(this.handleError(`fetching details for plant ${plantId}`))
     );
   }
 
@@ -110,10 +107,7 @@ export class PlantService {
     console.log('Saving plant:', plantData);
     return this.http.post(`${this.baseUrl}/plant`, plantData).pipe(
       tap((response) => console.log('Plant saved:', response)),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error saving plant:', error);
-        throw error;
-      })
+      catchError(this.handleError('saving plant'))
     );
   }
 
@@ -121,10 +115,7 @@ export class PlantService {
     console.log('Updating plant:', id, plantData);
     return this.http.put(`${this.baseUrl}/plant`, plantData).pipe(
       tap((response) => console.log('Plant updated:', response)),
-      catchError((error: HttpErrorResponse) => {
-        console.error(`Error updating plant ${id}:`, error);
-        throw error;
-      })
+      catchError(this.handleError(`updating plant ${id}`))
     );
   }
 
@@ -132,10 +123,15 @@ export class PlantService {
     console.log('Deleting plant:', id);
     return this.http.delete(`${this.baseUrl}/plant/${id}`).pipe(
       tap((response) => console.log('Plant deleted:', response)),
-      catchError((error: HttpErrorResponse) => {
-        console.error(`Error deleting plant ${id}:`, error);
-        throw error;
-      })
+      catchError(this.handleError(`deleting plant ${id}`))
     );
+  }
+
+  /** Centralized error handler */
+  private handleError(operation: string) {
+    return (error: HttpErrorResponse) => {
+      console.error(`Error during ${operation}:`, error);
+      throw error;
+    };
   }
 }

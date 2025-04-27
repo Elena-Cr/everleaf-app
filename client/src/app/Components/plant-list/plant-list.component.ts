@@ -8,7 +8,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Plant } from '../../Models/plant';
 import { PlantDetailDialogComponent } from '../plant-detail-dialog/plant-detail-dialog.component';
-import { animate, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-plant-list',
@@ -25,10 +31,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
   animations: [
     trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('300ms', style({ opacity: 1 })),
-      ]),
+      state('void', style({ opacity: 0 })),
+      transition(':enter', [animate('300ms ease-in')]),
     ]),
   ],
 })
@@ -46,18 +50,22 @@ export class PlantListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadPlants();
+    // ✅ Listen to user changes and reload plants
+    this.plantService.currentUserId$.subscribe((userId) => {
+      console.log('User changed, loading plants for user:', userId);
+      this.loadPlants(userId);
+    });
   }
 
-  loadPlants(): void {
+  loadPlants(userId: number): void {
     this.loading = true;
     this.error = null;
 
-    this.plantService.getPlants().subscribe({
+    this.plantService.getPlants(userId).subscribe({
       next: (data) => {
         this.plants = data;
         this.loading = false;
-        this.currentPage = 0; // Reset page to first when new plants load
+        this.currentPage = 0; // reset to page 0 when user changes
       },
       error: (error) => {
         console.error('Error fetching plants:', error);
@@ -79,14 +87,13 @@ export class PlantListComponent implements OnInit {
   }
 
   get currentPagePlants(): Plant[] {
-    if (!this.plants.length) return [];
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;
     return this.plants.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.plants.length / this.pageSize));
+    return Math.ceil(this.plants.length / this.pageSize);
   }
 
   nextPage(): void {
