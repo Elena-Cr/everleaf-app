@@ -22,7 +22,7 @@ export class PlantService {
     );
   }
 
-  getPlants(userId: number = 1): Observable<any[]> {
+  getPlants(userId: number = 2): Observable<any[]> {
     console.log('Fetching plants for user:', userId);
     return this.http
       .get<any[]>(`${this.baseUrl}/plant`, {

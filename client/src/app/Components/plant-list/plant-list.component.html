@@ -16,58 +16,66 @@
   </mat-card>
 </div>
 
-<!-- Plants Grid Container -->
+<!-- Main Plant Grid -->
 <div class="plants-container" *ngIf="plants.length > 0 && !loading && !error">
-  <!-- Navigation Arrows -->
-  <button
-    mat-icon-button
-    class="nav-button prev"
-    [disabled]="currentPage === 0"
-    (click)="previousPage()"
-  >
-    <mat-icon>chevron_left</mat-icon>
-  </button>
+  <!-- Left Navigation Button -->
+  <div class="nav-button-wrapper">
+    <button
+      mat-icon-button
+      class="nav-button prev"
+      [disabled]="currentPage === 0"
+      (click)="previousPage()"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  </div>
 
-  <!-- Plants Grid -->
+  <!-- Plant Cards Grid -->
   <div class="plants-grid">
     <mat-card
       *ngFor="let plant of currentPagePlants"
       class="plant-card"
       [@fadeIn]
     >
+      <!-- Image -->
       <div class="plant-image">
-        <img
-          src="https://img.freepik.com/free-vector/houseplant-purple-pot-nature-icon_24877-82969.jpg"
-          alt="Plant placeholder"
-        />
+        <img src="assets/images/plant_picture.png" alt="Plant image" />
       </div>
+
+      <!-- Card Header (nickname and species) -->
       <mat-card-header>
         <mat-card-title>{{ plant.nickname || "No Nickname" }}</mat-card-title>
         <mat-card-subtitle>{{ plant.name }}</mat-card-subtitle>
       </mat-card-header>
+
+      <!-- Card Content (date) -->
       <mat-card-content>
-        <p>Added: {{ plant.dateAdded | date }}</p>
+        <small>Added: {{ plant.dateAdded | date }}</small>
       </mat-card-content>
+
+      <!-- Card Action (button) -->
       <mat-card-actions>
         <button mat-raised-button color="primary" (click)="viewDetails(plant)">
-          <mat-icon>visibility</mat-icon>
           View Details
         </button>
       </mat-card-actions>
     </mat-card>
   </div>
 
-  <button
-    mat-icon-button
-    class="nav-button next"
-    [disabled]="currentPage === totalPages - 1"
-    (click)="nextPage()"
-  >
-    <mat-icon>chevron_right</mat-icon>
-  </button>
+  <!-- Right Navigation Button -->
+  <div class="nav-button-wrapper">
+    <button
+      mat-icon-button
+      class="nav-button next"
+      [disabled]="currentPage === totalPages - 1"
+      (click)="nextPage()"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
 </div>
 
-<!-- No Plants State -->
+<!-- No Plants Found -->
 <div class="no-plants" *ngIf="plants.length === 0 && !loading && !error">
   <mat-card>
     <mat-card-content>

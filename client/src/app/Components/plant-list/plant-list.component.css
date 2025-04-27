@@ -1,83 +1,169 @@
+html {
+  font-size: 62.5%; /* 1rem = 10px */
+}
+
+/* Container for the plant view */
 .plants-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px; /* Increased from 32px */
-  padding: 40px; /* Increased from 32px */
-  max-width: 1800px; /* Increased from 1600px */
+  gap: 4rem;
+  padding: 4rem;
+  max-width: 200rem;
   margin: 0 auto;
 }
 
+/* Grid of plants */
 .plants-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px; /* Increased from 32px */
-  max-width: 1600px; /* Increased from 1400px */
+  grid-template-columns: repeat(auto-fit, minmax(38rem, 1fr));
+  gap: 4rem;
+  width: 100%;
+  max-width: 180rem;
+  padding: 0 2.4rem;
 }
 
+/* Each plant card */
 .plant-card {
-  margin-bottom: 0;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  max-width: 450px; /* Increased from 380px */
-  margin-left: auto;
-  margin-right: auto;
+  height: 100%;
   width: 100%;
-}
-
-.plant-image {
-  width: 100%;
-  padding-top: 100%;
-  position: relative;
+  max-width: 42rem;
+  margin: auto;
+  background: #f9fcf9;
+  border-radius: 2rem;
   overflow: hidden;
-  border-radius: 12px 12px 0 0; /* Increased from 8px */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-}
-
-.plant-image img {
-  position: absolute;
-  width: 90%;
-  height: 90%;
-  object-fit: contain;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  padding: 3.2rem 2rem;
+  box-shadow: 0 0.4rem 2rem rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .plant-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-0.6rem) scale(1.02);
+  box-shadow: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.1);
 }
 
+/* Plant image container */
+.plant-image {
+  width: 100%;
+  height: 22rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9f7ec;
+  border-radius: 1.6rem;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.plant-image img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.plant-card:hover .plant-image img {
+  transform: scale(1.05);
+}
+
+/* Card header (nickname and species) */
+.mat-mdc-card-header {
+  width: 100%;
+  padding: 1.6rem 0 0.8rem 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mat-mdc-card-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.4rem;
+}
+
+.mat-mdc-card-subtitle {
+  font-size: 1.6rem;
+  color: #666;
+  font-weight: 400;
+}
+
+/* Card content (date) */
 .mat-mdc-card-content {
   flex-grow: 1;
-  padding: 24px; /* Increased from 16px */
+  padding: 1rem 0 0 0;
+  font-size: 1.5rem;
+  color: #777;
+  text-align: center;
 }
 
+.mat-mdc-card-content small {
+  display: block;
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: #aaa;
+}
+
+/* Card actions (button area) */
 .mat-mdc-card-actions {
   display: flex;
-  justify-content: flex-end;
-  padding: 24px; /* Increased from 16px */
-  gap: 12px; /* Increased from 8px */
+  justify-content: center;
+  padding: 2rem 0 0 0;
 }
 
-.mat-mdc-card-header {
-  padding: 24px; /* Increased from 16px */
+/* View Details button */
+.mat-mdc-raised-button {
+  background-color: var(--primary-color);
+  min-width: 14rem;
+  height: 4rem;
+  font-weight: 500;
+  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  border-radius: 1.2rem;
+  text-transform: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
 }
 
+.mat-mdc-raised-button:hover {
+  background-color: var(--primary-darker);
+  transform: translateY(-0.2rem);
+}
+
+/* Navigation button wrapper */
+.nav-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.nav-button-wrapper:hover {
+  transform: scale(1.1);
+}
+
+/* Navigation buttons */
 .nav-button {
   background-color: var(--primary-color);
   color: white;
-  width: 48px; /* Increased from 40px */
-  height: 48px; /* Increased from 40px */
+  width: 4.8rem;
+  height: 4.8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--primary-darker);
 }
 
 .nav-button:disabled {
@@ -85,9 +171,86 @@
   cursor: not-allowed;
 }
 
-.nav-button mat-icon {
-  font-size: 32px; /* Increased from 24px */
-  width: 32px; /* Increased from 24px */
-  height: 32px; /* Increased from 24px */
-  line-height: 32px; /* Increased from 24px */
+/* ---------------------------- */
+/*        RESPONSIVE ZONE       */
+/* ---------------------------- */
+
+/* Tablet adjustments */
+@media (max-width: 900px) {
+  .plants-grid {
+    grid-template-columns: repeat(auto-fit, minmax(32rem, 1fr));
+    gap: 3rem;
+    padding: 0 2rem;
+  }
+
+  .plant-card {
+    max-width: 36rem;
+    padding: 2.8rem 1.8rem;
+  }
+
+  .plant-image {
+    height: 20rem;
+  }
+
+  .mat-mdc-card-title {
+    font-size: 1.9rem;
+  }
+
+  .mat-mdc-card-subtitle {
+    font-size: 1.5rem;
+  }
+
+  .mat-mdc-card-content {
+    font-size: 1.4rem;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .plants-container {
+    padding: 2rem;
+  }
+
+  .plants-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1.2rem;
+  }
+
+  .plant-card {
+    max-width: 32rem;
+    padding: 2.4rem 1.6rem;
+  }
+
+  .plant-image {
+    height: 18rem;
+  }
+
+  .plant-image img {
+    width: 85%;
+    height: 85%;
+  }
+
+  .mat-mdc-card-title {
+    font-size: 1.8rem;
+  }
+
+  .mat-mdc-card-subtitle {
+    font-size: 1.4rem;
+  }
+
+  .mat-mdc-card-content {
+    font-size: 1.3rem;
+  }
+
+  .mat-mdc-raised-button {
+    min-width: 12rem;
+    height: 3.6rem;
+    font-size: 1.3rem;
+  }
+
+  .nav-button {
+    width: 4.4rem;
+    height: 4.4rem;
+  }
 }
