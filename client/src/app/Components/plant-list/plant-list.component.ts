@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { PlantService } from '../../Services/plant.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Plant } from '../../Models/plant';
+import { PlantDetailDialogComponent } from '../plant-detail-dialog/plant-detail-dialog.component';
 import {
-  trigger,
+  animate,
   state,
   style,
   transition,
-  animate,
+  trigger,
 } from '@angular/animations';
 
 @Component({
@@ -26,6 +27,7 @@ import {
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
+    MatDialogModule,
   ],
   animations: [
     trigger('fadeIn', [
@@ -41,7 +43,7 @@ export class PlantListComponent implements OnInit {
 
   constructor(
     private plantService: PlantService,
-    private router: Router,
+    private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
@@ -70,6 +72,10 @@ export class PlantListComponent implements OnInit {
   }
 
   viewDetails(plant: Plant): void {
-    this.router.navigate(['/plant', plant.id]);
+    this.dialog.open(PlantDetailDialogComponent, {
+      data: plant,
+      width: '500px',
+      panelClass: 'plant-detail-dialog',
+    });
   }
 }

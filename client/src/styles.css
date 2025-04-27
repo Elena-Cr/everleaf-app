@@ -1,104 +1,10 @@
-/* ✅ Load Poppins font */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+/* You can add global styles to this file, and also import other style files */
 
-/* ✅ Base styles */
-body {
-  font-family: "Poppins", sans-serif;
-  background-color: #fafafa;
-  color: #222;
-  margin: 0;
+/* Dialog Styles */
+.plant-detail-dialog .mat-mdc-dialog-container {
   padding: 0;
 }
 
-/* ✅ Material card */
-mat-card {
-  background-color: #fefefe !important; /* Clean white card */
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 16px;
-}
-
-.mat-card-title,
-.mat-card-subtitle {
-  color: #2e2e2e;
-  font-weight: 500;
-}
-
-/* ✅ Form fields */
-.mat-form-field {
-  font-size: 15px;
-  margin-bottom: 16px;
-  width: 100%;
-}
-
-.mat-form-field-appearance-fill .mat-form-field-flex {
-  background-color: white;
-  border-radius: 6px;
-}
-
-/* ✅ Primary buttons */
-.mat-raised-button.mat-primary {
-  background-color: #4caf50;
-  color: white;
+.plant-detail-dialog .mat-mdc-dialog-surface {
   border-radius: 8px;
-}
-
-.mat-raised-button.mat-primary:hover {
-  background-color: #43a047;
-}
-
-/* ✅ Forms layout */
-.care-log-form,
-.problem-form {
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 24px;
-  padding-right: 8px;
-}
-.mat-form-field-appearance-fill .mat-form-field-flex {
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  padding: 4px 12px;
-}
-
-.mat-form-field-appearance-fill .mat-form-field-outline {
-  display: none;
-}
-
-.mat-form-field.mat-focused .mat-form-field-flex {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-
-/* Optional: Add spacing + full width */
-.full-width {
-  width: 100%;
-}
-/* 🔧 Fix legacy border lines */
-.mat-form-field-appearance-legacy .mat-form-field-underline,
-.mat-form-field-appearance-standard .mat-form-field-underline {
-  display: none;
-}
-
-/* ✅ Confirm proper fill style */
-.mat-form-field-appearance-fill .mat-form-field-flex {
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 4px 12px;
-}
-
-.mat-form-field.mat-focused .mat-form-field-flex {
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
-}
-.mat-form-field-flex {
-  background-color: pink !important;
 }

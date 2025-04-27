@@ -1,0 +1,33 @@
+.dialog-content {
+  padding: 0;
+  margin: 0;
+  max-height: 85vh;
+}
+
+.detail-card {
+  box-shadow: none !important;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+  gap: 12px;
+}
+
+mat-icon {
+  color: #4caf50;
+}
+
+mat-dialog-content {
+  min-width: 300px;
+}
+
+mat-dialog-actions {
+  margin: 0;
+  padding: 8px 24px;
+}
+
+mat-card-content {
+  margin-top: 16px;
+}

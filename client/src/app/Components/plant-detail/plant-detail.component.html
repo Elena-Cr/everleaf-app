@@ -1,10 +1,48 @@
-<div *ngIf="!plant">Loading details...</div>
-<div *ngIf="plant">
-  <h2>{{ plant.name }} - {{ plant.species }}</h2>
-  <p><strong>Planted Date:</strong> {{ plant.plantedDate }}</p>
-  <p><strong>Location:</strong> {{ plant.location }}</p>
-  <p><strong>Care Logs:</strong></p>
-  <ul>
-    <li *ngFor="let log of plant.careLogs">{{ log }}</li>
-  </ul>
+<!-- Loading State -->
+<div *ngIf="loading" class="loading">
+  <mat-card>
+    <mat-card-content>
+      <p>Loading plant details...</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Error State -->
+<div *ngIf="error && !loading" class="loading">
+  <mat-card>
+    <mat-card-content>
+      <p class="error-message">{{ error }}</p>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Plant Details -->
+<div *ngIf="plant && !loading && !error" class="plant-detail">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ plant.name }}</mat-card-title>
+      <mat-card-subtitle *ngIf="plant.nickname">{{
+        plant.nickname
+      }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="detail-row">
+        <mat-icon>event</mat-icon>
+        <span><strong>Added:</strong> {{ plant.dateAdded | date }}</span>
+      </div>
+
+      <div class="detail-row" *ngIf="plant.species">
+        <mat-icon>local_florist</mat-icon>
+        <span><strong>Species:</strong> {{ plant.species }}</span>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Plants
+      </button>
+    </mat-card-actions>
+  </mat-card>
 </div>
