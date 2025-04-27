@@ -1,16 +1,12 @@
 -- ================================================
--- Everleaf Seed Data
+-- Everleaf Seed Data 
 -- ================================================
-
 
 BEGIN;
 
--- Clean existing data
-TRUNCATE TABLE carelog RESTART IDENTITY CASCADE;
-TRUNCATE TABLE problemreport RESTART IDENTITY CASCADE;
-TRUNCATE TABLE plant RESTART IDENTITY CASCADE;
-TRUNCATE TABLE planttype RESTART IDENTITY CASCADE;
-TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+-- Clean existing data (in dependency order)
+TRUNCATE carelog, problemreport, plant, planttype, users RESTART IDENTITY;
+
 
 -------------------------
 -- USERS (4 records)
@@ -310,13 +306,15 @@ INSERT INTO ProblemReport (Id, PlantId, DateReported, Description, Severity) VAL
 (44, 18, NOW() - INTERVAL '1 day', 'Minor fungal spot observed', 'Low'),
 (45, 18, NOW() - INTERVAL '2 days', 'Leaf tips show early signs of browning', 'Medium');
 
--- ================================================
--- End of Seed Data
--- ================================================
 
--- OPTIONAL: Update Sequences (if needed)
+-- Update Sequences (optional but good practice)
 SELECT setval('users_id_seq', (SELECT MAX(Id) FROM Users));
 SELECT setval('plant_id_seq', (SELECT MAX(Id) FROM Plant));
 SELECT setval('planttype_id_seq', (SELECT MAX(Id) FROM PlantType));
 SELECT setval('carelog_id_seq', (SELECT MAX(Id) FROM CareLog));
 SELECT setval('problemreport_id_seq', (SELECT MAX(Id) FROM ProblemReport));
+
+COMMIT;
+-- ================================================
+-- End of Seed Data
+-- ================================================
