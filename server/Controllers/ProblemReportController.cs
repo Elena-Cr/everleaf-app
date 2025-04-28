@@ -48,6 +48,14 @@ namespace Everleaf.API.Controllers
             return Ok(dtos);
         }
 
+        [HttpGet("plant/{plantId}")]
+        public ActionResult<IEnumerable<ProblemReportDTO>> GetByPlantId([FromRoute] int plantId)
+        {
+            var reports = _repository.GetReportsByPlantId(plantId);
+            var dtos = _mapper.Map<IEnumerable<ProblemReportDTO>>(reports);
+            return Ok(dtos);
+        }
+
         [HttpPost]
         public ActionResult Post([FromBody] CreateProblemReportDTO dto)
         {

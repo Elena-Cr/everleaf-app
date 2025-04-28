@@ -1,15 +1,18 @@
-<div class="page-content">
-  <mat-card class="detail-card">
-    <mat-card-header>
-      <mat-card-title class="plant-title">{{
-        plant?.nickname || plant?.name
-      }}</mat-card-title>
-      <mat-card-subtitle *ngIf="plant?.name && plant?.nickname">{{
-        plant.name
-      }}</mat-card-subtitle>
-    </mat-card-header>
+<div class="plant-details-page">
+  <!-- Top Bar: Back to Plants + Log Problem -->
+  <div class="plant-details-header">
+    <button mat-button (click)="close()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Plants
+    </button>
+    <button mat-raised-button color="primary" (click)="openLogProblemDialog()">
+      ➕ Log Problem
+    </button>
+  </div>
 
-    <div class="plant-image-container">
+  <!-- Main Plant Content -->
+  <div class="plant-main-content">
+    <div class="plant-image-wrapper">
       <img
         src="assets/images/plant_picture.png"
         alt="Plant Image"
@@ -17,23 +20,27 @@
       />
     </div>
 
-    <mat-card-content>
-      <div *ngIf="loading" class="loading-state">
-        <mat-spinner diameter="40"></mat-spinner>
-      </div>
+    <h1 class="plant-title">{{ plant.nickname || plant.name }}</h1>
+    <h3 class="plant-subtitle" *ngIf="plant.nickname && plant.name">
+      {{ plant.name }}
+    </h3>
 
-      <div *ngIf="!loading && plantType">
-        <!-- Plant Type Info -->
-        <div class="detail-section">
+    <div *ngIf="loading" class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading && plantType">
+      <div class="plant-info-grid">
+        <div class="plant-info-item">
           <mat-icon>eco</mat-icon>
-          <div class="section-content">
+          <div>
             <strong>Scientific Name:</strong> {{ plantType.scientificName }}
           </div>
         </div>
 
-        <div class="detail-section">
+        <div class="plant-info-item">
           <mat-icon>water_drop</mat-icon>
-          <div class="section-content">
+          <div>
             <strong>Watering:</strong> Every
             {{ plantType.wateringFrequencyDays }} days
             <div class="last-action" *ngIf="lastWatering">
@@ -42,9 +49,9 @@
           </div>
         </div>
 
-        <div class="detail-section">
+        <div class="plant-info-item">
           <mat-icon>local_florist</mat-icon>
-          <div class="section-content">
+          <div>
             <strong>Fertilizing:</strong> Every
             {{ plantType.fertilizingFrequencyDays }} days
             <div class="last-action" *ngIf="lastFertilizing">
@@ -53,36 +60,52 @@
           </div>
         </div>
 
-        <div class="detail-section">
+        <div class="plant-info-item">
           <mat-icon>wb_sunny</mat-icon>
-          <div class="section-content">
+          <div>
             <strong>Sunlight Needs:</strong> {{ plantType.sunlightNeeds }}
           </div>
         </div>
 
-        <div class="detail-section">
+        <div class="plant-info-item">
           <mat-icon>calendar_today</mat-icon>
-          <div class="section-content">
+          <div>
             <strong>Added to Garden:</strong> {{ plant.dateAdded | date }}
           </div>
         </div>
       </div>
-
-      <div *ngIf="!loading && !plantType" class="error-state">
-        <mat-icon color="warn">error_outline</mat-icon>
-        <p>Could not load plant details.</p>
-      </div>
-    </mat-card-content>
-
-    <div class="action-buttons">
-      <button mat-button (click)="close()">Back to Plants</button>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="openLogProblemDialog()"
-      >
-        ➕ Log Problem
-      </button>
     </div>
-  </mat-card>
+
+    <div *ngIf="!loading && !plantType" class="error-state">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>Could not load plant details.</p>
+    </div>
+
+    <!-- Problems Section -->
+    <div class="problems-section" *ngIf="problems && problems.length > 0">
+      <h2>Logged Problems</h2>
+      <div *ngFor="let problem of problems" class="problem-item">
+        <mat-icon
+          [style.color]="
+            problem.severity === 'High'
+              ? 'red'
+              : problem.severity === 'Medium'
+              ? 'orange'
+              : 'green'
+          "
+        >
+          report_problem
+        </mat-icon>
+        <div>
+          <strong>Severity: {{ problem.severity }}</strong>
+          <p>{{ problem.description }}</p>
+          <small>Logged on: {{ problem.dateReported | date }}</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-problems" *ngIf="problems && problems.length === 0">
+      <p>No problems logged yet 🌱</p>
+    </div>
+  </div>
 </div>

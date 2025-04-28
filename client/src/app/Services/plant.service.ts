@@ -13,6 +13,7 @@ import {
 } from 'rxjs';
 import { Plant } from '../Models/plant';
 import { PlantType } from '../Models/plant-type';
+import { ProblemReport } from '../Models/problem-reports';
 
 @Injectable({
   providedIn: 'root',
@@ -218,6 +219,17 @@ export class PlantService {
       tap((response) => console.log('Plant deleted:', response)),
       catchError(this.handleError(`deleting plant ${id}`))
     );
+  }
+
+  /** Fetch problems for a specific plant */
+  getPlantProblems(plantId: number): Observable<ProblemReport[]> {
+    console.log('Fetching problems for plant ID:', plantId);
+    return this.http
+      .get<ProblemReport[]>(`${this.baseUrl}/problemreport/plant/${plantId}`)
+      .pipe(
+        tap((problems) => console.log('Problems received:', problems)),
+        catchError(this.handleError(`fetching problems for plant ${plantId}`))
+      );
   }
 
   /** Centralized error handler */

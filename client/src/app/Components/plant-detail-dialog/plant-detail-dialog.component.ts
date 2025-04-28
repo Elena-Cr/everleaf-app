@@ -8,7 +8,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
 import { PlantService } from '../../Services/plant.service';
+import { ProblemService } from '../../Services/problem.service';
 import { ProblemFormComponent } from '../problem-form/problem-form.component';
+import { ProblemReport } from '../../Models/problem-reports';
 
 @Component({
   selector: 'app-plant-detail',
@@ -26,27 +28,49 @@ import { ProblemFormComponent } from '../problem-form/problem-form.component';
 })
 export class PlantDetailComponent implements OnInit {
   loading = true;
-  plantDetails: any;
+  plant!: Plant;
   plantType: any;
   careLogs: any[] = [];
   lastWatering: any;
   lastFertilizing: any;
-  plant!: Plant;
+  problems: ProblemReport[] = [];
 
   constructor(
     private plantService: PlantService,
+    private problemService: ProblemService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
-  ngOnInit() {
-    const plantId = this.route.snapshot.paramMap.get('id');
+  ngOnInit(): void {
+    const plantId = Number(this.route.snapshot.paramMap.get('id'));
     if (!plantId) {
       this.router.navigate(['/plants']);
       return;
     }
-    this.plantService.getPlantWithDetails(Number(plantId)).subscribe({
+
+    this.fetchPlantDetails(plantId);
+    this.loadProblems(plantId);
+  }
+
+  /** Load problems for the plant */
+  loadProblems(plantId: number): void {
+    this.problemService.getProblemsByPlant(plantId).subscribe({
+      next: (problems) => {
+        this.problems = problems;
+      },
+      error: (error) => {
+        console.error('Error loading problems:', error);
+      },
+    });
+  }
+
+  /** Load plant details from server */
+  fetchPlantDetails(plantId: number): void {
+    this.loading = true;
+
+    this.plantService.getPlantWithDetails(plantId).subscribe({
       next: (data) => {
         if (!data) {
           console.error('No plant details received');
@@ -54,23 +78,21 @@ export class PlantDetailComponent implements OnInit {
           return;
         }
 
-        console.log('Plant details received:', data);
         this.plant = data.plant;
-        this.plantDetails = data.plant;
         this.plantType = data.plantType;
         this.careLogs = data.careLogs;
 
-        // Last watering
+        // Find last watering log
         const waterLogs = this.careLogs
-          ?.filter((log) => log.type?.toLowerCase() === 'water')
+          ?.filter((log) => log.action?.toLowerCase() === 'water')
           ?.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
         this.lastWatering = waterLogs?.[0];
 
-        // Last fertilizing
+        // Find last fertilizing log
         const fertilizerLogs = this.careLogs
-          ?.filter((log) => log.type?.toLowerCase() === 'fertilizer')
+          ?.filter((log) => log.action?.toLowerCase() === 'fertilizer')
           ?.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
@@ -98,9 +120,9 @@ export class PlantDetailComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+      if (result && this.plant.id) {
         console.log('Problem logged:', result);
-        this.ngOnInit(); // Refresh the details after problem is logged
+        this.loadProblems(this.plant.id);
       }
     });
   }
