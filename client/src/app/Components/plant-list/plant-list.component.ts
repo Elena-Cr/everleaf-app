@@ -5,9 +5,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
-import { PlantDetailDialogComponent } from '../plant-detail-dialog/plant-detail-dialog.component';
 import {
   animate,
   state,
@@ -27,7 +26,6 @@ import {
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    MatDialogModule,
   ],
   animations: [
     trigger('fadeIn', [
@@ -45,8 +43,8 @@ export class PlantListComponent implements OnInit {
 
   constructor(
     private plantService: PlantService,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -81,11 +79,7 @@ export class PlantListComponent implements OnInit {
   }
 
   viewDetails(plant: Plant): void {
-    this.dialog.open(PlantDetailDialogComponent, {
-      data: plant,
-      width: '500px',
-      panelClass: 'plant-detail-dialog',
-    });
+    this.router.navigate(['/plants', plant.id]);
   }
 
   get currentPagePlants(): Plant[] {

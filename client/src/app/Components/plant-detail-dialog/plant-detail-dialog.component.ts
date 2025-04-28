@@ -1,57 +1,52 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-} from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
 import { PlantService } from '../../Services/plant.service';
+import { ProblemFormComponent } from '../problem-form/problem-form.component';
 
 @Component({
-  selector: 'app-plant-detail-dialog',
+  selector: 'app-plant-detail',
   templateUrl: './plant-detail-dialog.component.html',
   styleUrls: ['./plant-detail-dialog.component.css'],
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
   ],
 })
-export class PlantDetailDialogComponent implements OnInit {
+export class PlantDetailComponent implements OnInit {
   loading = true;
   plantDetails: any;
   plantType: any;
   careLogs: any[] = [];
   lastWatering: any;
   lastFertilizing: any;
+  plant!: Plant;
 
   constructor(
-    public dialogRef: MatDialogRef<PlantDetailDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public plant: Plant,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.loadPlantDetails();
-  }
-
-  loadPlantDetails() {
-    if (!this.plant?.id) {
-      console.error('No plant ID provided');
-      this.loading = false;
+    const plantId = this.route.snapshot.paramMap.get('id');
+    if (!plantId) {
+      this.router.navigate(['/plants']);
       return;
     }
-
-    this.plantService.getPlantWithDetails(this.plant.id).subscribe({
+    this.plantService.getPlantWithDetails(Number(plantId)).subscribe({
       next: (data) => {
         if (!data) {
           console.error('No plant details received');
@@ -60,11 +55,12 @@ export class PlantDetailDialogComponent implements OnInit {
         }
 
         console.log('Plant details received:', data);
+        this.plant = data.plant;
         this.plantDetails = data.plant;
         this.plantType = data.plantType;
         this.careLogs = data.careLogs;
 
-        // Filter and sort water logs
+        // Last watering
         const waterLogs = this.careLogs
           ?.filter((log) => log.type?.toLowerCase() === 'water')
           ?.sort(
@@ -72,7 +68,7 @@ export class PlantDetailDialogComponent implements OnInit {
           );
         this.lastWatering = waterLogs?.[0];
 
-        // Filter and sort fertilizer logs
+        // Last fertilizing
         const fertilizerLogs = this.careLogs
           ?.filter((log) => log.type?.toLowerCase() === 'fertilizer')
           ?.sort(
@@ -89,7 +85,23 @@ export class PlantDetailDialogComponent implements OnInit {
     });
   }
 
+  /** Navigate back to plant list */
   close(): void {
-    this.dialogRef.close();
+    this.router.navigate(['/plants']);
+  }
+
+  /** Open the Log Problem Form */
+  openLogProblemDialog(): void {
+    const dialogRef = this.dialog.open(ProblemFormComponent, {
+      width: '500px',
+      data: this.plant.id,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Problem logged:', result);
+        this.ngOnInit(); // Refresh the details after problem is logged
+      }
+    });
   }
 }

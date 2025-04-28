@@ -38,9 +38,17 @@ export class AppComponent {
   }
 
   openAddPlantDialog() {
-    this.dialog.open(PlantFormComponent, {
+    const dialogRef = this.dialog.open(PlantFormComponent, {
       width: '500px',
       panelClass: 'plant-detail-dialog',
+    });
+
+    // When the dialog closes with a 'true' result, reload the plant list
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        // Trigger a refresh by setting the current user ID again
+        this.plantService.setCurrentUserId(this.plantService.currentUserId);
+      }
     });
   }
 }

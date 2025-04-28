@@ -1,41 +1,77 @@
-.detail-card {
-  min-width: 300px;
-  max-width: 600px;
+.page-content {
+  padding: 2rem;
+  max-width: 800px;
   margin: 0 auto;
-  border-radius: 12px;
 }
 
-.dialog-content {
-  padding: 24px;
+.detail-card {
+  border-radius: 16px;
+  overflow: hidden;
 }
 
-.detail-row {
+mat-card-header {
+  text-align: center;
+  border-bottom: 1px solid var(--primary-lighter);
+  padding-bottom: 16px;
+}
+
+.plant-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.plant-image-container {
+  width: 100%;
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  gap: 16px;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: rgba(200, 230, 201, 0.1);
+  justify-content: center;
+  background-color: #e9f7ec;
+  padding: 24px 0;
+  border-radius: 12px;
+  margin-bottom: 24px;
 }
 
-.care-info {
+.plant-detail-image {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+}
+
+mat-card-content {
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 20px;
 }
 
-.care-info strong {
+.detail-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(200, 230, 201, 0.2);
+  padding: 16px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.detail-section:hover {
+  background: rgba(200, 230, 201, 0.3);
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1rem;
+}
+
+.section-content strong {
   color: var(--primary-color);
-  font-weight: 500;
 }
 
-.last-care {
-  font-size: 0.9em;
+.last-action {
+  font-size: 0.9rem;
   color: #666;
-  margin-left: 4px;
-  font-style: italic;
+  margin-top: 4px;
 }
 
 .loading-state {
@@ -59,19 +95,14 @@
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: var(--warn-color) !important;
+  color: var(--warn-color);
 }
 
-mat-card-content {
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin-top: 24px;
-}
-
-mat-card-header {
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--primary-lighter);
-  padding-bottom: 16px;
-}
-
-:host ::ng-deep .mat-mdc-card-header-text {
-  flex: 1;
 }

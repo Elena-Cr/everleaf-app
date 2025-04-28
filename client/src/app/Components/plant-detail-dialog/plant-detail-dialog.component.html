@@ -1,11 +1,21 @@
-<mat-dialog-content class="dialog-content">
+<div class="page-content">
   <mat-card class="detail-card">
     <mat-card-header>
-      <mat-card-title>{{ plant.name }}</mat-card-title>
-      <mat-card-subtitle *ngIf="plant.nickname">{{
-        plant.nickname
+      <mat-card-title class="plant-title">{{
+        plant?.nickname || plant?.name
+      }}</mat-card-title>
+      <mat-card-subtitle *ngIf="plant?.name && plant?.nickname">{{
+        plant.name
       }}</mat-card-subtitle>
     </mat-card-header>
+
+    <div class="plant-image-container">
+      <img
+        src="assets/images/plant_picture.png"
+        alt="Plant Image"
+        class="plant-detail-image"
+      />
+    </div>
 
     <mat-card-content>
       <div *ngIf="loading" class="loading-state">
@@ -14,46 +24,45 @@
 
       <div *ngIf="!loading && plantType">
         <!-- Plant Type Info -->
-        <div class="detail-row">
+        <div class="detail-section">
           <mat-icon>eco</mat-icon>
-          <div class="care-info">
+          <div class="section-content">
             <strong>Scientific Name:</strong> {{ plantType.scientificName }}
           </div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-section">
           <mat-icon>water_drop</mat-icon>
-          <div class="care-info">
+          <div class="section-content">
             <strong>Watering:</strong> Every
             {{ plantType.wateringFrequencyDays }} days
-            <span class="last-care" *ngIf="lastWatering">
+            <div class="last-action" *ngIf="lastWatering">
               Last watered: {{ lastWatering.date | date }}
-            </span>
+            </div>
           </div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-section">
           <mat-icon>local_florist</mat-icon>
-          <div class="care-info">
+          <div class="section-content">
             <strong>Fertilizing:</strong> Every
             {{ plantType.fertilizingFrequencyDays }} days
-            <span class="last-care" *ngIf="lastFertilizing">
+            <div class="last-action" *ngIf="lastFertilizing">
               Last fertilized: {{ lastFertilizing.date | date }}
-            </span>
+            </div>
           </div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-section">
           <mat-icon>wb_sunny</mat-icon>
-          <div class="care-info">
+          <div class="section-content">
             <strong>Sunlight Needs:</strong> {{ plantType.sunlightNeeds }}
           </div>
         </div>
 
-        <!-- Date Added -->
-        <div class="detail-row">
+        <div class="detail-section">
           <mat-icon>calendar_today</mat-icon>
-          <div class="care-info">
+          <div class="section-content">
             <strong>Added to Garden:</strong> {{ plant.dateAdded | date }}
           </div>
         </div>
@@ -64,9 +73,16 @@
         <p>Could not load plant details.</p>
       </div>
     </mat-card-content>
-  </mat-card>
-</mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Close</button>
-</mat-dialog-actions>
+    <div class="action-buttons">
+      <button mat-button (click)="close()">Back to Plants</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openLogProblemDialog()"
+      >
+        ➕ Log Problem
+      </button>
+    </div>
+  </mat-card>
+</div>
