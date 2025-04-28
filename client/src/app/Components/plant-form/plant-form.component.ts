@@ -112,18 +112,33 @@ export class PlantFormComponent implements OnInit {
       const plantData = this.plantForm.value;
       const selectedPlantType = plantData.plantType as PlantType;
 
+      // // Log the selected plant type for debugging
+      // console.log('Selected plant type:', selectedPlantType);
+
+      // Get the plant type ID and name
+      const speciesId = selectedPlantType?.Id ?? selectedPlantType?.id;
+      const commonName =
+        selectedPlantType?.CommonName ?? selectedPlantType?.commonName;
+
+      if (!speciesId) {
+        console.error('No valid plant type ID found:', selectedPlantType);
+        this.error = 'Invalid plant type selected';
+        return;
+      }
+
       const transformedData = {
-        Name: plantData.name,
-        Species: selectedPlantType.Id,
+        Name: commonName, // Use the plant type's common name as Name
+        Nickname: plantData.name, // Use the user's input as Nickname
+        Species: Number(speciesId),
         DateAdded: this.toLocalDate(plantData.plantedDate),
         UserId: this.plantService.currentUserId,
       };
 
-      console.log('Sending transformed data to server:', transformedData);
+      // console.log('Sending transformed data to server:', transformedData);
 
       this.plantService.savePlant(transformedData).subscribe({
         next: (response) => {
-          console.log('Plant saved successfully:', response);
+          // console.log('Plant saved successfully:', response);
           this.snackBar.open('✅ Plant added successfully!', 'Close', {
             duration: 3000,
           });
