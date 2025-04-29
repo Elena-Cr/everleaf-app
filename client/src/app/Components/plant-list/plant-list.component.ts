@@ -19,6 +19,7 @@ import {
 } from '@angular/animations';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { PlantDashboardComponent } from '../plant-dashboard/plant-dashboard.component';
 
 @Component({
   selector: 'app-plant-list',
@@ -33,6 +34,7 @@ import { takeUntil } from 'rxjs/operators';
     MatSnackBarModule,
     MatDialogModule,
     RouterModule,
+    PlantDashboardComponent,
   ],
   animations: [
     trigger('fadeIn', [

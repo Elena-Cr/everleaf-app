@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { PlantListComponent } from './Components/plant-list/plant-list.component';
 import { PlantDetailComponent } from './Components/plant-detail-dialog/plant-detail-dialog.component';
+import { PlantDashboardComponent } from './Components/plant-dashboard/plant-dashboard.component';
 
 export const routes: Routes = [
   { path: 'plants', component: PlantListComponent },
