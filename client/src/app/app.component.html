@@ -1,13 +1,23 @@
-<!-- Top Navigation Bar -->
+<!-- Top Navbar -->
 <nav class="navbar">
   <div class="navbar-logo">🌿 Everleaf</div>
 
   <div class="navbar-user">
-    <mat-icon>account_circle</mat-icon>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <span>{{ currentUserName }}</span>
+
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="selectUser(1)">Alice</button>
+      <button mat-menu-item (click)="selectUser(2)">Bob</button>
+      <button mat-menu-item (click)="selectUser(3)">Charlie</button>
+      <button mat-menu-item (click)="selectUser(4)">Dave</button>
+    </mat-menu>
   </div>
 </nav>
 
-<!-- Main Page Content -->
+<!-- Plant List -->
 <div class="container">
   <router-outlet></router-outlet>
 </div>

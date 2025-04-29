@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlantDetailDialogComponent } from './plant-detail-dialog.component';
+import { PlantDetailComponent } from './plant-detail-dialog.component';
 
 describe('PlantDetailDialogComponent', () => {
-  let component: PlantDetailDialogComponent;
-  let fixture: ComponentFixture<PlantDetailDialogComponent>;
+  let component: PlantDetailComponent;
+  let fixture: ComponentFixture<PlantDetailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlantDetailDialogComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(PlantDetailDialogComponent);
+      imports: [PlantDetailComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PlantDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

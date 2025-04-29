@@ -42,7 +42,7 @@ namespace Everleaf.Model.Repositories
 
         public List<PlantType> GetAllPlantType()
         {
-            Console.WriteLine("Getting all plant types");
+            Console.WriteLine("Getting all plant types from database");
             var types = new List<PlantType>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
@@ -59,11 +59,11 @@ namespace Everleaf.Model.Repositories
                     FertilizingFrequencyDays = Convert.ToInt32(data["fertilizingfrequencydays"]),
                     SunlightNeeds = data["sunlightneeds"].ToString()
                 };
-                Console.WriteLine($"Found plant type: {plantType.CommonName} (ID: {plantType.Id})");
+                Console.WriteLine($"Found plant type in DB: ID={plantType.Id}, CommonName={plantType.CommonName}, ScientificName={plantType.ScientificName}");
                 types.Add(plantType);
             }
 
-            Console.WriteLine($"Total plant types found: {types.Count}");
+            Console.WriteLine($"Total plant types found in DB: {types.Count}");
             return types;
         }
 

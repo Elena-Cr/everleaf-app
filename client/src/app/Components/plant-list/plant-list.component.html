@@ -16,6 +16,17 @@
   </mat-card>
 </div>
 
+<!-- Dashboard Top Section -->
+<div class="dashboard-header">
+  <h1>My Plants</h1>
+  <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
+    <mat-icon>add</mat-icon>
+    Add Plant
+  </button>
+</div>
+
+<hr class="dashboard-divider" />
+
 <!-- Main Plant Grid -->
 <div class="plants-container" *ngIf="plants.length > 0 && !loading && !error">
   <!-- Left Navigation Button -->
@@ -37,9 +48,18 @@
       class="plant-card"
       [@fadeIn]
     >
-      <!-- Image -->
+      <!-- Image with Care Log Button -->
       <div class="plant-image">
         <img src="assets/images/plant_picture.png" alt="Plant image" />
+        <button
+          mat-mini-fab
+          class="care-log-button"
+          color="primary"
+          (click)="openCareLogDialog(plant)"
+          aria-label="Add care log"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
       </div>
 
       <!-- Card Header (nickname and species) -->

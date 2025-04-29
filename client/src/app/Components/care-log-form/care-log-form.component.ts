@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CareLogService } from '../../Services/carelog.service';
 import { CareLog } from '../../Models/care-log';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -37,6 +38,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
+    MatSnackBarModule,
   ],
   templateUrl: './care-log-form.component.html',
   styleUrls: ['./care-log-form.component.css'],
@@ -49,23 +51,22 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   ],
 })
 export class CareLogFormComponent implements OnInit {
-  @Input() plantId!: number;
-
   careLogForm!: FormGroup;
   statusMessage = '';
 
   constructor(
     private fb: FormBuilder,
     private careLogService: CareLogService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<CareLogFormComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: { plantId: number }
   ) {}
 
   ngOnInit(): void {
     this.careLogForm = this.fb.group({
       type: ['', Validators.required],
-      date: [new Date(), Validators.required], //set current date
-      notes: [''],
-      plantId: [this.plantId, Validators.required],
+      date: [new Date(), Validators.required],
+      plantId: [this.data.plantId, Validators.required],
     });
   }
 
@@ -90,12 +91,7 @@ export class CareLogFormComponent implements OnInit {
           this.snackBar.open('✅ Care log submitted!', 'Close', {
             duration: 3000,
           });
-          this.careLogForm.reset({
-            type: '',
-            date: new Date(),
-            notes: '',
-            plantId: this.plantId,
-          });
+          this.dialogRef.close(true);
         },
         error: () => {
           this.snackBar.open('❌ Failed to submit care log.', 'Close', {

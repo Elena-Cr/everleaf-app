@@ -6,9 +6,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
-import { PlantDetailDialogComponent } from '../plant-detail-dialog/plant-detail-dialog.component';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { PlantFormComponent } from '../plant-form/plant-form.component';
+import { CareLogFormComponent } from '../care-log-form/care-log-form.component';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-plant-list',
@@ -25,10 +33,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
   animations: [
     trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('300ms', style({ opacity: 1 })),
-      ]),
+      state('void', style({ opacity: 0 })),
+      transition(':enter', [animate('300ms ease-in')]),
     ]),
   ],
 })
@@ -38,26 +44,62 @@ export class PlantListComponent implements OnInit {
   error: string | null = null;
   currentPage = 0;
   pageSize = 3;
+  currentUserName: string = '';
 
   constructor(
     private plantService: PlantService,
+    private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadPlants();
+    // Listen to user changes and reload plants
+    this.plantService.currentUser$.subscribe(
+      (user: { id: number; name: string }) => {
+        console.log('User changed, loading plants for user:', user.id);
+        this.currentUserName = user.name;
+        this.loadPlants(user.id);
+      }
+    );
   }
 
-  loadPlants(): void {
+  openAddPlantDialog(): void {
+    const dialogRef = this.dialog.open(PlantFormComponent, {
+      width: '500px',
+      data: { mode: 'add' },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadPlants(this.plantService.currentUserId);
+      }
+    });
+  }
+
+  /** Open care log dialog */
+  openCareLogDialog(plant: Plant): void {
+    const dialogRef = this.dialog.open(CareLogFormComponent, {
+      width: '500px',
+      data: { plantId: plant.id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadPlants(this.plantService.currentUserId);
+      }
+    });
+  }
+
+  loadPlants(userId: number): void {
     this.loading = true;
     this.error = null;
 
-    this.plantService.getPlants().subscribe({
+    this.plantService.getPlants(userId).subscribe({
       next: (data) => {
         this.plants = data;
         this.loading = false;
-        this.currentPage = 0; // Reset page to first when new plants load
+        this.currentPage = 0; // reset to page 0 when user changes
       },
       error: (error) => {
         console.error('Error fetching plants:', error);
@@ -71,22 +113,17 @@ export class PlantListComponent implements OnInit {
   }
 
   viewDetails(plant: Plant): void {
-    this.dialog.open(PlantDetailDialogComponent, {
-      data: plant,
-      width: '500px',
-      panelClass: 'plant-detail-dialog',
-    });
+    this.router.navigate(['/plants', plant.id]);
   }
 
   get currentPagePlants(): Plant[] {
-    if (!this.plants.length) return [];
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;
     return this.plants.slice(start, end);
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.plants.length / this.pageSize));
+    return Math.ceil(this.plants.length / this.pageSize);
   }
 
   nextPage(): void {

@@ -1,43 +1,93 @@
-.detail-card {
-  min-width: 300px;
-  max-width: 600px;
+/* --- Full Page Layout --- */
+.plant-details-page {
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
-  border-radius: 12px;
-}
-
-.dialog-content {
-  padding: 24px;
-}
-
-.detail-row {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 20px;
-  gap: 16px;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: rgba(200, 230, 201, 0.1);
-}
-
-.care-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 2rem;
 }
 
-.care-info strong {
+/* --- Top Header (Back + Log Problem Buttons) --- */
+.plant-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- Main Plant Content (Image + Info) --- */
+.plant-main-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Left: Plant Image --- */
+.plant-image-wrapper {
+  background-color: #e9f7ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.plant-detail-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* --- Right: Plant Info --- */
+.plant-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.plant-title {
+  font-size: 2.5rem;
+  font-weight: 700;
   color: var(--primary-color);
-  font-weight: 500;
+  margin-bottom: 0.25rem;
 }
 
-.last-care {
-  font-size: 0.9em;
-  color: #666;
-  margin-left: 4px;
-  font-style: italic;
+.plant-subtitle {
+  font-size: 1.2rem;
+  color: gray;
+  margin-bottom: 1.5rem;
 }
 
+.plant-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+}
+
+.plant-info-label {
+  background: rgba(200, 230, 201, 0.3);
+  padding: 0.75rem;
+  font-weight: bold;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plant-info-value {
+  background: rgba(200, 230, 201, 0.15);
+  padding: 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+}
+
+/* --- Loading State --- */
 .loading-state {
   display: flex;
   justify-content: center;
@@ -45,33 +95,170 @@
   min-height: 200px;
 }
 
+/* --- Error State --- */
 .error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  min-height: 200px;
+  text-align: center;
+  padding: 2rem;
   color: var(--warn-color);
 }
 
-.error-state mat-icon {
-  font-size: 48px;
-  width: 48px;
-  height: 48px;
-  color: var(--warn-color) !important;
+/* --- Problems Section --- */
+.problems-section {
+  margin-top: 2rem;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-mat-card-content {
-  margin-top: 24px;
+.problem-list {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-mat-card-header {
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--primary-lighter);
-  padding-bottom: 16px;
+.problem-header {
+  font-weight: bold;
+  background: rgba(200, 230, 201, 0.5);
+  padding: 0.8rem;
+  text-align: center;
+  border-radius: 8px;
 }
 
-:host ::ng-deep .mat-mdc-card-header-text {
-  flex: 1;
+.problem-cell {
+  background: rgba(200, 230, 201, 0.15);
+  padding: 0.8rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Severity Coloring */
+.severity.low mat-icon,
+.severity.low {
+  color: green;
+}
+
+.severity.medium mat-icon,
+.severity.medium {
+  color: orange;
+}
+
+.severity.high mat-icon,
+.severity.high {
+  color: red;
+}
+
+/* Hover Effect */
+.problem-cell:hover {
+  background: rgba(200, 230, 201, 0.25);
+  cursor: default;
+}
+
+.no-problems {
+  margin-top: 1rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+.plant-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.plant-actions button {
+  text-transform: none;
+  font-weight: 600;
+}
+/* --- Care Logs Section --- */
+.carelogs-section {
+  margin-top: 2rem;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1rem;
+}
+
+.carelogs-section h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.carelog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.carelog-category {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.carelog-category h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.carelog-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.carelog-item:last-child {
+  border-bottom: none;
+}
+
+.no-logs-text {
+  color: #777;
+  font-style: italic;
+}
+
+.no-carelogs {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+}
+
+.carelog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 1rem;
+}
+
+.carelog-header h3 {
+  margin: 0;
+}
+
+.carelog-header button {
+  margin-left: 12px;
+  background-color: white !important;
+}
+
+.carelog-header button:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+.plant-details-header button:nth-child(2) mat-icon {
+  color: white !important;
+  font-size: 2.4rem !important;
+  width: 2.4rem !important;
+  height: 2.4rem !important;
+}
+
+/* --- Buttons Global Styling --- */
+button[mat-button],
+button[mat-raised-button] {
+  text-transform: none;
+  font-weight: 600;
 }

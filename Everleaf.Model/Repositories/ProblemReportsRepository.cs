@@ -85,6 +85,29 @@ namespace Everleaf.Model.Repositories
             return reports;
         }
 
+        public List<ProblemReport> GetReportsByPlantId(int plantId)
+        {
+            var reports = new List<ProblemReport>();
+            using var dbConn = new NpgsqlConnection(ConnectionString);
+            var cmd = dbConn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM ProblemReport WHERE plantid = @plantId ORDER BY datereported DESC";
+            cmd.Parameters.AddWithValue("@plantId", NpgsqlDbType.Integer, plantId);
+
+            var data = GetData(dbConn, cmd);
+            while (data.Read())
+            {
+                reports.Add(new ProblemReport(Convert.ToInt32(data["id"]))
+                {
+                    PlantId = Convert.ToInt32(data["plantid"]),
+                    DateReported = Convert.ToDateTime(data["datereported"]),
+                    Description = data["description"].ToString(),
+                    Severity = data["severity"].ToString()
+                });
+            }
+
+            return reports;
+        }
+
         public bool InsertReport(ProblemReport report)
         {
             using var dbConn = new NpgsqlConnection(ConnectionString);

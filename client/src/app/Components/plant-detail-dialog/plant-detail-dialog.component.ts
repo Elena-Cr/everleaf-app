@@ -1,64 +1,95 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  MatDialogRef,
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-} from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
 import { PlantService } from '../../Services/plant.service';
+import { ProblemService } from '../../Services/problem.service';
+import { ProblemFormComponent } from '../problem-form/problem-form.component';
+import { ProblemReport } from '../../Models/problem-reports';
+import { PlantFormComponent } from '../plant-form/plant-form.component';
+import { CareLogService } from '../../Services/carelog.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-plant-detail-dialog',
+  selector: 'app-plant-detail',
   templateUrl: './plant-detail-dialog.component.html',
   styleUrls: ['./plant-detail-dialog.component.css'],
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
     MatButtonModule,
     MatIconModule,
     MatCardModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
   ],
 })
-export class PlantDetailDialogComponent implements OnInit {
+export class PlantDetailComponent implements OnInit {
   loading = true;
-  plantDetails: any;
+  plant!: Plant;
   plantType: any;
   careLogs: any[] = [];
   lastWatering: any;
   lastFertilizing: any;
+  problems: ProblemReport[] = [];
+  wateringLogs: any[] = [];
+  fertilizerLogs: any[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<PlantDetailDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public plant: Plant,
-    private plantService: PlantService
+    private plantService: PlantService,
+    private problemService: ProblemService,
+    private careLogService: CareLogService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
-  ngOnInit() {
-    this.loadPlantDetails();
-  }
-
-  loadPlantDetails() {
-    if (!this.plant?.id) {
-      console.error('No plant ID provided');
-      this.loading = false;
+  ngOnInit(): void {
+    const plantId = Number(this.route.snapshot.paramMap.get('id'));
+    if (!plantId) {
+      this.router.navigate(['/plants']);
       return;
     }
 
-    this.plantService.getPlantWithDetails(this.plant.id).subscribe({
+    this.fetchPlantDetails(plantId);
+    this.loadProblems(plantId);
+  }
+
+  /** Load problems for the plant */
+  loadProblems(plantId: number): void {
+    this.problemService.getProblemsByPlant(plantId).subscribe({
+      next: (problems) => {
+        this.problems = problems;
+      },
+      error: (error) => {
+        console.error('Error loading problems:', error);
+      },
+    });
+  }
+
+  /** Load plant details from server */
+  fetchPlantDetails(plantId: number): void {
+    this.loading = true;
+
+    this.plantService.getPlantWithDetails(plantId).subscribe({
       next: (data) => {
-        console.log('Plant details received:', data);
-        this.plantDetails = data.plant;
+        if (!data) {
+          console.error('No plant details received');
+          this.loading = false;
+          return;
+        }
+
+        this.plant = data.plant;
         this.plantType = data.plantType;
         this.careLogs = data.careLogs;
 
-        // Filter and sort water logs
+        // Find last watering log
         const waterLogs = this.careLogs
           ?.filter((log) => log.type?.toLowerCase() === 'water')
           ?.sort(
@@ -66,13 +97,17 @@ export class PlantDetailDialogComponent implements OnInit {
           );
         this.lastWatering = waterLogs?.[0];
 
-        // Filter and sort fertilizer logs
+        // Find last fertilizing log
         const fertilizerLogs = this.careLogs
           ?.filter((log) => log.type?.toLowerCase() === 'fertilizer')
           ?.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
         this.lastFertilizing = fertilizerLogs?.[0];
+
+        // Separate logs by type for display
+        this.wateringLogs = waterLogs || [];
+        this.fertilizerLogs = fertilizerLogs || [];
 
         this.loading = false;
       },
@@ -83,7 +118,105 @@ export class PlantDetailDialogComponent implements OnInit {
     });
   }
 
+  /** Navigate back to plant list */
   close(): void {
-    this.dialogRef.close();
+    this.router.navigate(['/plants']);
+  }
+
+  /** Open the Log Problem Form */
+  openLogProblemDialog(): void {
+    const dialogRef = this.dialog.open(ProblemFormComponent, {
+      width: '500px',
+      data: this.plant.id,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && this.plant.id) {
+        console.log('Problem logged:', result);
+        this.loadProblems(this.plant.id);
+      }
+    });
+  }
+  /** Edit Plant */
+  editPlant(): void {
+    const dialogRef = this.dialog.open(PlantFormComponent, {
+      width: '500px',
+      data: {
+        mode: 'edit', // Pass edit mode
+        plant: this.plant, // Pass existing plant data
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Plant updated:', result);
+        this.ngOnInit(); // Refresh plant details
+      }
+    });
+  }
+
+  /** Delete Plant */
+  deletePlant(): void {
+    if (confirm('Are you sure you want to delete this plant?')) {
+      this.plantService.deletePlant(Number(this.plant.id)).subscribe({
+        next: () => {
+          console.log('Plant deleted successfully.');
+          this.router.navigate(['/plants']); // Redirect after delete
+        },
+        error: (error) => {
+          console.error('Error deleting plant:', error);
+        },
+      });
+    }
+  }
+
+  /** Quick action to add a watering log */
+  addWateringLog(): void {
+    if (!this.plant?.id) return;
+
+    const careLog = {
+      type: 'Water',
+      date: new Date().toISOString(),
+      plantId: this.plant.id,
+    };
+
+    this.careLogService.createCareLog(careLog).subscribe({
+      next: () => {
+        this.snackBar.open('✅ Watering logged!', 'Close', { duration: 3000 });
+        this.fetchPlantDetails(this.plant.id!);
+      },
+      error: (error) => {
+        console.error('Error logging watering:', error);
+        this.snackBar.open('❌ Failed to log watering', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  /** Quick action to add a fertilizing log */
+  addFertilizingLog(): void {
+    if (!this.plant?.id) return;
+
+    const careLog = {
+      type: 'Fertilizer',
+      date: new Date().toISOString(),
+      plantId: this.plant.id,
+    };
+
+    this.careLogService.createCareLog(careLog).subscribe({
+      next: () => {
+        this.snackBar.open('✅ Fertilizing logged!', 'Close', {
+          duration: 3000,
+        });
+        this.fetchPlantDetails(this.plant.id!);
+      },
+      error: (error) => {
+        console.error('Error logging fertilizing:', error);
+        this.snackBar.open('❌ Failed to log fertilizing', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 }
