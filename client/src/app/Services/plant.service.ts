@@ -1,19 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {
-  Observable,
-  BehaviorSubject,
-  of,
-  forkJoin,
-  switchMap,
-  catchError,
-  tap,
-  retry,
-  map,
-} from 'rxjs';
+import { BehaviorSubject, Observable, of, forkJoin } from 'rxjs';
+import { catchError, tap, retry, switchMap, delay, map } from 'rxjs/operators';
 import { Plant } from '../Models/plant';
 import { PlantType } from '../Models/plant-type';
-import { ProblemReport } from '../Models/problem-reports';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +28,10 @@ export class PlantService {
     name: 'Bob',
   });
 
-  currentUser$ = this.currentUserSubject.asObservable();
+  currentUser$ = this.currentUserSubject.asObservable().pipe(
+    // Add a small delay to ensure routing completes
+    delay(100)
+  );
 
   constructor(private http: HttpClient) {}
 
@@ -46,8 +39,11 @@ export class PlantService {
   setCurrentUserId(userId: number) {
     const user = this.users.find((u) => u.id === userId);
     if (user) {
-      this.currentUserSubject.next(user);
-      console.log('Switched to user:', user);
+      // Execute on next tick to avoid immediate state update
+      setTimeout(() => {
+        this.currentUserSubject.next(user);
+        console.log('Switched to user:', user);
+      }, 0);
     }
   }
 
@@ -71,9 +67,9 @@ export class PlantService {
           console.log('First plant type:', types[0]);
         }
       }),
-      map((types) => {
+      map((types: any[]) => {
         // Ensure proper casing of properties
-        return types.map((type) => ({
+        return types.map((type: any) => ({
           ...type,
           commonName: type.CommonName || type.commonName,
           scientificName: type.ScientificName || type.scientificName,
@@ -84,19 +80,6 @@ export class PlantService {
           sunlightNeeds: type.SunlightNeeds || type.sunlightNeeds,
           id: type.Id || type.id,
         }));
-      }),
-      retry(1),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error fetching plant types:', error);
-        if (error.status === 0) {
-          throw new Error(
-            'Server is unreachable. Please ensure the server is running.'
-          );
-        } else if (error.status === 404) {
-          throw new Error('No plant types found.');
-        } else {
-          throw new Error(error.error?.message || 'Unknown server error.');
-        }
       })
     );
   }
@@ -225,17 +208,6 @@ export class PlantService {
       tap((response) => console.log('Plant deleted:', response)),
       catchError(this.handleError(`deleting plant ${id}`))
     );
-  }
-
-  /** Fetch problems for a specific plant */
-  getPlantProblems(plantId: number): Observable<ProblemReport[]> {
-    console.log('Fetching problems for plant ID:', plantId);
-    return this.http
-      .get<ProblemReport[]>(`${this.baseUrl}/problemreport/plant/${plantId}`)
-      .pipe(
-        tap((problems) => console.log('Problems received:', problems)),
-        catchError(this.handleError(`fetching problems for plant ${plantId}`))
-      );
   }
 
   /** Centralized error handler */

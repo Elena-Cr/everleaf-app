@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PlantService } from '../../Services/plant.service';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Plant } from '../../Models/plant';
 import { PlantFormComponent } from '../plant-form/plant-form.component';
 import { CareLogFormComponent } from '../care-log-form/care-log-form.component';
@@ -17,6 +17,8 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-plant-list',
@@ -30,6 +32,7 @@ import {
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
+    RouterModule,
   ],
   animations: [
     trigger('fadeIn', [
@@ -38,13 +41,14 @@ import {
     ]),
   ],
 })
-export class PlantListComponent implements OnInit {
+export class PlantListComponent implements OnInit, OnDestroy {
   plants: Plant[] = [];
   loading: boolean = true;
   error: string | null = null;
   currentPage = 0;
   pageSize = 3;
   currentUserName: string = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private plantService: PlantService,
@@ -55,13 +59,22 @@ export class PlantListComponent implements OnInit {
 
   ngOnInit(): void {
     // Listen to user changes and reload plants
-    this.plantService.currentUser$.subscribe(
-      (user: { id: number; name: string }) => {
+    this.plantService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (user: { id: number; name: string }) => {
         console.log('User changed, loading plants for user:', user.id);
         this.currentUserName = user.name;
         this.loadPlants(user.id);
-      }
-    );
+      },
+      error: (error) => {
+        console.error('Error in user subscription:', error);
+        this.error = 'Failed to load user data';
+      },
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   openAddPlantDialog(): void {
@@ -70,49 +83,62 @@ export class PlantListComponent implements OnInit {
       data: { mode: 'add' },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadPlants(this.plantService.currentUserId);
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        if (result) {
+          this.loadPlants(this.plantService.currentUserId);
+        }
+      });
   }
 
-  /** Open care log dialog */
   openCareLogDialog(plant: Plant): void {
     const dialogRef = this.dialog.open(CareLogFormComponent, {
       width: '500px',
       data: { plantId: plant.id },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadPlants(this.plantService.currentUserId);
-      }
-    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result) => {
+        if (result) {
+          this.loadPlants(this.plantService.currentUserId);
+        }
+      });
   }
 
   loadPlants(userId: number): void {
     this.loading = true;
     this.error = null;
 
-    this.plantService.getPlants(userId).subscribe({
-      next: (data) => {
-        this.plants = data;
-        this.loading = false;
-        this.currentPage = 0; // reset to page 0 when user changes
-      },
-      error: (error) => {
-        console.error('Error fetching plants:', error);
-        this.error = 'Failed to load plants. Please try again later.';
-        this.loading = false;
-        this.snackBar.open('❌ Failed to load plants', 'Close', {
-          duration: 3000,
-        });
-      },
-    });
+    this.plantService
+      .getPlants(userId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.plants = data;
+          this.loading = false;
+          this.currentPage = 0;
+        },
+        error: (error) => {
+          console.error('Error fetching plants:', error);
+          this.error = 'Failed to load plants. Please try again later.';
+          this.loading = false;
+          this.snackBar.open('❌ Failed to load plants', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
   }
 
   viewDetails(plant: Plant): void {
+    if (!plant || !plant.id) {
+      console.error('Invalid plant for navigation');
+      return;
+    }
+
     this.router.navigate(['/plants', plant.id]);
   }
 
