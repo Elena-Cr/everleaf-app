@@ -7,8 +7,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4rem;
-  padding: 4rem;
+  gap: 3rem;
+  padding: 3rem;
   max-width: 200rem;
   margin: 0 auto;
 }
@@ -17,7 +17,7 @@ html {
 .plants-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(38rem, 1fr));
-  gap: 4rem;
+  gap: 3rem;
   width: 100%;
   max-width: 180rem;
   padding: 0 2.4rem;
@@ -34,7 +34,7 @@ html {
   background: #f9fcf9;
   border-radius: 2rem;
   overflow: hidden;
-  padding: 3.2rem 2rem;
+  padding: 2rem 1rem;
   box-shadow: 0 0.4rem 2rem rgba(0, 0, 0, 0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }

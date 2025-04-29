@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {
-  Observable,
-  BehaviorSubject,
-  of,
-  forkJoin,
-  switchMap,
-  catchError,
-  tap,
-  retry,
-  map,
-} from 'rxjs';
+import { BehaviorSubject, Observable, of, forkJoin } from 'rxjs';
+import { catchError, tap, retry, switchMap, delay, map } from 'rxjs/operators';
 import { Plant } from '../Models/plant';
 import { PlantType } from '../Models/plant-type';
-import { ProblemReport } from '../Models/problem-reports';
+
+interface PlantStatistics {
+  totalPlants: number;
+  plantsNeedingWater: number;
+  plantsNeedingFertilizer: number;
+  mostCommonIssue: string | null;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +35,10 @@ export class PlantService {
     name: 'Bob',
   });
 
-  currentUser$ = this.currentUserSubject.asObservable();
+  currentUser$ = this.currentUserSubject.asObservable().pipe(
+    // Add a small delay to ensure routing completes
+    delay(100)
+  );
 
   constructor(private http: HttpClient) {}
 
@@ -46,8 +46,11 @@ export class PlantService {
   setCurrentUserId(userId: number) {
     const user = this.users.find((u) => u.id === userId);
     if (user) {
-      this.currentUserSubject.next(user);
-      console.log('Switched to user:', user);
+      // Execute on next tick to avoid immediate state update
+      setTimeout(() => {
+        this.currentUserSubject.next(user);
+        console.log('Switched to user:', user);
+      }, 0);
     }
   }
 
@@ -71,9 +74,9 @@ export class PlantService {
           console.log('First plant type:', types[0]);
         }
       }),
-      map((types) => {
+      map((types: any[]) => {
         // Ensure proper casing of properties
-        return types.map((type) => ({
+        return types.map((type: any) => ({
           ...type,
           commonName: type.CommonName || type.commonName,
           scientificName: type.ScientificName || type.scientificName,
@@ -84,19 +87,6 @@ export class PlantService {
           sunlightNeeds: type.SunlightNeeds || type.sunlightNeeds,
           id: type.Id || type.id,
         }));
-      }),
-      retry(1),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error fetching plant types:', error);
-        if (error.status === 0) {
-          throw new Error(
-            'Server is unreachable. Please ensure the server is running.'
-          );
-        } else if (error.status === 404) {
-          throw new Error('No plant types found.');
-        } else {
-          throw new Error(error.error?.message || 'Unknown server error.');
-        }
       })
     );
   }
@@ -227,15 +217,102 @@ export class PlantService {
     );
   }
 
-  /** Fetch problems for a specific plant */
-  getPlantProblems(plantId: number): Observable<ProblemReport[]> {
-    console.log('Fetching problems for plant ID:', plantId);
+  /** Get statistics for plants */
+  getPlantStatistics(userId: number): Observable<PlantStatistics> {
+    return forkJoin({
+      plants: this.getPlants(userId),
+      plantTypes: this.getPlantTypes(),
+      careLogs: this.getAllCareLogs(userId),
+      problems: this.getAllProblems(userId),
+    }).pipe(
+      map(({ plants, plantTypes, careLogs, problems }) => {
+        const now = new Date();
+        const plantsWithTypes = plants.map((plant) => ({
+          ...plant,
+          plantType: plantTypes.find((pt) => pt.id === plant.species),
+        }));
+
+        // Calculate plants needing water
+        const plantsNeedingWater = plantsWithTypes.filter((plant) => {
+          const lastWatering = careLogs
+            .filter(
+              (log) =>
+                log.plantId === plant.id && log.type?.toLowerCase() === 'water'
+            )
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
+
+          if (!lastWatering || !plant.plantType?.wateringFrequencyDays)
+            return false;
+
+          const daysSinceWatering = Math.floor(
+            (now.getTime() - new Date(lastWatering.date).getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
+          return daysSinceWatering >= plant.plantType.wateringFrequencyDays;
+        });
+
+        // Calculate plants needing fertilizer
+        const plantsNeedingFertilizer = plantsWithTypes.filter((plant) => {
+          const lastFertilizing = careLogs
+            .filter(
+              (log) =>
+                log.plantId === plant.id &&
+                log.type?.toLowerCase() === 'fertilizer'
+            )
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
+
+          if (!lastFertilizing || !plant.plantType?.fertilizingFrequencyDays)
+            return false;
+
+          const daysSinceFertilizing = Math.floor(
+            (now.getTime() - new Date(lastFertilizing.date).getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
+          return (
+            daysSinceFertilizing >= plant.plantType.fertilizingFrequencyDays
+          );
+        });
+
+        // Calculate most common issue
+        const issueCount = problems.reduce((acc, problem) => {
+          acc[problem.issue] = (acc[problem.issue] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const sortedIssues = Object.entries(issueCount).sort(
+          ([, countA], [, countB]): number =>
+            (countB as number) - (countA as number)
+        );
+
+        const mostCommonIssue =
+          sortedIssues.length > 0 ? sortedIssues[0][0] : null;
+
+        return {
+          totalPlants: plants.length,
+          plantsNeedingWater: plantsNeedingWater.length,
+          plantsNeedingFertilizer: plantsNeedingFertilizer.length,
+          mostCommonIssue,
+        };
+      })
+    );
+  }
+
+  /** Get all care logs for a user */
+  private getAllCareLogs(userId: number): Observable<any[]> {
     return this.http
-      .get<ProblemReport[]>(`${this.baseUrl}/problemreport/plant/${plantId}`)
-      .pipe(
-        tap((problems) => console.log('Problems received:', problems)),
-        catchError(this.handleError(`fetching problems for plant ${plantId}`))
-      );
+      .get<any[]>(`${this.baseUrl}/carelog/user/${userId}`)
+      .pipe(catchError(() => of([])));
+  }
+
+  /** Get all problems for a user */
+  private getAllProblems(userId: number): Observable<any[]> {
+    return this.http
+      .get<any[]>(`${this.baseUrl}/problemreport/user/${userId}`)
+      .pipe(catchError(() => of([])));
   }
 
   /** Centralized error handler */
