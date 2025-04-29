@@ -16,6 +16,16 @@
   </mat-card>
 </div>
 
+<!-- Dashboard Top Section -->
+<div class="dashboard-header">
+  <h2>Hi, {{ currentUserName }}</h2>
+  <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
+    ➕ Add Plant
+  </button>
+</div>
+
+<hr class="dashboard-divider" />
+
 <!-- Main Plant Grid -->
 <div class="plants-container" *ngIf="plants.length > 0 && !loading && !error">
   <!-- Left Navigation Button -->

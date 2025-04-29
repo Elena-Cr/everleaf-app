@@ -12,6 +12,9 @@ import { ProblemService } from '../../Services/problem.service';
 import { ProblemFormComponent } from '../problem-form/problem-form.component';
 import { ProblemReport } from '../../Models/problem-reports';
 import { PlantFormComponent } from '../plant-form/plant-form.component';
+import { CareLogService } from '../../Services/carelog.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 @Component({
   selector: 'app-plant-detail',
   templateUrl: './plant-detail-dialog.component.html',
@@ -40,6 +43,8 @@ export class PlantDetailComponent implements OnInit {
   constructor(
     private plantService: PlantService,
     private problemService: ProblemService,
+    private careLogService: CareLogService,
+    private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router
@@ -71,13 +76,6 @@ export class PlantDetailComponent implements OnInit {
   /** Load plant details from server */
   fetchPlantDetails(plantId: number): void {
     this.loading = true;
-    this.wateringLogs = this.careLogs
-      ?.filter((log) => log.action?.toLowerCase() === 'water')
-      ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-    this.fertilizerLogs = this.careLogs
-      ?.filter((log) => log.action?.toLowerCase() === 'fertilizer')
-      ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     this.plantService.getPlantWithDetails(plantId).subscribe({
       next: (data) => {
@@ -93,7 +91,7 @@ export class PlantDetailComponent implements OnInit {
 
         // Find last watering log
         const waterLogs = this.careLogs
-          ?.filter((log) => log.action?.toLowerCase() === 'water')
+          ?.filter((log) => log.type?.toLowerCase() === 'water')
           ?.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
@@ -101,11 +99,15 @@ export class PlantDetailComponent implements OnInit {
 
         // Find last fertilizing log
         const fertilizerLogs = this.careLogs
-          ?.filter((log) => log.action?.toLowerCase() === 'fertilizer')
+          ?.filter((log) => log.type?.toLowerCase() === 'fertilizer')
           ?.sort(
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
         this.lastFertilizing = fertilizerLogs?.[0];
+
+        // Separate logs by type for display
+        this.wateringLogs = waterLogs || [];
+        this.fertilizerLogs = fertilizerLogs || [];
 
         this.loading = false;
       },
@@ -166,5 +168,55 @@ export class PlantDetailComponent implements OnInit {
         },
       });
     }
+  }
+
+  /** Quick action to add a watering log */
+  addWateringLog(): void {
+    if (!this.plant?.id) return;
+
+    const careLog = {
+      type: 'Water',
+      date: new Date().toISOString(),
+      plantId: this.plant.id,
+    };
+
+    this.careLogService.createCareLog(careLog).subscribe({
+      next: () => {
+        this.snackBar.open('✅ Watering logged!', 'Close', { duration: 3000 });
+        this.fetchPlantDetails(this.plant.id!);
+      },
+      error: (error) => {
+        console.error('Error logging watering:', error);
+        this.snackBar.open('❌ Failed to log watering', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  /** Quick action to add a fertilizing log */
+  addFertilizingLog(): void {
+    if (!this.plant?.id) return;
+
+    const careLog = {
+      type: 'Fertilizer',
+      date: new Date().toISOString(),
+      plantId: this.plant.id,
+    };
+
+    this.careLogService.createCareLog(careLog).subscribe({
+      next: () => {
+        this.snackBar.open('✅ Fertilizing logged!', 'Close', {
+          duration: 3000,
+        });
+        this.fetchPlantDetails(this.plant.id!);
+      },
+      error: (error) => {
+        console.error('Error logging fertilizing:', error);
+        this.snackBar.open('❌ Failed to log fertilizing', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 }

@@ -5,8 +5,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
+import { PlantFormComponent } from '../plant-form/plant-form.component';
 import {
   animate,
   state,
@@ -26,6 +28,7 @@ import {
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
+    MatDialogModule,
   ],
   animations: [
     trigger('fadeIn', [
@@ -40,10 +43,12 @@ export class PlantListComponent implements OnInit {
   error: string | null = null;
   currentPage = 0;
   pageSize = 3;
+  currentUserName: string = '';
 
   constructor(
     private plantService: PlantService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private router: Router
   ) {}
 
@@ -52,9 +57,23 @@ export class PlantListComponent implements OnInit {
     this.plantService.currentUser$.subscribe(
       (user: { id: number; name: string }) => {
         console.log('User changed, loading plants for user:', user.id);
+        this.currentUserName = user.name;
         this.loadPlants(user.id);
       }
     );
+  }
+
+  openAddPlantDialog(): void {
+    const dialogRef = this.dialog.open(PlantFormComponent, {
+      width: '500px',
+      data: { mode: 'add' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadPlants(this.plantService.currentUserId);
+      }
+    });
   }
 
   loadPlants(userId: number): void {

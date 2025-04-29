@@ -98,25 +98,11 @@ export class PlantFormComponent implements OnInit {
         plantedDate: new Date(plant.dateAdded),
       });
 
-      // Load care logs if we're editing an existing plant
-      this.loadCareLogs(this.data.plant.id);
+      
     }
   }
 
-  /** Load care logs for a plant */
-  loadCareLogs(plantId: number): void {
-    this.loadingLogs = true;
-    this.careLogService.getLogsByPlantId(plantId).subscribe({
-      next: (logs: CareLog[]) => {
-        this.careLogs = logs;
-        this.loadingLogs = false;
-      },
-      error: (error: Error) => {
-        console.error('Error loading care logs:', error);
-        this.loadingLogs = false;
-      },
-    });
-  }
+
 
   /** Load plant types */
   loadPlantTypes(): void {

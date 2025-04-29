@@ -17,16 +17,6 @@
   </div>
 </nav>
 
-<!-- Dashboard Top Section -->
-<div class="dashboard-header">
-  <h2>Hi, {{ currentUserName }}</h2>
-  <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
-    ➕ Add Plant
-  </button>
-</div>
-
-<hr class="dashboard-divider" />
-
 <!-- Plant List -->
 <div class="container">
   <router-outlet></router-outlet>

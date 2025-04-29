@@ -125,7 +125,17 @@
     <div class="carelog-grid">
       <!-- Watering Logs -->
       <div class="carelog-category">
-        <h3>💧 Watering</h3>
+        <div class="carelog-header">
+          <h3>💧 Watering</h3>
+          <button
+            mat-mini-fab
+            color="primary"
+            (click)="addWateringLog()"
+            aria-label="Log watering"
+          >
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </div>
 
         <div *ngIf="wateringLogs.length > 0; else noWaterLogs">
           <div *ngFor="let log of wateringLogs" class="carelog-item">
@@ -141,7 +151,17 @@
 
       <!-- Fertilizing Logs -->
       <div class="carelog-category">
-        <h3>🌿 Fertilizing</h3>
+        <div class="carelog-header">
+          <h3>🌿 Fertilizing</h3>
+          <button
+            mat-mini-fab
+            color="accent"
+            (click)="addFertilizingLog()"
+            aria-label="Log fertilizing"
+          >
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </div>
 
         <div *ngIf="fertilizerLogs.length > 0; else noFertilizeLogs">
           <div *ngFor="let log of fertilizerLogs" class="carelog-item">

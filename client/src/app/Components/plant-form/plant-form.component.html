@@ -82,34 +82,6 @@
           </button>
         </div>
       </form>
-
-      <!-- Care Logs Section -->
-      <div class="care-logs-section" *ngIf="data?.mode === 'edit'">
-        <h3>Care History</h3>
-
-        <!-- Loading State -->
-        <div *ngIf="loadingLogs" class="loading-state">
-          <mat-progress-spinner diameter="20" mode="indeterminate">
-          </mat-progress-spinner>
-          Loading care logs...
-        </div>
-
-        <!-- Care Logs List -->
-        <div class="care-logs-list" *ngIf="!loadingLogs && careLogs.length > 0">
-          <div *ngFor="let log of careLogs" class="care-log-item">
-            <mat-icon [color]="log.type === 'Water' ? 'primary' : 'accent'">
-              {{ log.type === "Water" ? "water_drop" : "eco" }}
-            </mat-icon>
-            <span class="care-log-date">{{ log.date | date }}</span>
-            <span class="care-log-type">{{ log.type }}</span>
-          </div>
-        </div>
-
-        <!-- No Logs State -->
-        <div *ngIf="!loadingLogs && careLogs.length === 0" class="no-logs">
-          <p>No care logs recorded yet. 🌱</p>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+    </mat-card-content></mat-card
+  >
 </div>
