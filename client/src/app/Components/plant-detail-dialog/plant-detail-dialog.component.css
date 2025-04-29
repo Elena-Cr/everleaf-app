@@ -1,7 +1,7 @@
 /* --- Full Page Layout --- */
 .plant-details-page {
   padding: 2rem;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -15,76 +15,76 @@
   align-items: center;
 }
 
-/* --- Main Plant Content --- */
+/* --- Main Plant Content (Image + Info) --- */
 .plant-main-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
   background: white;
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* --- Plant Image --- */
+/* --- Left: Plant Image --- */
 .plant-image-wrapper {
   background-color: #e9f7ec;
-  width: 100%;
-  padding: 2rem 0;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
   display: flex;
+  align-items: center;
   justify-content: center;
+  border-radius: 12px;
+  padding: 1rem;
 }
 
 .plant-detail-image {
-  width: 250px;
-  height: 250px;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
   object-fit: contain;
 }
 
-/* --- Plant Title & Subtitle --- */
+/* --- Right: Plant Info --- */
+.plant-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .plant-title {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: var(--primary-color);
-  text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .plant-subtitle {
   font-size: 1.2rem;
-  font-weight: 400;
   color: gray;
-  text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
-/* --- Plant Info Sections --- */
 .plant-info-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: 1rem;
-  width: 100%;
 }
 
-.plant-info-item {
-  background: rgba(200, 230, 201, 0.2);
-  padding: 1rem;
-  border-radius: 12px;
+.plant-info-label {
+  background: rgba(200, 230, 201, 0.3);
+  padding: 0.75rem;
+  font-weight: bold;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
-.plant-info-item mat-icon {
-  color: var(--primary-color);
-}
-
-.last-action {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 0.25rem;
+.plant-info-value {
+  background: rgba(200, 230, 201, 0.15);
+  padding: 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
 }
 
 /* --- Loading State --- */
@@ -97,70 +97,139 @@
 
 /* --- Error State --- */
 .error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  min-height: 200px;
+  text-align: center;
+  padding: 2rem;
   color: var(--warn-color);
 }
 
-.error-state mat-icon {
-  font-size: 48px;
-  width: 48px;
-  height: 48px;
+/* --- Problems Section --- */
+.problems-section {
+  margin-top: 2rem;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Problems List Section --- */
-.problems-section {
+.problem-list {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.problem-header {
+  font-weight: bold;
+  background: rgba(200, 230, 201, 0.5);
+  padding: 0.8rem;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.problem-cell {
+  background: rgba(200, 230, 201, 0.15);
+  padding: 0.8rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Severity Coloring */
+.severity.low mat-icon,
+.severity.low {
+  color: green;
+}
+
+.severity.medium mat-icon,
+.severity.medium {
+  color: orange;
+}
+
+.severity.high mat-icon,
+.severity.high {
+  color: red;
+}
+
+/* Hover Effect */
+.problem-cell:hover {
+  background: rgba(200, 230, 201, 0.25);
+  cursor: default;
+}
+
+.no-problems {
+  margin-top: 1rem;
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
+.plant-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.plant-actions button {
+  text-transform: none;
+  font-weight: 600;
+}
+/* --- Care Logs Section --- */
+.carelogs-section {
   margin-top: 2rem;
   border-top: 1px solid #e0e0e0;
   padding-top: 1rem;
 }
 
-.problems-section h2 {
-  margin-bottom: 1rem;
+.carelogs-section h2 {
+  margin-bottom: 1.5rem;
   color: #333;
+  text-align: center;
 }
 
-.problem-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
+.carelog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.carelog-category {
   background-color: #f8f8f8;
-  border-radius: 8px;
+  border-radius: 12px;
+  padding: 1.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.problem-item mat-icon {
-  margin-top: 0.25rem;
+.carelog-category h3 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
 }
 
-.problem-item strong {
-  display: block;
-  margin-bottom: 0.5rem;
+.carelog-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.problem-item p {
-  margin: 0.5rem 0;
-  color: #555;
+.carelog-item:last-child {
+  border-bottom: none;
 }
 
-.problem-item small {
+.no-logs-text {
   color: #777;
+  font-style: italic;
 }
 
-.no-problems {
+.no-carelogs {
   text-align: center;
   padding: 2rem;
   color: #666;
   font-style: italic;
 }
 
-/* --- Buttons Global Styling (optional enhancement) --- */
+/* --- Buttons Global Styling --- */
 button[mat-button],
 button[mat-raised-button] {
   text-transform: none;

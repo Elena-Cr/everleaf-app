@@ -26,6 +26,11 @@ export class CareLogService {
     return this.http.get<CareLog[]>(`${this.baseUrl}/user/${userId}`);
   }
 
+  // GET /api/CareLog/plant/{plantId}
+  getLogsByPlantId(plantId: number): Observable<CareLog[]> {
+    return this.http.get<CareLog[]>(`${this.baseUrl}/plant/${plantId}`);
+  }
+
   // POST /api/CareLog
   createCareLog(careLog: CareLog): Observable<any> {
     return this.http.post(this.baseUrl, careLog);

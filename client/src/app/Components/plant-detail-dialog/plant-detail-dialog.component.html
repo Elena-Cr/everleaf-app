@@ -1,5 +1,5 @@
 <div class="plant-details-page">
-  <!-- Top Bar: Back to Plants + Log Problem -->
+  <!-- Top Bar -->
   <div class="plant-details-header">
     <button mat-button (click)="close()">
       <mat-icon>arrow_back</mat-icon>
@@ -9,9 +9,19 @@
       ➕ Log Problem
     </button>
   </div>
+  <div class="plant-actions">
+    <button mat-stroked-button color="primary" (click)="editPlant()">
+      ✏️ Edit Plant
+    </button>
+
+    <button mat-stroked-button color="warn" (click)="deletePlant()">
+      🗑️ Delete Plant
+    </button>
+  </div>
 
   <!-- Main Plant Content -->
   <div class="plant-main-content">
+    <!-- Left: Image -->
     <div class="plant-image-wrapper">
       <img
         src="assets/images/plant_picture.png"
@@ -20,92 +30,140 @@
       />
     </div>
 
-    <h1 class="plant-title">{{ plant.nickname || plant.name }}</h1>
-    <h3 class="plant-subtitle" *ngIf="plant.nickname && plant.name">
-      {{ plant.name }}
-    </h3>
+    <!-- Right: Info -->
+    <div class="plant-info-wrapper">
+      <h1 class="plant-title">{{ plant.nickname || plant.name }}</h1>
+      <h3 class="plant-subtitle" *ngIf="plant.nickname && plant.name">
+        {{ plant.name }}
+      </h3>
 
-    <div *ngIf="loading" class="loading-state">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
+      <div *ngIf="loading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
 
-    <div *ngIf="!loading && plantType">
-      <div class="plant-info-grid">
-        <div class="plant-info-item">
-          <mat-icon>eco</mat-icon>
-          <div>
-            <strong>Scientific Name:</strong> {{ plantType.scientificName }}
+      <div *ngIf="!loading && plantType" class="plant-info-grid">
+        <div class="plant-info-label">
+          <mat-icon>eco</mat-icon> Scientific Name:
+        </div>
+        <div class="plant-info-value">{{ plantType.scientificName }}</div>
+
+        <div class="plant-info-label">
+          <mat-icon>water_drop</mat-icon> Watering Schedule:
+        </div>
+        <div class="plant-info-value">
+          Every {{ plantType.wateringFrequencyDays }} days
+          <div class="last-action" *ngIf="lastWatering">
+            (Last watered: {{ lastWatering.date | date }})
           </div>
         </div>
 
-        <div class="plant-info-item">
-          <mat-icon>water_drop</mat-icon>
-          <div>
-            <strong>Watering:</strong> Every
-            {{ plantType.wateringFrequencyDays }} days
-            <div class="last-action" *ngIf="lastWatering">
-              Last watered: {{ lastWatering.date | date }}
-            </div>
+        <div class="plant-info-label">
+          <mat-icon>local_florist</mat-icon> Fertilizing Schedule:
+        </div>
+        <div class="plant-info-value">
+          Every {{ plantType.fertilizingFrequencyDays }} days
+          <div class="last-action" *ngIf="lastFertilizing">
+            (Last fertilized: {{ lastFertilizing.date | date }})
           </div>
         </div>
 
-        <div class="plant-info-item">
-          <mat-icon>local_florist</mat-icon>
-          <div>
-            <strong>Fertilizing:</strong> Every
-            {{ plantType.fertilizingFrequencyDays }} days
-            <div class="last-action" *ngIf="lastFertilizing">
-              Last fertilized: {{ lastFertilizing.date | date }}
-            </div>
-          </div>
+        <div class="plant-info-label">
+          <mat-icon>wb_sunny</mat-icon> Sunlight Needs:
         </div>
+        <div class="plant-info-value">{{ plantType.sunlightNeeds }}</div>
 
-        <div class="plant-info-item">
-          <mat-icon>wb_sunny</mat-icon>
-          <div>
-            <strong>Sunlight Needs:</strong> {{ plantType.sunlightNeeds }}
-          </div>
+        <div class="plant-info-label">
+          <mat-icon>calendar_today</mat-icon> Added on:
         </div>
+        <div class="plant-info-value">{{ plant.dateAdded | date }}</div>
+      </div>
 
-        <div class="plant-info-item">
-          <mat-icon>calendar_today</mat-icon>
-          <div>
-            <strong>Added to Garden:</strong> {{ plant.dateAdded | date }}
-          </div>
-        </div>
+      <div *ngIf="!loading && !plantType" class="error-state">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>Could not load plant details.</p>
       </div>
     </div>
+  </div>
 
-    <div *ngIf="!loading && !plantType" class="error-state">
-      <mat-icon color="warn">error_outline</mat-icon>
-      <p>Could not load plant details.</p>
-    </div>
+  <!-- Problems Section -->
+  <div class="problems-section">
+    <h2>Logged Problems</h2>
 
-    <!-- Problems Section -->
-    <div class="problems-section" *ngIf="problems && problems.length > 0">
-      <h2>Logged Problems</h2>
-      <div *ngFor="let problem of problems" class="problem-item">
-        <mat-icon
-          [style.color]="
-            problem.severity === 'High'
-              ? 'red'
-              : problem.severity === 'Medium'
-              ? 'orange'
-              : 'green'
-          "
+    <div *ngIf="problems && problems.length > 0" class="problem-list">
+      <!-- Table Headers -->
+      <div class="problem-header">Severity</div>
+      <div class="problem-header">Problem</div>
+      <div class="problem-header">Date</div>
+
+      <!-- Problems -->
+      <ng-container *ngFor="let problem of problems">
+        <div
+          class="problem-cell severity"
+          [ngClass]="problem.severity.toLowerCase()"
         >
-          report_problem
-        </mat-icon>
-        <div>
-          <strong>Severity: {{ problem.severity }}</strong>
-          <p>{{ problem.description }}</p>
-          <small>Logged on: {{ problem.dateReported | date }}</small>
+          {{ problem.severity }}
         </div>
-      </div>
+        <div class="problem-cell">
+          {{ problem.description }}
+        </div>
+        <div class="problem-cell">
+          {{ problem.dateReported | date }}
+        </div>
+      </ng-container>
     </div>
 
-    <div class="no-problems" *ngIf="problems && problems.length === 0">
+    <!-- No Problems -->
+    <div *ngIf="problems && problems.length === 0" class="no-problems">
       <p>No problems logged yet 🌱</p>
     </div>
   </div>
+
+  <!-- Care Logs Section -->
+  <div class="carelogs-section" *ngIf="careLogs && careLogs.length > 0">
+    <h2>Care Logs</h2>
+
+    <div class="carelog-grid">
+      <!-- Watering Logs -->
+      <div class="carelog-category">
+        <h3>💧 Watering</h3>
+
+        <div *ngIf="wateringLogs.length > 0; else noWaterLogs">
+          <div *ngFor="let log of wateringLogs" class="carelog-item">
+            <mat-icon color="primary">water_drop</mat-icon>
+            {{ log.date | date }}
+          </div>
+        </div>
+
+        <ng-template #noWaterLogs>
+          <p class="no-logs-text">No watering logs yet</p>
+        </ng-template>
+      </div>
+
+      <!-- Fertilizing Logs -->
+      <div class="carelog-category">
+        <h3>🌿 Fertilizing</h3>
+
+        <div *ngIf="fertilizerLogs.length > 0; else noFertilizeLogs">
+          <div *ngFor="let log of fertilizerLogs" class="carelog-item">
+            <mat-icon color="accent">local_florist</mat-icon>
+            {{ log.date | date }}
+          </div>
+        </div>
+
+        <ng-template #noFertilizeLogs>
+          <p class="no-logs-text">No fertilizing logs yet</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Care Logs -->
+  <div class="no-carelogs" *ngIf="careLogs && careLogs.length === 0">
+    <p>No care actions logged yet 🌱</p>
+  </div>
+
+  <!-- Add Care Log Button -->
+  <!-- <button mat-raised-button color="primary" (click)="openAddCareLogDialog()">
+    ➕ Add Care Log
+  </button> -->
 </div>

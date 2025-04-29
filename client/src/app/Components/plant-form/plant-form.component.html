@@ -1,12 +1,14 @@
 <div class="plant-form-container" cdkTrapFocus>
   <mat-card class="plant-form-card">
     <mat-card-header>
-      <mat-card-title>Add New Plant</mat-card-title>
+      <mat-card-title>
+        {{ data?.mode === "edit" ? "Edit Plant" : "Add New Plant" }}
+      </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
       <form [formGroup]="plantForm" (ngSubmit)="onSubmit()">
-        <!-- Plant type field -->
+        <!-- Plant Type Field -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Plant Type</mat-label>
           <mat-select formControlName="plantType" cdkTrapFocusAutoCapture>
@@ -21,9 +23,8 @@
                 *ngFor="let type of plantTypes$ | async"
                 [value]="type"
               >
-                {{ type.CommonName || type.commonName }} ({{
-                  type.ScientificName || type.scientificName
-                }})
+                {{ type.CommonName || type.commonName }}
+                ({{ type.ScientificName || type.scientificName }})
               </mat-option>
             </ng-container>
           </mat-select>
@@ -32,7 +33,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Error handling -->
+        <!-- Error Handling -->
         <div *ngIf="error" class="error-message" role="alert">
           {{ error }}
           <button mat-button color="primary" (click)="loadPlantTypes()">
@@ -40,7 +41,7 @@
           </button>
         </div>
 
-        <!-- Nickname field -->
+        <!-- Nickname Field -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nickname</mat-label>
           <input
@@ -53,7 +54,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Planting date field -->
+        <!-- Planting Date Field -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Planting Date</mat-label>
           <input
@@ -69,7 +70,7 @@
           </mat-error>
         </mat-form-field>
 
-        <!-- Submit button -->
+        <!-- Submit Button -->
         <div class="form-actions">
           <button
             mat-raised-button
@@ -77,10 +78,38 @@
             type="submit"
             [disabled]="!plantForm.valid || loading"
           >
-            Add Plant
+            {{ data?.mode === "edit" ? "Save Changes" : "Add Plant" }}
           </button>
         </div>
       </form>
+
+      <!-- Care Logs Section -->
+      <div class="care-logs-section" *ngIf="data?.mode === 'edit'">
+        <h3>Care History</h3>
+
+        <!-- Loading State -->
+        <div *ngIf="loadingLogs" class="loading-state">
+          <mat-progress-spinner diameter="20" mode="indeterminate">
+          </mat-progress-spinner>
+          Loading care logs...
+        </div>
+
+        <!-- Care Logs List -->
+        <div class="care-logs-list" *ngIf="!loadingLogs && careLogs.length > 0">
+          <div *ngFor="let log of careLogs" class="care-log-item">
+            <mat-icon [color]="log.type === 'Water' ? 'primary' : 'accent'">
+              {{ log.type === "Water" ? "water_drop" : "eco" }}
+            </mat-icon>
+            <span class="care-log-date">{{ log.date | date }}</span>
+            <span class="care-log-type">{{ log.type }}</span>
+          </div>
+        </div>
+
+        <!-- No Logs State -->
+        <div *ngIf="!loadingLogs && careLogs.length === 0" class="no-logs">
+          <p>No care logs recorded yet. 🌱</p>
+        </div>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>

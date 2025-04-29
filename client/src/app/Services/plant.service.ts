@@ -203,11 +203,17 @@ export class PlantService {
     );
   }
 
-  /** Update an existing plant */
+  /** Update existing plant */
   updatePlant(id: number, plantData: any): Observable<any> {
     console.log('Updating plant ID:', id);
-    return this.http.put(`${this.baseUrl}/plant`, plantData).pipe(
-      tap((response) => console.log('Plant updated:', response)),
+
+    const updatedPlant = {
+      ...plantData,
+      id: id,
+    };
+
+    return this.http.put(`${this.baseUrl}/plant`, updatedPlant).pipe(
+      tap((response) => console.log('Plant updated successfully:', response)),
       catchError(this.handleError(`updating plant ${id}`))
     );
   }

@@ -11,7 +11,7 @@ import { PlantService } from '../../Services/plant.service';
 import { ProblemService } from '../../Services/problem.service';
 import { ProblemFormComponent } from '../problem-form/problem-form.component';
 import { ProblemReport } from '../../Models/problem-reports';
-
+import { PlantFormComponent } from '../plant-form/plant-form.component';
 @Component({
   selector: 'app-plant-detail',
   templateUrl: './plant-detail-dialog.component.html',
@@ -34,6 +34,8 @@ export class PlantDetailComponent implements OnInit {
   lastWatering: any;
   lastFertilizing: any;
   problems: ProblemReport[] = [];
+  wateringLogs: any[] = [];
+  fertilizerLogs: any[] = [];
 
   constructor(
     private plantService: PlantService,
@@ -69,6 +71,13 @@ export class PlantDetailComponent implements OnInit {
   /** Load plant details from server */
   fetchPlantDetails(plantId: number): void {
     this.loading = true;
+    this.wateringLogs = this.careLogs
+      ?.filter((log) => log.action?.toLowerCase() === 'water')
+      ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    this.fertilizerLogs = this.careLogs
+      ?.filter((log) => log.action?.toLowerCase() === 'fertilizer')
+      ?.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     this.plantService.getPlantWithDetails(plantId).subscribe({
       next: (data) => {
@@ -125,5 +134,37 @@ export class PlantDetailComponent implements OnInit {
         this.loadProblems(this.plant.id);
       }
     });
+  }
+  /** Edit Plant */
+  editPlant(): void {
+    const dialogRef = this.dialog.open(PlantFormComponent, {
+      width: '500px',
+      data: {
+        mode: 'edit', // Pass edit mode
+        plant: this.plant, // Pass existing plant data
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Plant updated:', result);
+        this.ngOnInit(); // Refresh plant details
+      }
+    });
+  }
+
+  /** Delete Plant */
+  deletePlant(): void {
+    if (confirm('Are you sure you want to delete this plant?')) {
+      this.plantService.deletePlant(Number(this.plant.id)).subscribe({
+        next: () => {
+          console.log('Plant deleted successfully.');
+          this.router.navigate(['/plants']); // Redirect after delete
+        },
+        error: (error) => {
+          console.error('Error deleting plant:', error);
+        },
+      });
+    }
   }
 }
