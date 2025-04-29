@@ -18,9 +18,10 @@
 
 <!-- Dashboard Top Section -->
 <div class="dashboard-header">
-  <h2>Hi, {{ currentUserName }}</h2>
+  <h1>My Plants</h1>
   <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
-    ➕ Add Plant
+    <mat-icon>add</mat-icon>
+    Add Plant
   </button>
 </div>
 
@@ -47,9 +48,18 @@
       class="plant-card"
       [@fadeIn]
     >
-      <!-- Image -->
+      <!-- Image with Care Log Button -->
       <div class="plant-image">
         <img src="assets/images/plant_picture.png" alt="Plant image" />
+        <button
+          mat-mini-fab
+          class="care-log-button"
+          color="primary"
+          (click)="openCareLogDialog(plant)"
+          aria-label="Add care log"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
       </div>
 
       <!-- Card Header (nickname and species) -->

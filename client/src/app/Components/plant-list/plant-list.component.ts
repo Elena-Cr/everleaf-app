@@ -9,6 +9,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Plant } from '../../Models/plant';
 import { PlantFormComponent } from '../plant-form/plant-form.component';
+import { CareLogFormComponent } from '../care-log-form/care-log-form.component';
 import {
   animate,
   state,
@@ -66,10 +67,24 @@ export class PlantListComponent implements OnInit {
   openAddPlantDialog(): void {
     const dialogRef = this.dialog.open(PlantFormComponent, {
       width: '500px',
-      data: { mode: 'add' }
+      data: { mode: 'add' },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadPlants(this.plantService.currentUserId);
+      }
+    });
+  }
+
+  /** Open care log dialog */
+  openCareLogDialog(plant: Plant): void {
+    const dialogRef = this.dialog.open(CareLogFormComponent, {
+      width: '500px',
+      data: { plantId: plant.id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loadPlants(this.plantService.currentUserId);
       }

@@ -69,6 +69,29 @@ html {
   transform: scale(1.05);
 }
 
+.care-log-button {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background-color: white !important;
+  z-index: 2;
+}
+
+.care-log-button:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.care-log-button mat-icon {
+  color: var(--primary-color) !important;
+}
+
+mat-icon {
+  color: white !important;
+  font-size: 2.4rem !important;
+  width: 2.4rem !important;
+  height: 2.4rem !important;
+}
+
 /* Card header (nickname and species) */
 .mat-mdc-card-header {
   width: 100%;
@@ -259,15 +282,15 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 2rem 0 1rem 0; /* More margin top */
-  padding: 0 2rem;
+  margin: 2rem 0 2rem 0; /* More margin top */
+  padding: 0 3rem;
 }
 
-/* Greeting text */
-.dashboard-header h2 {
+/* Header text */
+.dashboard-header h1 {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
-  font-size: 3rem; /* << BIGGER */
+  font-size: 4.5rem; /* << BIGGER */
   color: #333;
   margin: 0;
 }
