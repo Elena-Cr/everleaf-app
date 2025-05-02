@@ -1,5 +1,6 @@
 using Everleaf.Model.Repositories;
 using Everleaf.Model;
+using Everleaf.Server.Middleware;
 
 // Initialize the application builder
 var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +39,8 @@ app.UseCors("AllowFrontend");
 
 #region Middleware Configuration
 // Configure the HTTP request pipeline
-
+//app.UseHeaderAuthenticationMiddleware();
+//app.UseBasicAuthenticationMiddleware();
 
 // Enable authorization middleware
 app.UseAuthorization();
