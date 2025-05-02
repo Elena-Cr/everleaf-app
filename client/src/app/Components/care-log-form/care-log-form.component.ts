@@ -4,6 +4,9 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import {
   trigger,
@@ -64,10 +67,23 @@ export class CareLogFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.careLogForm = this.fb.group({
-      type: ['', Validators.required],
-      date: [new Date(), Validators.required],
+      type: ['', [Validators.required]],
+      date: ['', [Validators.required, this.dateNotInFutureValidator()]],
       plantId: [this.data.plantId, Validators.required],
+      notes: ['', [Validators.maxLength(500)]], // Optional notes field with max length
     });
+  }
+
+  // Custom validator for date not in future
+  private dateNotInFutureValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+      const today = new Date();
+      const inputDate = new Date(control.value);
+      return inputDate > today ? { futureDate: true } : null;
+    };
   }
 
   toLocalDate(date: Date): string {

@@ -11,6 +11,9 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import { PlantService } from '../../Services/plant.service';
 import { CareLogService } from '../../Services/carelog.service';
@@ -76,10 +79,29 @@ export class PlantFormComponent implements OnInit {
     public data: { mode: 'add' | 'edit'; plant?: Plant } | null
   ) {
     this.plantForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      plantType: ['', Validators.required],
-      plantedDate: [new Date(), Validators.required],
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50),
+        ],
+      ],
+      plantType: ['', [Validators.required]],
+      plantedDate: ['', [Validators.required, this.dateNotInFutureValidator()]],
     });
+  }
+
+  // Custom validator for date not in future
+  private dateNotInFutureValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+      const today = new Date();
+      const inputDate = new Date(control.value);
+      return inputDate > today ? { futureDate: true } : null;
+    };
   }
 
   ngOnInit(): void {
@@ -97,12 +119,8 @@ export class PlantFormComponent implements OnInit {
         plantType: { id: plant.species, commonName: plant.name },
         plantedDate: new Date(plant.dateAdded),
       });
-
-      
     }
   }
-
-
 
   /** Load plant types */
   loadPlantTypes(): void {

@@ -52,6 +52,12 @@
           <mat-error *ngIf="plantForm.get('name')?.hasError('required')">
             Nickname is required
           </mat-error>
+          <mat-error *ngIf="plantForm.get('name')?.hasError('minlength')">
+            Nickname must be at least 2 characters
+          </mat-error>
+          <mat-error *ngIf="plantForm.get('name')?.hasError('maxlength')">
+            Nickname cannot exceed 50 characters
+          </mat-error>
         </mat-form-field>
 
         <!-- Planting Date Field -->
@@ -67,6 +73,11 @@
           <mat-datepicker #picker></mat-datepicker>
           <mat-error *ngIf="plantForm.get('plantedDate')?.hasError('required')">
             Planting date is required
+          </mat-error>
+          <mat-error
+            *ngIf="plantForm.get('plantedDate')?.hasError('futureDate')"
+          >
+            Planting date cannot be in the future
           </mat-error>
         </mat-form-field>
 

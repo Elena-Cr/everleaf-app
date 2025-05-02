@@ -17,7 +17,7 @@
           <mat-option value="Fertilizer">Fertilizer</mat-option>
         </mat-select>
         <mat-error *ngIf="careLogForm.get('type')?.hasError('required')">
-          Type is required
+          Care type is required
         </mat-error>
       </mat-form-field>
 
@@ -31,6 +31,17 @@
         <mat-datepicker #picker></mat-datepicker>
         <mat-error *ngIf="careLogForm.get('date')?.hasError('required')">
           Date is required
+        </mat-error>
+        <mat-error *ngIf="careLogForm.get('date')?.hasError('futureDate')">
+          Date cannot be in the future
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Notes (Optional)</mat-label>
+        <textarea matInput formControlName="notes" rows="3"></textarea>
+        <mat-error *ngIf="careLogForm.get('notes')?.hasError('maxlength')">
+          Notes cannot exceed 500 characters
         </mat-error>
       </mat-form-field>
     </mat-card-content>
