@@ -1,0 +1,60 @@
+<div class="dashboard-header">
+  <h1>Register</h1>
+</div>
+<hr class="dashboard-divider"/>
+
+<form #f="ngForm" (ngSubmit)="onSubmit()">
+  <!-- Username -->
+  <div class="form-group">
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input
+        matInput
+        [(ngModel)]="username"
+        name="username"
+        required
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Password -->
+  <div class="form-group">
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        required
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Email -->
+  <div class="form-group">
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        required
+      />
+    </mat-form-field>
+  </div>
+
+  <!-- Submit -->
+  <button mat-raised-button color="primary" type="submit" [disabled]="f.invalid">
+    Register
+  </button>
+
+  <!-- Error if any -->
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <!-- Switch to login -->
+  <p>
+    <a routerLink="/login">Already have an account? Login</a>
+  </p>
+</form>

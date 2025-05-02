@@ -16,93 +16,109 @@
   </mat-card>
 </div>
 
-<!-- Dashboard Top Section -->
-<div class="dashboard-header">
-  <h1>My Plants</h1>
-  <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
-    <mat-icon>add</mat-icon>
-    Add Plant
-  </button>
-</div>
+<!-- When nobody is logged in -->
+<ng-container *ngIf="!currentUserName && !loading && !error; else withUser">
+  <div class="no-plants">
+    <mat-card>
+      <mat-card-content>
+        <p>Please <a routerLink="/login">log in</a> to see your plants.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</ng-container>
 
-<hr class="dashboard-divider" />
-
-<!-- Main Plant Grid -->
-<div class="plants-container" *ngIf="plants.length > 0 && !loading && !error">
-  <!-- Left Navigation Button -->
-  <div class="nav-button-wrapper">
-    <button
-      mat-icon-button
-      class="nav-button prev"
-      [disabled]="currentPage === 0"
-      (click)="previousPage()"
-    >
-      <mat-icon>chevron_left</mat-icon>
+<ng-template #withUser>
+  <!-- Dashboard Top Section -->
+  <div class="dashboard-header" *ngIf="currentUserName">
+    <h1>My Plants</h1>
+    <button mat-raised-button color="primary" (click)="openAddPlantDialog()">
+      <mat-icon>add</mat-icon>
+      Add Plant
     </button>
   </div>
 
-  <!-- Plant Cards Grid -->
-  <div class="plants-grid">
-    <mat-card
-      *ngFor="let plant of currentPagePlants"
-      class="plant-card"
-      [@fadeIn]
-    >
-      <!-- Image with Care Log Button -->
-      <div class="plant-image">
-        <img src="assets/images/plant_picture.png" alt="Plant image" />
-        <button
-          mat-mini-fab
-          class="care-log-button"
-          color="primary"
-          (click)="openCareLogDialog(plant)"
-          aria-label="Add care log"
-        >
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
+  <hr class="dashboard-divider" *ngIf="currentUserName" />
 
-      <!-- Card Header (nickname and species) -->
-      <mat-card-header>
-        <mat-card-title>{{ plant.nickname || "No Nickname" }}</mat-card-title>
-        <mat-card-subtitle>{{ plant.name }}</mat-card-subtitle>
-      </mat-card-header>
+  <!-- Main Plant Grid -->
+  <div
+    class="plants-container"
+    *ngIf="plants.length > 0 && !loading && !error"
+  >
+    <!-- Left Navigation Button -->
+    <div class="nav-button-wrapper">
+      <button
+        mat-icon-button
+        class="nav-button prev"
+        [disabled]="currentPage === 0"
+        (click)="previousPage()"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+    </div>
 
-      <!-- Card Content (date) -->
+    <!-- Plant Cards Grid -->
+    <div class="plants-grid">
+      <mat-card
+        *ngFor="let plant of currentPagePlants"
+        class="plant-card"
+        [@fadeIn]
+      >
+        <!-- Image with Care Log Button -->
+        <div class="plant-image">
+          <img src="assets/images/plant_picture.png" alt="Plant image" />
+          <button
+            mat-mini-fab
+            class="care-log-button"
+            color="primary"
+            (click)="openCareLogDialog(plant)"
+            aria-label="Add care log"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+
+        <!-- Card Header (nickname and species) -->
+        <mat-card-header>
+          <mat-card-title>{{ plant.nickname || "No Nickname" }}</mat-card-title>
+          <mat-card-subtitle>{{ plant.name }}</mat-card-subtitle>
+        </mat-card-header>
+
+        <!-- Card Content (date) -->
+        <mat-card-content>
+          <small>Added: {{ plant.dateAdded | date }}</small>
+        </mat-card-content>
+
+        <!-- Card Action (button) -->
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="viewDetails(plant)">
+            View Details
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Right Navigation Button -->
+    <div class="nav-button-wrapper">
+      <button
+        mat-icon-button
+        class="nav-button next"
+        [disabled]="currentPage === totalPages - 1"
+        (click)="nextPage()"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- No Plants Found for the logged-in user -->
+  <div class="no-plants" *ngIf="plants.length === 0 && !loading && !error">
+    <mat-card>
       <mat-card-content>
-        <small>Added: {{ plant.dateAdded | date }}</small>
+        <p>No plants found. Add your first plant!</p>
       </mat-card-content>
-
-      <!-- Card Action (button) -->
-      <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="viewDetails(plant)">
-          View Details
-        </button>
-      </mat-card-actions>
     </mat-card>
   </div>
 
-  <!-- Right Navigation Button -->
-  <div class="nav-button-wrapper">
-    <button
-      mat-icon-button
-      class="nav-button next"
-      [disabled]="currentPage === totalPages - 1"
-      (click)="nextPage()"
-    >
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-  </div>
-</div>
-
-<!-- No Plants Found -->
-<div class="no-plants" *ngIf="plants.length === 0 && !loading && !error">
-  <mat-card>
-    <mat-card-content>
-      <p>No plants found. Add your first plant!</p>
-    </mat-card-content>
-  </mat-card>
-</div>
-
-<!-- Dashboard Section -->
-<app-plant-dashboard></app-plant-dashboard>
+  <!-- Dashboard Section -->
+  <app-plant-dashboard *ngIf="currentUserName"></app-plant-dashboard>
+</ng-template>

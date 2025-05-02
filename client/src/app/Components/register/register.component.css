@@ -1,0 +1,86 @@
+:host {
+    display: block;
+    padding: 1px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+    /* title + divider */
+.dashboard-header h1 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: 4.5rem; /* << BIGGER */
+    color: #333;
+    margin: 0;
+  }
+  .dashboard-divider {
+    margin: 1rem 2rem 0rem 0rem;
+    border: none;
+    height: 2px;
+    background: #e0e0e0;
+  }
+
+  form {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(333px, 1fr));
+    gap: 16px;
+  }
+  
+  /* exactly match Login: each field takes full column */
+  mat-form-field {
+    width: 100%;
+  }
+  
+  /* uniform outline height */
+  mat-form-field .mat-form-field-flex {
+    min-height: 56px;
+  }
+  
+  /* make the button span all columns */
+  button[type="submit"] {
+    grid-column: 1 / -1;
+    padding: 12px;
+    background-color: #4caf50;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  /* error message */
+  .error {
+    grid-column: 1 / -1;
+    color: red;
+    margin-top: 4px;
+  }
+  
+  /* link under button, same alignment & style */
+  p a {
+    grid-column: 1 / -1;
+    display: block;
+    color: #4caf50;
+    text-decoration: none;
+    font-size: 14px;
+    margin-top: 8px;
+    text-align: left;
+  }
+  
+  p a:hover {
+    text-decoration: underline;
+  }
+  

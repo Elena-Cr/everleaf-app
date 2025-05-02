@@ -2,6 +2,42 @@ html {
   font-size: 62.5%; /* 1rem = 10px */
 }
 
+/* Center the card and give it some breathing room */
+.no-plants {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+/* Make the mat-card a bit narrower, with rounded corners and a soft shadow */
+.no-plants mat-card {
+  max-width: 1200px;
+  width: 100%;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the message text */
+.no-plants p {
+  margin: 0;
+  font-size: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Style the link to match your primary buttons */
+.no-plants a {
+  color: #4caf50;           
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 0.25rem;
+}
+
+/* Underline on hover */
+.no-plants a:hover {
+  text-decoration: underline;
+}
+
 /* Container for the plant view */
 .plants-container {
   display: flex;
