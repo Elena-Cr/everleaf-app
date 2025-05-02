@@ -39,7 +39,7 @@ app.UseCors("AllowFrontend");
 
 #region Middleware Configuration
 // Configure the HTTP request pipeline
-//app.UseHeaderAuthenticationMiddleware();
+app.UseHeaderAuthenticationMiddleware();
 //app.UseBasicAuthenticationMiddleware();
 
 // Enable authorization middleware
