@@ -6,7 +6,7 @@ using NpgsqlTypes;
 
 public class BaseRepository(IConfiguration configuration)
 {
-    protected string ConnectionString { get; } = configuration.GetConnectionString("AppProgDb");
+    protected string ConnectionString { get; } = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string not found.");
 
     protected NpgsqlDataReader GetData(NpgsqlConnection conn, NpgsqlCommand cmd)
     {
