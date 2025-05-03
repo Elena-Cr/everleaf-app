@@ -1,0 +1,86 @@
+:host {
+    display: block;
+    padding: 1px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+  }
+  
+  /* title + divider */
+.dashboard-header h1 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 4.5rem; /* << BIGGER */
+  color: #333;
+  margin: 0;
+}
+.dashboard-divider {
+  margin: 1rem 2rem 0rem 0rem;
+  border: none;
+  height: 2px;
+  background: #e0e0e0;
+}
+
+  form {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 16px;
+  }
+  
+  /* Make each mat-form-field take full column width */
+  mat-form-field {
+    width: 100%;
+  }
+  
+  /* Uniform height on the input box only—not on the entire form-field outline */
+  mat-form-field .mat-form-field-flex {
+    min-height: 56px;
+  }
+  
+  /* Full-width button */
+  button[type="submit"] {
+    grid-column: 1 / -1;      /* span entire row */
+    padding: 12px;
+    background-color: #4caf50;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #45a049;
+  }
+  
+  /* Error message under the button */
+  .error {
+    grid-column: 1 / -1;
+    color: red;
+    margin-top: 4px;
+  }
+  
+  /* Register link under the button, right-aligned */
+  p a {
+    grid-column: 1 / -1;
+    color: #4caf50;
+    text-decoration: none;
+    font-size: 14px;
+    text-align: left;
+    margin-top: 8px;
+    display: block;
+  }
+  
+  p a:hover {
+    text-decoration: underline;
+  }
+  

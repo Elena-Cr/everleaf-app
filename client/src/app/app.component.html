@@ -1,23 +1,18 @@
-<!-- Top Navbar -->
 <nav class="navbar">
   <div class="navbar-logo">🌿 Everleaf</div>
 
   <div class="navbar-user">
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-    <span>{{ currentUserName }}</span>
-
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item (click)="selectUser(1)">Alice</button>
-      <button mat-menu-item (click)="selectUser(2)">Bob</button>
-      <button mat-menu-item (click)="selectUser(3)">Charlie</button>
-      <button mat-menu-item (click)="selectUser(4)">Dave</button>
-    </mat-menu>
+    <ng-container *ngIf="currentUserName; else loggedOut">
+      <button mat-button (click)="logout()">Logout</button>
+      <span>{{ currentUserName }}</span>
+    </ng-container>
+    <ng-template #loggedOut>
+      <a mat-button routerLink="/login">Login</a>
+      <a mat-button routerLink="/register">Register</a>
+    </ng-template>
   </div>
 </nav>
 
-<!-- Plant List -->
 <div class="container">
   <router-outlet></router-outlet>
 </div>

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Everleaf.API.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+        [ApiController]
     public class PlantTypeController : ControllerBase
     {
         protected PlantTypeRepository Repository { get; }

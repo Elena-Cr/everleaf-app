@@ -22,7 +22,7 @@
 
 /* Left side (Logo) */
 .navbar-logo {
-  font-size: 2rem;
+  font-size: 2.4rem;
   font-weight: 600;
 }
 
@@ -32,6 +32,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
+}
+
+.navbar-user a,
+.navbar-user button {
+  color: white !important;
+}
+.navbar-user span {
+  color: white;
 }
 
 .navbar-user .mat-icon {

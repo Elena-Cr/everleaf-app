@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PlantService } from '../../Services/plant.service';
+import { AuthService } from '../../Services/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -50,9 +51,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
   currentPage = 0;
   pageSize = 3;
   currentUserName: string = '';
+
   private destroy$ = new Subject<void>();
 
   constructor(
+    private auth: AuthService,
     private plantService: PlantService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,

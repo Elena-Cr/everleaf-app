@@ -1,9 +1,11 @@
+// src/app/services/plant.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, forkJoin } from 'rxjs';
 import { catchError, tap, retry, switchMap, delay, map } from 'rxjs/operators';
 import { Plant } from '../Models/plant';
 import { PlantType } from '../Models/plant-type';
+import { AuthService } from './auth.service';
 
 interface PlantStatistics {
   totalPlants: number;
@@ -18,35 +20,33 @@ interface PlantStatistics {
 export class PlantService {
   private baseUrl: string = 'http://localhost:5234/api';
 
-  // Dummy user list
-  private users = [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-    { id: 3, name: 'Charlie' },
-    { id: 4, name: 'Dave' },
-  ];
+  // Dummy user list (no longer used for default)
+  private users: { id: number; name: string }[] = [];
 
   // BehaviorSubject to track the currently logged in user
-  private currentUserSubject = new BehaviorSubject<{
-    id: number;
-    name: string;
-  }>({
-    id: 2,
-    name: 'Bob',
-  });
-
+  private currentUserSubject = new BehaviorSubject<{ id: number; name: string }>({ id: 0, name: '' });
   currentUser$ = this.currentUserSubject.asObservable().pipe(
     // Add a small delay to ensure routing completes
     delay(100)
   );
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {
+    // Subscribe to AuthService to update currentUserSubject
+    this.auth.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUserSubject.next({ id: user.id, name: user.username });
+        console.log('PlantService detected login, switched to user:', user);
+      } else {
+        this.currentUserSubject.next({ id: 0, name: '' });
+        console.log('PlantService detected logout, cleared user');
+      }
+    });
+  }
 
-  /** Change current user */
+  /** Change current user manually (optional) */
   setCurrentUserId(userId: number) {
     const user = this.users.find((u) => u.id === userId);
     if (user) {
-      // Execute on next tick to avoid immediate state update
       setTimeout(() => {
         this.currentUserSubject.next(user);
         console.log('Switched to user:', user);
@@ -74,20 +74,17 @@ export class PlantService {
           console.log('First plant type:', types[0]);
         }
       }),
-      map((types: any[]) => {
-        // Ensure proper casing of properties
-        return types.map((type: any) => ({
+      map((types: any[]) =>
+        types.map((type: any) => ({
           ...type,
           commonName: type.CommonName || type.commonName,
           scientificName: type.ScientificName || type.scientificName,
-          wateringFrequencyDays:
-            type.WateringFrequencyDays || type.wateringFrequencyDays,
-          fertilizingFrequencyDays:
-            type.FertilizingFrequencyDays || type.fertilizingFrequencyDays,
+          wateringFrequencyDays: type.WateringFrequencyDays || type.wateringFrequencyDays,
+          fertilizingFrequencyDays: type.FertilizingFrequencyDays || type.fertilizingFrequencyDays,
           sunlightNeeds: type.SunlightNeeds || type.sunlightNeeds,
           id: type.Id || type.id,
-        }));
-      })
+        }))
+      )
     );
   }
 
@@ -146,7 +143,9 @@ export class PlantService {
   }
 
   /** Fetch full plant info: base + type + care logs */
-  getPlantWithDetails(plantId: number): Observable<{
+  getPlantWithDetails(
+    plantId: number
+  ): Observable<{
     plant: Plant;
     plantType: PlantType;
     careLogs: any[];
@@ -232,7 +231,7 @@ export class PlantService {
           plantType: plantTypes.find((pt) => pt.id === plant.species),
         }));
 
-        // Calculate plants needing water
+        // ... rest of method unchanged ...
         const plantsNeedingWater = plantsWithTypes.filter((plant) => {
           const lastWatering = careLogs
             .filter(
@@ -253,13 +252,11 @@ export class PlantService {
           return daysSinceWatering >= plant.plantType.wateringFrequencyDays;
         });
 
-        // Calculate plants needing fertilizer
         const plantsNeedingFertilizer = plantsWithTypes.filter((plant) => {
           const lastFertilizing = careLogs
             .filter(
               (log) =>
-                log.plantId === plant.id &&
-                log.type?.toLowerCase() === 'fertilizer'
+                log.plantId === plant.id && log.type?.toLowerCase() === 'fertilizer'
             )
             .sort(
               (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -272,24 +269,19 @@ export class PlantService {
             (now.getTime() - new Date(lastFertilizing.date).getTime()) /
               (1000 * 60 * 60 * 24)
           );
-          return (
-            daysSinceFertilizing >= plant.plantType.fertilizingFrequencyDays
-          );
+          return daysSinceFertilizing >= plant.plantType.fertilizingFrequencyDays;
         });
 
-        // Calculate most common issue
         const issueCount = problems.reduce((acc, problem) => {
           acc[problem.issue] = (acc[problem.issue] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
 
         const sortedIssues = Object.entries(issueCount).sort(
-          ([, countA], [, countB]): number =>
-            (countB as number) - (countA as number)
+          ([, countA], [, countB]) => (countB as number) - (countA as number)
         );
 
-        const mostCommonIssue =
-          sortedIssues.length > 0 ? sortedIssues[0][0] : null;
+        const mostCommonIssue = sortedIssues.length > 0 ? sortedIssues[0][0] : null;
 
         return {
           totalPlants: plants.length,
@@ -301,21 +293,18 @@ export class PlantService {
     );
   }
 
-  /** Get all care logs for a user */
   private getAllCareLogs(userId: number): Observable<any[]> {
     return this.http
       .get<any[]>(`${this.baseUrl}/carelog/user/${userId}`)
       .pipe(catchError(() => of([])));
   }
 
-  /** Get all problems for a user */
   private getAllProblems(userId: number): Observable<any[]> {
     return this.http
       .get<any[]>(`${this.baseUrl}/problemreport/user/${userId}`)
       .pipe(catchError(() => of([])));
   }
 
-  /** Centralized error handler */
   private handleError(operation: string) {
     return (error: HttpErrorResponse) => {
       console.error(`Error during ${operation}:`, error);
