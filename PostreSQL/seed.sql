@@ -13,10 +13,10 @@ TRUNCATE carelog, problemreport, plant, planttype, users RESTART IDENTITY;
 -------------------------
 
 INSERT INTO Users (Id, Username, PasswordHash, Email) VALUES
-(1, 'alice', 'hashed_pw_1', 'alice@example.com'),
-(2, 'bob', 'hashed_pw_2', 'bob@example.com'),
-(3, 'charlie', 'hashed_pw_3', 'charlie@example.com'),
-(4, 'dave', 'hashed_pw_4', 'dave@example.com');
+(1, 'Alice', 'alice.pw', 'alice@example.com'),
+(2, 'Bob', 'bob.pw', 'bob@example.com'),
+(3, 'Charlie', 'charlie.pw', 'charlie@example.com'),
+(4, 'Dave', 'dave.pw', 'dave@example.com');
 
 -------------------------
 -- PLANT TYPES (10 records)
