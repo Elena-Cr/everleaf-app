@@ -15,25 +15,40 @@
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Severity</mat-label>
         <mat-select formControlName="severity">
-          <mat-option value="Low">Low</mat-option>
-          <mat-option value="Medium">Medium</mat-option>
-          <mat-option value="High">High</mat-option>
+          <mat-option value="Low" class="severity-low">Low</mat-option>
+          <mat-option value="Medium" class="severity-medium">Medium</mat-option>
+          <mat-option value="High" class="severity-high">High</mat-option>
         </mat-select>
         <mat-error *ngIf="problemForm.get('severity')?.hasError('required')">
-          Severity is required.
+          Please select the severity level
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Description</mat-label>
-        <textarea matInput rows="3" formControlName="description"></textarea>
+        <textarea
+          matInput
+          rows="3"
+          formControlName="description"
+          placeholder="Describe the problem..."
+        ></textarea>
+        <mat-hint align="end"
+          >{{
+            problemForm.get("description")?.value?.length || 0
+          }}/1000</mat-hint
+        >
         <mat-error *ngIf="problemForm.get('description')?.hasError('required')">
-          Description is required.
+          Description is required
         </mat-error>
         <mat-error
           *ngIf="problemForm.get('description')?.hasError('minlength')"
         >
-          Description must be at least 5 characters.
+          Description must be at least 5 characters
+        </mat-error>
+        <mat-error
+          *ngIf="problemForm.get('description')?.hasError('maxlength')"
+        >
+          Description cannot exceed 1000 characters
         </mat-error>
       </mat-form-field>
 
@@ -49,19 +64,25 @@
         <mat-error
           *ngIf="problemForm.get('dateReported')?.hasError('required')"
         >
-          Date is required.
+          Date is required
+        </mat-error>
+        <mat-error
+          *ngIf="problemForm.get('dateReported')?.hasError('futureDate')"
+        >
+          Report date cannot be in the future
         </mat-error>
       </mat-form-field>
     </mat-card-content>
 
     <mat-card-actions class="form-actions">
+      <button mat-raised-button type="button" mat-dialog-close>Cancel</button>
       <button
         mat-raised-button
         color="warn"
         type="submit"
         [disabled]="problemForm.invalid"
       >
-        Report
+        Report Problem
       </button>
     </mat-card-actions>
   </mat-card>

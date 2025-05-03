@@ -4,6 +4,9 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import {
   trigger,
@@ -66,11 +69,33 @@ export class ProblemFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.problemForm = this.fb.group({
-      severity: ['', Validators.required],
-      description: ['', [Validators.required, Validators.minLength(5)]],
-      dateReported: [new Date(), Validators.required],
+      severity: ['', [Validators.required]],
+      description: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(1000),
+        ],
+      ],
+      dateReported: [
+        '',
+        [Validators.required, this.dateNotInFutureValidator()],
+      ],
       plantId: [this.plantId, Validators.required],
     });
+  }
+
+  // Custom validator for date not in future
+  private dateNotInFutureValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+      const today = new Date();
+      const inputDate = new Date(control.value);
+      return inputDate > today ? { futureDate: true } : null;
+    };
   }
 
   toLocalDate(date: Date): string {
@@ -101,6 +126,12 @@ export class ProblemFormComponent implements OnInit {
             duration: 3000,
           });
         },
+      });
+    } else {
+      // Mark all fields as touched to trigger validation messages
+      Object.keys(this.problemForm.controls).forEach((key) => {
+        const control = this.problemForm.get(key);
+        control?.markAsTouched();
       });
     }
   }
