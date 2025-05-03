@@ -1,4 +1,6 @@
-﻿namespace Everleaf.Tests;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace EverleafSystem.Tests;
 
 [TestClass]
 public sealed class Test1
