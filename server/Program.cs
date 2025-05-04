@@ -39,10 +39,10 @@ app.UseCors("AllowFrontend");
 
 #region Middleware Configuration
 // Configure the HTTP request pipeline
-//app.UseBasicAuthenticationMiddleware();
+app.UseBasicAuthenticationMiddleware(); // <-- Uncommented this line
 
 // Enable authorization middleware
-// app.UseAuthorization();
+// app.UseAuthorization(); // This might be needed depending on how you mix auth types later
 
 // Enable endpoint routing for controllers
 app.MapControllers();

@@ -2,6 +2,7 @@ using AutoMapper;
 using Everleaf.Model.DTOs;
 using Everleaf.Model.Entities;
 using Everleaf.Model.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Everleaf.API.Controllers
@@ -104,6 +105,7 @@ namespace Everleaf.API.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public ActionResult Register([FromBody] UserRegisterDTO dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.PasswordHash))
@@ -125,6 +127,7 @@ namespace Everleaf.API.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public ActionResult<UserDTO> Login([FromBody] UserLoginDTO dto)
         {
             var user = _repository.GetUserByUsername(dto.Username);
