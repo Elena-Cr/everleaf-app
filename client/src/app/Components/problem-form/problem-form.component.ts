@@ -29,6 +29,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 
+// Define an interface for the data passed to the dialog
+export interface ProblemDialogData {
+  mode: 'add' | 'edit';
+  plantId: number;
+  problemData?: ProblemReport;
+}
+
 @Component({
   selector: 'app-problem-form',
   standalone: true,
@@ -58,16 +65,21 @@ import { MatDialogModule } from '@angular/material/dialog';
 export class ProblemFormComponent implements OnInit {
   problemForm!: FormGroup;
   statusMessage: string = '';
+  mode: 'add' | 'edit' = 'add'; // Default to add mode
+  private problemId: number | null = null; // To store the ID when editing
 
   constructor(
     private fb: FormBuilder,
     private problemService: ProblemService,
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<ProblemFormComponent>,
-    @Inject(MAT_DIALOG_DATA) private plantId: number
+    // Inject the data using the interface
+    @Inject(MAT_DIALOG_DATA) private data: ProblemDialogData
   ) {}
 
   ngOnInit(): void {
+    this.mode = this.data.mode; // Set the mode from injected data
+
     this.problemForm = this.fb.group({
       severity: ['', [Validators.required]],
       description: [
@@ -82,8 +94,22 @@ export class ProblemFormComponent implements OnInit {
         '',
         [Validators.required, this.dateNotInFutureValidator()],
       ],
-      plantId: [this.plantId, Validators.required],
+      // plantId is part of the data, not directly in the form for edit mode
+      // It will be included in the payload construction
     });
+
+    // If in edit mode, patch the form with existing data
+    if (this.mode === 'edit' && this.data.problemData) {
+      this.problemId = this.data.problemData.id ?? null;
+      this.problemForm.patchValue({
+        severity: this.data.problemData.severity,
+        description: this.data.problemData.description,
+        // Convert date string back to Date object for the datepicker
+        dateReported: this.data.problemData.dateReported
+          ? new Date(this.data.problemData.dateReported)
+          : '',
+      });
+    }
   }
 
   // Custom validator for date not in future
@@ -93,7 +119,11 @@ export class ProblemFormComponent implements OnInit {
         return null;
       }
       const today = new Date();
+      // Reset time part for accurate date comparison
+      today.setHours(0, 0, 0, 0);
       const inputDate = new Date(control.value);
+      inputDate.setHours(0, 0, 0, 0);
+
       return inputDate > today ? { futureDate: true } : null;
     };
   }
@@ -109,24 +139,49 @@ export class ProblemFormComponent implements OnInit {
     if (this.problemForm.valid) {
       const formValue = this.problemForm.value;
 
-      const payload = {
-        ...formValue,
+      // Construct the payload, always include plantId from the injected data
+      const payload: Omit<ProblemReport, 'id'> & { id?: number } = {
+        severity: formValue.severity,
+        description: formValue.description,
         dateReported: this.toLocalDate(formValue.dateReported),
+        plantId: this.data.plantId, // Use plantId from injected data
       };
 
-      this.problemService.createProblem(payload).subscribe({
-        next: () => {
-          this.snackBar.open('✅ Problem reported!', 'Close', {
-            duration: 3000,
+      if (this.mode === 'edit' && this.problemId !== null) {
+        // --- EDIT MODE ---
+        this.problemService
+          .updateProblem(this.problemId, payload as ProblemReport)
+          .subscribe({
+            next: () => {
+              this.snackBar.open('✅ Problem updated!', 'Close', {
+                duration: 3000,
+              });
+              this.dialogRef.close(true); // Close dialog indicating success
+            },
+            error: (err) => {
+              console.error('Error updating problem:', err);
+              this.snackBar.open('❌ Failed to update problem.', 'Close', {
+                duration: 3000,
+              });
+            },
           });
-          this.dialogRef.close(true);
-        },
-        error: () => {
-          this.snackBar.open('❌ Failed to submit problem.', 'Close', {
-            duration: 3000,
-          });
-        },
-      });
+      } else {
+        // --- ADD MODE ---
+        this.problemService.createProblem(payload as ProblemReport).subscribe({
+          next: () => {
+            this.snackBar.open('✅ Problem reported!', 'Close', {
+              duration: 3000,
+            });
+            this.dialogRef.close(true); // Close dialog indicating success
+          },
+          error: (err) => {
+            console.error('Error creating problem:', err);
+            this.snackBar.open('❌ Failed to submit problem.', 'Close', {
+              duration: 3000,
+            });
+          },
+        });
+      }
     } else {
       // Mark all fields as touched to trigger validation messages
       Object.keys(this.problemForm.controls).forEach((key) => {

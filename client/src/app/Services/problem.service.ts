@@ -18,4 +18,12 @@ export class ProblemService {
   getProblemsByPlant(plantId: number): Observable<ProblemReport[]> {
     return this.http.get<ProblemReport[]>(`${this.baseUrl}/plant/${plantId}`);
   }
+
+  updateProblem(id: number, report: ProblemReport): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}`, report);
+  }
+
+  deleteProblem(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}`);
+  }
 }

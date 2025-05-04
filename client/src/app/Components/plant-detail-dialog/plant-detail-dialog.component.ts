@@ -123,6 +123,10 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error loading problems:', error);
+        // Optionally show a snackbar message
+        this.snackBar.open('❌ Failed to load problems', 'Close', {
+          duration: 3000,
+        });
       },
     });
   }
@@ -181,14 +185,63 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
   openLogProblemDialog(): void {
     const dialogRef = this.dialog.open(ProblemFormComponent, {
       width: '500px',
-      data: this.plant.id,
+      data: { plantId: this.plant.id }, // Pass plantId in data object
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.plant.id) {
         console.log('Problem logged:', result);
-        this.loadProblems(this.plant.id);
+        this.loadProblems(this.plant.id); // Refresh problems list
       }
+    });
+  }
+
+  /** Open the Problem Form in Edit Mode */
+  editProblem(problem: ProblemReport): void {
+    const dialogRef = this.dialog.open(ProblemFormComponent, {
+      width: '500px',
+      data: {
+        mode: 'edit',
+        problemData: problem,
+        plantId: this.plant.id, // Pass plantId as well
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && this.plant.id) {
+        console.log('Problem updated:', result);
+        this.loadProblems(this.plant.id); // Refresh problems list
+      }
+    });
+  }
+
+  /** Delete a Problem Report */
+  deleteProblem(problem: ProblemReport): void {
+    const dateString = problem.dateReported
+      ? new Date(problem.dateReported).toLocaleDateString()
+      : 'this problem';
+    if (
+      !problem.id ||
+      !confirm(`Are you sure you want to delete ${dateString}?`)
+    ) {
+      return;
+    }
+
+    this.problemService.deleteProblem(problem.id).subscribe({
+      next: () => {
+        console.log('Problem deleted successfully.');
+        this.snackBar.open('✅ Problem deleted', 'Close', { duration: 3000 });
+        if (this.plant.id) {
+          this.loadProblems(this.plant.id); // Refresh problems list
+        }
+      },
+      error: (error: any) => {
+        // Added explicit type for error
+        console.error('Error deleting problem:', error);
+        this.snackBar.open('❌ Failed to delete problem', 'Close', {
+          duration: 3000,
+        });
+      },
     });
   }
 
