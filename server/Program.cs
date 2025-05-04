@@ -23,7 +23,8 @@ builder.Services.AddControllers();
 // Register repositories with dependency injection
 // Each repository is scoped to the HTTP request lifetime
 builder.Services.AddScoped<CareLogRepository>();
-builder.Services.AddScoped<PlantRepository>();
+// Register the interface and its implementation
+builder.Services.AddScoped<IPlantRepository, PlantRepository>(); 
 builder.Services.AddScoped<PlantTypeRepository>();
 builder.Services.AddScoped<ProblemReportRepository>();
 builder.Services.AddScoped<UserRepository>();

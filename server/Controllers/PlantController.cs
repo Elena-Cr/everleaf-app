@@ -10,10 +10,12 @@ namespace Everleaf.API.Controllers
     [ApiController]
     public class PlantController : ControllerBase
     {
-        private readonly PlantRepository _repository;
+        // Depend on the interface
+        private readonly IPlantRepository _repository;
         private readonly IMapper _mapper;
 
-        public PlantController(PlantRepository repository, IMapper mapper)
+        // Inject the interface
+        public PlantController(IPlantRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;

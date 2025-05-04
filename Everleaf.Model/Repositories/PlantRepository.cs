@@ -7,7 +7,8 @@ using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    public class PlantRepository : BaseRepository
+    // Implement the IPlantRepository interface
+    public class PlantRepository : BaseRepository, IPlantRepository
     {
         public PlantRepository(IConfiguration configuration) : base(configuration)
         {
