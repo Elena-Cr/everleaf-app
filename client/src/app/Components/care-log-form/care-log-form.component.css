@@ -1,9 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+
 .care-log-form {
   display: flex;
   justify-content: center;
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
+  font-family: 'Poppins', sans-serif;
 }
 
 .care-log-card {
