@@ -10,9 +10,6 @@
     <mat-error *ngIf="username.hasError('required')">
       Username is required
     </mat-error>
-    <mat-error *ngIf="username.hasError('pattern')">
-      No spaces allowed
-    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="outline">
@@ -20,12 +17,6 @@
     <input matInput type="password" formControlName="password" />
     <mat-error *ngIf="password.hasError('required')">
       Password is required
-    </mat-error>
-    <mat-error *ngIf="password.hasError('minlength') || password.hasError('pattern')">
-      Minimum 8 characters
-      <ng-container *ngIf="password.hasError('pattern')">
-        &amp; Must include at least one digit
-      </ng-container>
     </mat-error>
   </mat-form-field>
 
