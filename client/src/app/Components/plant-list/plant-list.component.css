@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 html {
-  font-size: 62.5%; /* 1rem = 10px */
+  font-size: 62.5%;/* 1rem = 10px */
+  font-family: Poppins; 
 }
 
 /* Center the card and give it some breathing room */
@@ -349,3 +352,28 @@ mat-icon {
   height: 2px;
   background: #e0e0e0;
 }
+
+/* Watering Status */
+.watering-status {
+  display: inline-flex; /* Align icon and text horizontally */
+  align-items: center; /* Vertically center the content */
+  background-color: #eff7f0; /* Light grey background */
+  border-radius: 20px; /* Rounded corners for the pill shape */
+  padding: 5px 10px; /* Add some padding for spacing */
+  font-size: 14px; /* Adjust font size */
+  font-size:1.3 rem;
+  color: #4caf50;
+  margin-top: 10px;
+  font-weight: bold;
+  font-family: Poppins;
+}
+
+/* Style for the water drop icon inside the pill */
+.watering-status mat-icon {
+
+  color: #4caf50 !important; /* Force the green color */
+  vertical-align: middle; /* Align the icon with the text */
+  margin-right: 5px; /* Add spacing between the icon and the text */
+  }
+
+/* Removed invalid HTML code */

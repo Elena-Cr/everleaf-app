@@ -83,9 +83,12 @@
           <mat-card-subtitle>{{ plant.name }}</mat-card-subtitle>
         </mat-card-header>
 
-        <!-- Card Content (date) -->
+        <!-- Card Content (date and watering status) -->
         <mat-card-content>
           <small>Added: {{ plant.dateAdded | date }}</small>
+          <p class="watering-status" *ngIf="plant.status">
+            <mat-icon>water_drop</mat-icon> {{ plant.status }}
+          </p>
         </mat-card-content>
 
         <!-- Card Action (button) -->

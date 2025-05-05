@@ -118,24 +118,34 @@ export class PlantListComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
 
-    this.plantService
-      .getPlants(userId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.plants = data;
-          this.loading = false;
-          this.currentPage = 0;
-        },
-        error: (error) => {
-          console.error('Error fetching plants:', error);
-          this.error = 'Failed to load plants. Please try again later.';
-          this.loading = false;
-          this.snackBar.open('❌ Failed to load plants', 'Close', {
-            duration: 3000,
-          });
-        },
-      });
+    this.plantService.getPlantsWithWateringData(userId).subscribe({
+      next: (plants) => {
+        this.plants = plants.map((plant) => {
+          // Format the status for display
+          const status = plant.needsWatering
+            ? 'Needs watering!'
+            : `Due in ${plant.wateringFrequencyDays - plant.daysSinceWatering} day${
+                plant.wateringFrequencyDays - plant.daysSinceWatering > 1 ? 's' : ''
+              }`;
+
+          return {
+            ...plant,
+            status,
+          };
+        });
+
+        this.loading = false;
+        this.currentPage = 0;
+      },
+      error: (error) => {
+        console.error('Error fetching plants:', error);
+        this.error = 'Failed to load plants. Please try again later.';
+        this.loading = false;
+        this.snackBar.open('❌ Failed to load plants', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
   }
 
   viewDetails(plant: Plant): void {
