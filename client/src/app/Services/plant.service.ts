@@ -293,6 +293,62 @@ export class PlantService {
     );
   }
 
+  /** Get plants with watering data */
+  getPlantsWithWateringData(userId: number): Observable<any[]> {
+    return forkJoin({
+      plants: this.getPlants(userId),
+      plantTypes: this.getPlantTypes(),
+      careLogs: this.getAllCareLogs(userId),
+    }).pipe(
+      map(({ plants, plantTypes, careLogs }) => {
+        const now = new Date();
+
+        // Enrich each plant with watering data
+        return plants.map((plant) => {
+          const plantType = plantTypes.find((pt) => pt.id === plant.species);
+
+          // Find the last watering log for this plant
+          const lastWateringLog = careLogs
+            .filter(
+              (log) =>
+                log.plantId === plant.id && log.type?.toLowerCase() === 'water'
+            )
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
+
+          const lastWatering = lastWateringLog
+            ? new Date(lastWateringLog.date)
+            : null;
+
+          // Calculate days since last watering
+          const daysSinceWatering = lastWatering
+            ? Math.floor(
+                (now.getTime() - lastWatering.getTime()) / (1000 * 60 * 60 * 24)
+              )
+            : null;
+
+          // Determine if the plant needs watering
+          const wateringFrequencyDays = plantType?.wateringFrequencyDays || 7; // Default to 7 days
+          const needsWatering =
+            lastWatering && daysSinceWatering !== null
+              ? daysSinceWatering >= wateringFrequencyDays
+              : false;
+
+          // Return enriched plant data
+          return {
+            ...plant,
+            plantType,
+            lastWatering,
+            wateringFrequencyDays,
+            daysSinceWatering,
+            needsWatering,
+          };
+        });
+      })
+    );
+  }
+
   private getAllCareLogs(userId: number): Observable<any[]> {
     return this.http
       .get<any[]>(`${this.baseUrl}/carelog/user/${userId}`)

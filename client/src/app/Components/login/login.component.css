@@ -1,7 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html {
+  font-family: 'Poppins', sans-serif;
+}
+
+
 :host {
     display: block;
     padding: 1px;
-    font-family: Arial, sans-serif;
+    font-family: Poppins, sans-serif;
     background-color: #f9f9f9;
   }
   
@@ -28,7 +35,7 @@
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  
+    font-family: Poppins, sans-serif;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     gap: 16px;
@@ -56,6 +63,8 @@
     cursor: pointer;
     transition: background-color 0.3s;
     text-align: center;
+    font-family: Poppins, sans-serif;
+
   }
   
   button[type="submit"]:hover {
@@ -78,6 +87,8 @@
     text-align: left;
     margin-top: 8px;
     display: block;
+    font-family: Poppins, sans-serif;
+
   }
   
   p a:hover {
