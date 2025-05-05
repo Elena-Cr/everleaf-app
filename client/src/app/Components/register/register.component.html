@@ -3,57 +3,55 @@
 </div>
 <hr class="dashboard-divider"/>
 
-<form #f="ngForm" (ngSubmit)="onSubmit()">
-  <!-- Username -->
-  <div class="form-group">
-    <mat-form-field appearance="outline">
-      <mat-label>Username</mat-label>
-      <input
-        matInput
-        [(ngModel)]="username"
-        name="username"
-        required
-      />
-    </mat-form-field>
-  </div>
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-  <!-- Password -->
-  <div class="form-group">
-    <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-      />
-    </mat-form-field>
-  </div>
+  <!-- USERNAME -->
+  <mat-form-field appearance="outline">
+    <mat-label>Username</mat-label>
+    <input matInput formControlName="username" />
+    <mat-error *ngIf="username.hasError('required')">
+      Username is required
+    </mat-error>
+    <mat-error *ngIf="username.hasError('pattern')">
+      No spaces allowed
+    </mat-error>
+  </mat-form-field>
 
-  <!-- Email -->
-  <div class="form-group">
-    <mat-form-field appearance="outline">
-      <mat-label>Email</mat-label>
-      <input
-        matInput
-        type="email"
-        [(ngModel)]="email"
-        name="email"
-        required
-      />
-    </mat-form-field>
-  </div>
+  <!-- PASSWORD -->
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput type="password" formControlName="password" />
+    <mat-error *ngIf="password.hasError('required')">
+      Password is required
+    </mat-error>
+    <mat-error *ngIf="password.hasError('minlength') || password.hasError('pattern')">
+      Minimum 8 characters &amp; Must include at least one digit
+    </mat-error>
+  </mat-form-field>
 
-  <!-- Submit -->
-  <button mat-raised-button color="primary" type="submit" [disabled]="f.invalid">
+  <!-- EMAIL -->
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput type="email" formControlName="email" />
+    <mat-error *ngIf="email.hasError('required')">
+      Email is required
+    </mat-error>
+    <mat-error *ngIf="email.hasError('email')">
+      Enter a valid email address
+    </mat-error>
+  </mat-form-field>
+
+  <!-- SUBMIT -->
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="registerForm.invalid"
+  >
     Register
   </button>
 
-  <!-- Error if any -->
-  <p class="error" *ngIf="error">{{ error }}</p>
-
-  <!-- Switch to login -->
+  <!-- SWITCH TO LOGIN -->
   <p>
     <a routerLink="/login">Already have an account? Login</a>
   </p>

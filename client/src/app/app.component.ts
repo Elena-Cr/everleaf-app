@@ -1,7 +1,7 @@
 // src/app/app.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from './Services/auth.service';
 
@@ -19,7 +19,7 @@ import { AuthService } from './Services/auth.service';
 export class AppComponent implements OnInit {
   currentUserName = '';
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.auth.currentUser$.subscribe(u => {
@@ -29,5 +29,6 @@ export class AppComponent implements OnInit {
 
   logout() {
     this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }
