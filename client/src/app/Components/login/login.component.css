@@ -81,14 +81,12 @@ html {
   /* Register link under the button, right-aligned */
   p a {
     grid-column: 1 / -1;
+    display: block;
     color: #4caf50;
     text-decoration: none;
     font-size: 14px;
-    text-align: left;
     margin-top: 8px;
-    display: block;
-    font-family: Poppins, sans-serif;
-
+    text-align: left;
   }
   
   p a:hover {

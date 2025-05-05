@@ -121,18 +121,38 @@ export class PlantListComponent implements OnInit, OnDestroy {
     this.plantService.getPlantsWithWateringData(userId).subscribe({
       next: (plants) => {
         this.plants = plants.map((plant) => {
-          // Format the status for display
-          const status = plant.needsWatering
-            ? 'Needs watering!'
-            : `Due in ${plant.wateringFrequencyDays - plant.daysSinceWatering} day${
-                plant.wateringFrequencyDays - plant.daysSinceWatering > 1 ? 's' : ''
-              }`;
+            // Format the status for display
+            const status = plant.needsWatering
+              ? 'Needs watering!'
+              : `Due in ${
+                  plant.wateringFrequencyDays - plant.daysSinceWatering
+                } day${
+                  plant.wateringFrequencyDays - plant.daysSinceWatering > 1
+                    ? 's'
+                    : ''
+                }`;
 
-          return {
-            ...plant,
-            status,
-          };
-        });
+            return {
+              ...plant,
+              status,
+            };
+          })
+          .sort((a, b) => {
+            // Sort plants: "Needs watering!" first, then "Due in X days"
+            if (
+              a.status === 'Needs watering!' &&
+              b.status !== 'Needs watering!'
+            ) {
+              return -1;
+            }
+            if (
+              a.status !== 'Needs watering!' &&
+              b.status === 'Needs watering!'
+            ) {
+              return 1;
+            }
+            return 0; // Keep the same order for plants with the same status
+          });
 
         this.loading = false;
         this.currentPage = 0;

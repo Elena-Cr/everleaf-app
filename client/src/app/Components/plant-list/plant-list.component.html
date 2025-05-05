@@ -40,10 +40,7 @@
   <hr class="dashboard-divider" *ngIf="currentUserName" />
 
   <!-- Main Plant Grid -->
-  <div
-    class="plants-container"
-    *ngIf="plants.length > 0 && !loading && !error"
-  >
+  <div class="plants-container" *ngIf="plants.length > 0 && !loading && !error">
     <!-- Left Navigation Button -->
     <div class="nav-button-wrapper">
       <button
@@ -86,14 +83,24 @@
         <!-- Card Content (date and watering status) -->
         <mat-card-content>
           <small>Added: {{ plant.dateAdded | date }}</small>
-          <p class="watering-status" *ngIf="plant.status">
+          <p
+            class="watering-status"
+            [ngClass]="{
+              'needs-watering': plant.status === 'Needs watering!',
+              'due-soon': plant.status?.startsWith('Due in')
+            }"
+          >
             <mat-icon>water_drop</mat-icon> {{ plant.status }}
           </p>
         </mat-card-content>
 
         <!-- Card Action (button) -->
         <mat-card-actions>
-          <button mat-raised-button color="primary" (click)="viewDetails(plant)">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="viewDetails(plant)"
+          >
             View Details
           </button>
         </mat-card-actions>

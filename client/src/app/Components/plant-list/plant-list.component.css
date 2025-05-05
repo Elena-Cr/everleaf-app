@@ -368,6 +368,18 @@ mat-icon {
   font-family: Poppins;
 }
 
+/* Styling for "Needs watering!" status */
+.needs-watering {
+  background-color: #fbf2e3; 
+  color: #d38c2f; 
+}
+
+/* Styling for "Due in X days" status */
+.due-soon {
+  background-color: #eff7f0; 
+  color: #4caf50; 
+}
+
 /* Style for the water drop icon inside the pill */
 .watering-status mat-icon {
 
@@ -376,4 +388,3 @@ mat-icon {
   margin-right: 5px; /* Add spacing between the icon and the text */
   }
 
-/* Removed invalid HTML code */
