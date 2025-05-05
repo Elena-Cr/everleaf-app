@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 /* --- Full Page Layout --- */
 .plant-details-page {
   padding: 2rem;
@@ -6,6 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* --- Top Header (Back + Log Problem Buttons) --- */
@@ -51,14 +54,14 @@
 }
 
 .plant-title {
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 700;
   color: var(--primary-color);
-  margin-bottom: 0.25rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 .plant-subtitle {
-  font-size: 1.2rem;
+  font-size: 2.0rem;
   color: gray;
   margin-bottom: 1.5rem;
 }
