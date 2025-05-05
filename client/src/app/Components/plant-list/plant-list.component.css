@@ -2,7 +2,7 @@
 
 html {
   font-size: 62.5%;/* 1rem = 10px */
-  font-family: Poppins; 
+  font-family: 'Poppins', sans-serif; 
 }
 
 /* Center the card and give it some breathing room */
@@ -303,6 +303,7 @@ mat-icon {
 
   .mat-mdc-card-content {
     font-size: 1.3rem;
+    font-family: Poppins sans-serif;
   }
 
   .mat-mdc-raised-button {
@@ -374,6 +375,12 @@ mat-icon {
   color: #d38c2f; 
 }
 
+.needs-watering mat-icon{
+  color: #d38c2f !important; /* Force the orange color */
+  vertical-align: middle; /* Align the icon with the text */
+  margin-right: 5px; /* Add spacing between the icon and the text */
+}
+
 /* Styling for "Due in X days" status */
 .due-soon {
   background-color: #eff7f0; 
@@ -381,7 +388,7 @@ mat-icon {
 }
 
 /* Style for the water drop icon inside the pill */
-.watering-status mat-icon {
+.due-soon mat-icon {
 
   color: #4caf50 !important; /* Force the green color */
   vertical-align: middle; /* Align the icon with the text */
