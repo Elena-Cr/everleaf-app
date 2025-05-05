@@ -12,7 +12,7 @@ TRUNCATE carelog, problemreport, plant, planttype, users RESTART IDENTITY;
 -- USERS (4 records)
 -------------------------
 
-INSERT INTO Users (Id, Username, PasswordHash, Email) VALUES
+INSERT INTO Users (Id, Username, password, Email) VALUES
 (1, 'Alice', 'alice.pw', 'alice@example.com'),
 (2, 'Bob', 'bob.pw', 'bob@example.com'),
 (3, 'Charlie', 'charlie.pw', 'charlie@example.com'),

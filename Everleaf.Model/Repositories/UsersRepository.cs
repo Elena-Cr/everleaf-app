@@ -26,7 +26,7 @@ namespace Everleaf.Model.Repositories
                 return new Users(Convert.ToInt32(data["id"]))
                 {
                     Username = data["username"].ToString(),
-                    PasswordHash = data["passwordhash"].ToString(),
+                    password = data["password"].ToString(),
                     Email = data["email"].ToString()
                 };
             }
@@ -47,7 +47,7 @@ namespace Everleaf.Model.Repositories
                 return new Users(Convert.ToInt32(data["id"]))
                 {
                     Username = data["username"].ToString(),
-                    PasswordHash = data["passwordhash"].ToString(),
+                    password = data["password"].ToString(),
                     Email = data["email"].ToString()
                 };
             }
@@ -68,7 +68,7 @@ namespace Everleaf.Model.Repositories
                 users.Add(new Users(Convert.ToInt32(data["id"]))
                 {
                     Username = data["username"].ToString(),
-                    PasswordHash = data["passwordhash"].ToString(),
+                    password = data["password"].ToString(),
                     Email = data["email"].ToString()
                 });
             }
@@ -81,11 +81,11 @@ namespace Everleaf.Model.Repositories
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO Users (username, passwordhash, email)
-                VALUES (@username, @passwordhash, @email)";
+                INSERT INTO Users (username, password, email)
+                VALUES (@username, @password, @email)";
 
             cmd.Parameters.AddWithValue("@username", NpgsqlDbType.Text, user.Username ?? "");
-            cmd.Parameters.AddWithValue("@passwordhash", NpgsqlDbType.Text, user.PasswordHash ?? "");
+            cmd.Parameters.AddWithValue("@password", NpgsqlDbType.Text, user.password ?? "");
             cmd.Parameters.AddWithValue("@email", NpgsqlDbType.Text, user.Email ?? "");
 
             return InsertData(dbConn, cmd);
@@ -98,12 +98,12 @@ namespace Everleaf.Model.Repositories
             cmd.CommandText = @"
                 UPDATE Users SET
                     username = @username,
-                    passwordhash = @passwordhash,
+                    password = @password,
                     email = @email
                 WHERE id = @id";
 
             cmd.Parameters.AddWithValue("@username", NpgsqlDbType.Text, user.Username ?? "");
-            cmd.Parameters.AddWithValue("@passwordhash", NpgsqlDbType.Text, user.PasswordHash ?? "");
+            cmd.Parameters.AddWithValue("@password", NpgsqlDbType.Text, user.password ?? "");
             cmd.Parameters.AddWithValue("@email", NpgsqlDbType.Text, user.Email ?? "");
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, user.Id);
 

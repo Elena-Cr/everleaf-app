@@ -75,7 +75,7 @@ namespace Everleaf.API.Controllers
             }
 
             var updatedUser = _mapper.Map<Users>(dto);
-            updatedUser.PasswordHash = existing.PasswordHash; // Keep the old password (not sent in DTO)
+            updatedUser.password = existing.password; // Keep the old password (not sent in DTO)
 
             bool status = _repository.UpdateUser(updatedUser);
             if (status)
@@ -109,7 +109,7 @@ namespace Everleaf.API.Controllers
         public ActionResult<UserDTO> Register([FromBody] UserRegisterDTO dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Username) ||
-                string.IsNullOrWhiteSpace(dto.PasswordHash) ||
+                string.IsNullOrWhiteSpace(dto.password) ||
                 string.IsNullOrWhiteSpace(dto.Email)
                 )
             {
@@ -144,7 +144,7 @@ namespace Everleaf.API.Controllers
             var userEntity = new Users(0)
             {
                 Username     = dto.Username,
-                PasswordHash = dto.PasswordHash,
+                password = dto.password,
                 Email        = dto.Email
             };
 
@@ -169,7 +169,7 @@ namespace Everleaf.API.Controllers
         public ActionResult<UserDTO> Login([FromBody] UserLoginDTO dto)
         {
             var user = _repository.GetUserByUsername(dto.Username);
-            if (user == null || user.PasswordHash != dto.PasswordHash)
+            if (user == null || user.password != dto.password)
                 return Unauthorized("Invalid credentials.");
 
             var userDto = _mapper.Map<UserDTO>(user);

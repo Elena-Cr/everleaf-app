@@ -23,7 +23,7 @@ export class AuthService {
     return this.http.post<UserDTO>(`${this.base}/login`, dto).pipe(
       tap((user) => {
         // Encode credentials using browser's btoa
-        const credentials = btoa(`${dto.username}:${dto.passwordHash}`); // Base64 encode username:password
+        const credentials = btoa(`${dto.username}:${dto.password}`); // Base64 encode username:password
         // save user to BehaviorSubject AND localStorage
         this._currentUser.next(user);
         localStorage.setItem('currentUser', JSON.stringify(user));

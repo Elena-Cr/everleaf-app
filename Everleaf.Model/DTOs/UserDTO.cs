@@ -10,7 +10,7 @@ namespace Everleaf.Model.DTOs
      public class CreateUserDTO
     {
         public string Username { get; set; }
-        public string PasswordHash { get; set; } // Consider hashing this in backend later
+        public string password { get; set; } // Consider hashing this in backend later
         public string Email { get; set; }
     }
 }

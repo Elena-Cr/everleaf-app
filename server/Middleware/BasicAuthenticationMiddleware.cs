@@ -59,10 +59,10 @@ public class BasicAuthenticationMiddleware
                 var user = userRepository.GetUserByUsername(username);
 
                 // IMPORTANT: You MUST compare the provided password with the stored HASH.
-                // Assuming your stored PasswordHash is the actual hash and you have a way to verify it.
+                // Assuming your stored password is the actual hash and you have a way to verify it.
                 // For this example, I'll assume direct comparison, but you SHOULD use a proper hash verification method (e.g., BCrypt.Net, ASP.NET Core Identity hasher).
                 // Replace this check with your actual password hashing verification logic.
-                if (user != null && user.PasswordHash == password) // <-- *** REPLACE THIS WITH ACTUAL HASH VERIFICATION ***
+                if (user != null && user.password == password) // <-- *** REPLACE THIS WITH ACTUAL HASH VERIFICATION ***
                 {
                     // TODO: Optionally attach user principal to context if needed downstream
                     // var claims = new[] { new Claim(ClaimTypes.Name, user.Username) };
