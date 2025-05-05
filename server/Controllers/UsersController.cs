@@ -106,24 +106,62 @@ namespace Everleaf.API.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public ActionResult Register([FromBody] UserRegisterDTO dto)
+        public ActionResult<UserDTO> Register([FromBody] UserRegisterDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.PasswordHash))
-                return BadRequest("Username and password are required.");
-
-            var existing = _repository.GetUserByUsername(dto.Username);
-            if (existing != null)
-                return Conflict("Username already exists.");
-
-            var user = new Users(0)
+            if (string.IsNullOrWhiteSpace(dto.Username) ||
+                string.IsNullOrWhiteSpace(dto.PasswordHash) ||
+                string.IsNullOrWhiteSpace(dto.Email)
+                )
             {
-                Username = dto.Username,
-                PasswordHash = dto.PasswordHash, // optionally hash this later
-                Email = dto.Email
+                return BadRequest("All fields are required.");
+            }
+
+            // Check if the username already exists
+            var existingUser = _repository
+            .GetAllUsers()
+            .FirstOrDefault(u =>
+                string.Equals(u.Username, dto.Username,
+                            StringComparison.OrdinalIgnoreCase)
+            );
+
+            if (existingUser != null)
+            {
+                return Conflict("Username already exists. Please choose a different one.");
+            }
+
+            // Check if the email already exists
+            var existingEmail = _repository
+            .GetAllUsers()
+            .FirstOrDefault(u =>
+                string.Equals(u.Email, dto.Email,
+                            StringComparison.OrdinalIgnoreCase)
+            );
+            if (existingEmail != null)
+            {
+                return Conflict("Email already exists. Please choose a different one.");
+            }
+
+            var userEntity = new Users(0)
+            {
+                Username     = dto.Username,
+                PasswordHash = dto.PasswordHash,
+                Email        = dto.Email
             };
 
-            var status = _repository.InsertUser(user);
-            return status ? Ok("User registered") : BadRequest("Failed to register.");
+            var success = _repository.InsertUser(userEntity);
+            if (!success)
+                return BadRequest("Failed to register.");
+
+            // freshly retrieve the saved user (now with its real Id)
+            var saved = _repository.GetUserByUsername(dto.Username);
+            var userDto = _mapper.Map<UserDTO>(saved);
+
+            // Return 201 Created + the DTO in the body
+            return CreatedAtAction(
+            nameof(GetUser),
+            new { id = userDto.Id },
+            userDto
+            );
         }
 
         [HttpPost("login")]

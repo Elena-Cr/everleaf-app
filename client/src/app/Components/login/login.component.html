@@ -3,30 +3,40 @@
 </div>
 <hr class="dashboard-divider"/>
 
-<form (ngSubmit)="onSubmit()">
-  <div class="form-group">
-    <mat-form-field appearance="outline">
-      <mat-label>Username</mat-label>
-      <input matInput [(ngModel)]="username" name="username" required>
-    </mat-form-field>
-  </div>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline">
+    <mat-label>Username</mat-label>
+    <input matInput formControlName="username" />
+    <mat-error *ngIf="username.hasError('required')">
+      Username is required
+    </mat-error>
+    <mat-error *ngIf="username.hasError('pattern')">
+      No spaces allowed
+    </mat-error>
+  </mat-form-field>
 
-  <div class="form-group">
-    <mat-form-field appearance="outline">
-      <mat-label>Password</mat-label>
-      <input
-        matInput
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-        required
-      >
-    </mat-form-field>
-  </div>
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput type="password" formControlName="password" />
+    <mat-error *ngIf="password.hasError('required')">
+      Password is required
+    </mat-error>
+    <mat-error *ngIf="password.hasError('minlength') || password.hasError('pattern')">
+      Minimum 8 characters
+      <ng-container *ngIf="password.hasError('pattern')">
+        &amp; Must include at least one digit
+      </ng-container>
+    </mat-error>
+  </mat-form-field>
 
-  <button mat-raised-button color="primary" type="submit">Login</button>
-
-  <p class="error" *ngIf="error">{{ error }}</p>
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="loginForm.invalid"
+  >
+    Login
+  </button>
 
   <p>
     <a routerLink="/register">Register a new account</a>
