@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 
 import { PlantFormComponent } from './plant-form.component';
 import { PlantService } from '../../Services/plant.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 //Jasmine: The test cases are written using Jasmine syntax (e.g., describe, it, expect).
@@ -19,16 +20,24 @@ describe('PlantFormComponent', () => {
   beforeEach(async () => {
     const plantServiceMock = jasmine.createSpyObj('PlantService', ['savePlant', 'updatePlant', 'getPlantTypes'], { currentUserId: 1 });
 
+    plantServiceMock.getPlantTypes.and.returnValue(of([]));
+
     await TestBed.configureTestingModule({
       imports: [
+        PlantFormComponent,
         ReactiveFormsModule,
         HttpClientTestingModule,
         MatSnackBarModule,
+        BrowserAnimationsModule,
       ],
-      declarations: [PlantFormComponent],
       providers: [
         { provide: PlantService, useValue: plantServiceMock },
-        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MatDialogRef,
+          useValue: {
+            close: jasmine.createSpy('close')
+          }
+        },
         { provide: MAT_DIALOG_DATA, useValue: null },
       ],
     }).compileComponents();
