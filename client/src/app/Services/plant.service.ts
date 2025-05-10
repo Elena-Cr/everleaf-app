@@ -17,18 +17,16 @@ interface PlantStatistics {
 @Injectable({
   providedIn: 'root',
 })
+
 export class PlantService {
   private baseUrl: string = 'http://localhost:5234/api';
 
-  // Dummy user list (no longer used for default)
+  // Dummy user list (no longer used for manual user switching)
   private users: { id: number; name: string }[] = [];
 
   // BehaviorSubject to track the currently logged in user
   private currentUserSubject = new BehaviorSubject<{ id: number; name: string }>({ id: 0, name: '' });
-  currentUser$ = this.currentUserSubject.asObservable().pipe(
-    // Add a small delay to ensure routing completes
-    delay(100)
-  );
+  currentUser$ = this.currentUserSubject.asObservable().pipe(delay(100));
 
   constructor(private http: HttpClient, private auth: AuthService) {
     // Subscribe to AuthService to update currentUserSubject
@@ -43,31 +41,17 @@ export class PlantService {
     });
   }
 
-  /** Change current user manually (optional) */
-  setCurrentUserId(userId: number) {
-    const user = this.users.find((u) => u.id === userId);
-    if (user) {
-      setTimeout(() => {
-        this.currentUserSubject.next(user);
-        console.log('Switched to user:', user);
-      }, 0);
-    }
-  }
-
-  /** Get current user ID */
+  // Get current user ID 
   get currentUserId(): number {
     return this.currentUserSubject.value.id;
   }
 
-  /** Fetch plant types */
+  // Fetch plant types 
   getPlantTypes(): Observable<PlantType[]> {
     console.log('Fetching plant types from:', `${this.baseUrl}/planttype`);
     return this.http.get<PlantType[]>(`${this.baseUrl}/planttype`).pipe(
       tap((types) => {
-        console.log(
-          'Raw plant types received:',
-          JSON.stringify(types, null, 2)
-        );
+        console.log('Raw plant types received:',types);
         if (!types || types.length === 0) {
           console.warn('No plant types returned from server');
         } else {
@@ -88,7 +72,7 @@ export class PlantService {
     );
   }
 
-  /** Fetch plants for current user */
+  // Fetch plants for current user
   getPlants(userId: number = this.currentUserId): Observable<any[]> {
     console.log('Fetching plants for user:', userId);
     return this.http
@@ -101,7 +85,7 @@ export class PlantService {
       );
   }
 
-  /** Fetch a specific plant by ID */
+  // Fetch a specific plant by ID
   getPlantById(id: number): Observable<Plant> {
     console.log('Fetching plant details for ID:', id);
     return this.http.get<Plant>(`${this.baseUrl}/plant/${id}`).pipe(
@@ -110,7 +94,7 @@ export class PlantService {
     );
   }
 
-  /** Fetch plant type by ID */
+  // Fetch plant type by ID
   getPlantTypeById(id: number): Observable<PlantType> {
     console.log('Fetching plant type for ID:', id);
     return this.http.get<PlantType>(`${this.baseUrl}/planttype/${id}`).pipe(
@@ -131,7 +115,7 @@ export class PlantService {
     );
   }
 
-  /** Fetch care logs for a plant */
+  // Fetch care logs for a plant
   getPlantCareLogs(plantId: number): Observable<any[]> {
     console.log('Fetching care logs for plant ID:', plantId);
     return this.http
@@ -142,10 +126,9 @@ export class PlantService {
       );
   }
 
-  /** Fetch full plant info: base + type + care logs */
-  getPlantWithDetails(
-    plantId: number
-  ): Observable<{
+  // Fetch full plant info: base + type + care logs
+  getPlantWithDetails(plantId: number): Observable<
+  {
     plant: Plant;
     plantType: PlantType;
     careLogs: any[];
@@ -183,7 +166,7 @@ export class PlantService {
     );
   }
 
-  /** Save a new plant */
+  // Save a new plant
   savePlant(plantData: any): Observable<any> {
     console.log('Saving new plant:', plantData);
     return this.http.post(`${this.baseUrl}/plant`, plantData).pipe(
@@ -192,7 +175,7 @@ export class PlantService {
     );
   }
 
-  /** Update existing plant */
+  // Update existing plant
   updatePlant(id: number, plantData: any): Observable<any> {
     console.log('Updating plant ID:', id);
 
@@ -207,7 +190,7 @@ export class PlantService {
     );
   }
 
-  /** Delete a plant */
+  // Delete a plant
   deletePlant(id: number): Observable<any> {
     console.log('Deleting plant ID:', id);
     return this.http.delete(`${this.baseUrl}/plant/${id}`).pipe(
@@ -216,7 +199,7 @@ export class PlantService {
     );
   }
 
-  /** Get statistics for plants */
+  // Get statistics for plants
   getPlantStatistics(userId: number): Observable<PlantStatistics> {
     return forkJoin({
       plants: this.getPlants(userId),
@@ -231,16 +214,10 @@ export class PlantService {
           plantType: plantTypes.find((pt) => pt.id === plant.species),
         }));
 
-        // ... rest of method unchanged ...
         const plantsNeedingWater = plantsWithTypes.filter((plant) => {
           const lastWatering = careLogs
-            .filter(
-              (log) =>
-                log.plantId === plant.id && log.type?.toLowerCase() === 'water'
-            )
-            .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            )[0];
+            .filter((log) => log.plantId === plant.id && log.type?.toLowerCase() === 'water')
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
           if (!lastWatering || !plant.plantType?.wateringFrequencyDays)
             return false;
@@ -293,7 +270,7 @@ export class PlantService {
     );
   }
 
-  /** Get plants with watering data */
+  // Get plants with watering data
   getPlantsWithWateringData(userId: number): Observable<any[]> {
     return forkJoin({
       plants: this.getPlants(userId),
@@ -303,7 +280,6 @@ export class PlantService {
       map(({ plants, plantTypes, careLogs }) => {
         const now = new Date();
 
-        // Enrich each plant with watering data
         return plants.map((plant) => {
           const plantType = plantTypes.find((pt) => pt.id === plant.species);
 
