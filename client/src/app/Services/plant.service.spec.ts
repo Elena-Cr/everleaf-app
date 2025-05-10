@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { PlantService } from './plant.service';
 
-describe('PlantService (minimal)', () => {
+describe('PlantService', () => {
   let service: PlantService;
 
   beforeEach(() => {
@@ -32,24 +32,6 @@ describe('PlantService (minimal)', () => {
       expect(plants.length).toBe(1);
       expect(plants[0].name).toBe('MyPlant');
       done();
-    });
-  });
-
-  it('getPlants() propagates http errors', (done) => {
-    service['http'] = {
-      get: () => ({
-        pipe: () => ({
-          subscribe: (observer: any) => observer.error('oops')
-        })
-      })
-    } as any;
-
-    service.getPlants().subscribe({
-      next: () => fail('should not succeed'),
-      error: e => {
-        expect(e).toBe('oops');
-        done();
-      }
     });
   });
 

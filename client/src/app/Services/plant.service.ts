@@ -223,29 +223,24 @@ export class PlantService {
             return false;
 
           const daysSinceWatering = Math.floor(
-            (now.getTime() - new Date(lastWatering.date).getTime()) /
-              (1000 * 60 * 60 * 24)
+            (now.getTime() - new Date(lastWatering.date).getTime()) / (1000 * 60 * 60 * 24)
           );
+
           return daysSinceWatering >= plant.plantType.wateringFrequencyDays;
         });
 
         const plantsNeedingFertilizer = plantsWithTypes.filter((plant) => {
           const lastFertilizing = careLogs
-            .filter(
-              (log) =>
-                log.plantId === plant.id && log.type?.toLowerCase() === 'fertilizer'
-            )
-            .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            )[0];
+            .filter((log) => log.plantId === plant.id && log.type?.toLowerCase() === 'fertilizer')
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
           if (!lastFertilizing || !plant.plantType?.fertilizingFrequencyDays)
             return false;
 
           const daysSinceFertilizing = Math.floor(
-            (now.getTime() - new Date(lastFertilizing.date).getTime()) /
-              (1000 * 60 * 60 * 24)
+            (now.getTime() - new Date(lastFertilizing.date).getTime()) / (1000 * 60 * 60 * 24)
           );
+
           return daysSinceFertilizing >= plant.plantType.fertilizingFrequencyDays;
         });
 
@@ -286,23 +281,15 @@ export class PlantService {
           // Find the last watering log for this plant
           const lastWateringLog = careLogs
             .filter(
-              (log) =>
-                log.plantId === plant.id && log.type?.toLowerCase() === 'water'
-            )
+              (log) => log.plantId === plant.id && log.type?.toLowerCase() === 'water')
             .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-            )[0];
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
-          const lastWatering = lastWateringLog
-            ? new Date(lastWateringLog.date)
-            : null;
+          const lastWatering = lastWateringLog? new Date(lastWateringLog.date): null;
 
           // Calculate days since last watering
-          const daysSinceWatering = lastWatering
-            ? Math.floor(
-                (now.getTime() - lastWatering.getTime()) / (1000 * 60 * 60 * 24)
-              )
-            : null;
+          const daysSinceWatering = lastWatering? Math.floor(
+                (now.getTime() - lastWatering.getTime()) / (1000 * 60 * 60 * 24)) : null;
 
           // Determine if the plant needs watering
           const wateringFrequencyDays = plantType?.wateringFrequencyDays || 7; // Default to 7 days
