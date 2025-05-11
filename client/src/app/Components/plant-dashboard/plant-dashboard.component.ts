@@ -14,14 +14,18 @@ import { takeUntil } from 'rxjs/operators';
   imports: [CommonModule, MatCardModule, MatGridListModule],
 })
 export class PlantDashboardComponent implements OnInit, OnDestroy {
+  // Dashboard statistics
   totalPlants = 0;
   plantsNeedingWater = 0;
   plantsNeedingFertilizer = 0;
   mostCommonIssue: string | null = null;
+
+  // Lifecycle management
   private destroy$ = new Subject<void>();
 
   constructor(private plantService: PlantService) {}
 
+  // Lifecycle hooks
   ngOnInit() {
     // Subscribe to user changes to update dashboard
     this.plantService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe({
@@ -32,10 +36,12 @@ export class PlantDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // Clean up subscriptions
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Data loading
   private loadDashboardData(userId: number) {
     this.plantService
       .getPlantStatistics(userId)

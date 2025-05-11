@@ -45,13 +45,17 @@ import { PlantDashboardComponent } from '../plant-dashboard/plant-dashboard.comp
   ],
 })
 export class PlantListComponent implements OnInit, OnDestroy {
+  // Component state
   plants: Plant[] = [];
   loading: boolean = true;
   error: string | null = null;
-  currentPage = 0;
-  pageSize = 3;
   currentUserName: string = '';
 
+  // Pagination
+  currentPage = 0;
+  pageSize = 3;
+
+  // Lifecycle management
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -62,11 +66,11 @@ export class PlantListComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
+  // Lifecycle hooks
   ngOnInit(): void {
     // Listen to user changes and reload plants
     this.plantService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe({
       next: (user: { id: number; name: string }) => {
-        console.log('User changed, loading plants for user:', user.id);
         this.currentUserName = user.name;
         this.loadPlants(user.id);
       },
@@ -82,6 +86,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // Plant management actions
   openAddPlantDialog(): void {
     const dialogRef = this.dialog.open(PlantFormComponent, {
       width: '500px',
@@ -114,13 +119,24 @@ export class PlantListComponent implements OnInit, OnDestroy {
       });
   }
 
+  viewDetails(plant: Plant): void {
+    if (!plant || !plant.id) {
+      console.error('Invalid plant for navigation');
+      return;
+    }
+
+    this.router.navigate(['/plants', plant.id]);
+  }
+
+  // Data loading
   loadPlants(userId: number): void {
     this.loading = true;
     this.error = null;
 
     this.plantService.getPlantsWithWateringData(userId).subscribe({
       next: (plants) => {
-        this.plants = plants.map((plant) => {
+        this.plants = plants
+          .map((plant) => {
             // Format the status for display
             const status = plant.needsWatering
               ? 'Needs watering!'
@@ -168,15 +184,7 @@ export class PlantListComponent implements OnInit, OnDestroy {
     });
   }
 
-  viewDetails(plant: Plant): void {
-    if (!plant || !plant.id) {
-      console.error('Invalid plant for navigation');
-      return;
-    }
-
-    this.router.navigate(['/plants', plant.id]);
-  }
-
+  // Pagination helpers
   get currentPagePlants(): Plant[] {
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;

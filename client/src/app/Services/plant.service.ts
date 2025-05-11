@@ -17,20 +17,24 @@ interface PlantStatistics {
 @Injectable({
   providedIn: 'root',
 })
-
 export class PlantService {
+  // Service configuration
   private baseUrl: string = 'http://localhost:5234/api';
 
   // Dummy user list (no longer used for manual user switching)
   private users: { id: number; name: string }[] = [];
 
   // BehaviorSubject to track the currently logged in user
-  private currentUserSubject = new BehaviorSubject<{ id: number; name: string }>({ id: 0, name: '' });
+  private currentUserSubject = new BehaviorSubject<{
+    id: number;
+    name: string;
+  }>({ id: 0, name: '' });
   currentUser$ = this.currentUserSubject.asObservable().pipe(delay(100));
 
+  // Service initialization
   constructor(private http: HttpClient, private auth: AuthService) {
     // Subscribe to AuthService to update currentUserSubject
-    this.auth.currentUser$.subscribe(user => {
+    this.auth.currentUser$.subscribe((user) => {
       if (user) {
         this.currentUserSubject.next({ id: user.id, name: user.username });
         console.log('PlantService detected login, switched to user:', user);
@@ -41,17 +45,19 @@ export class PlantService {
     });
   }
 
-  // Get current user ID 
+  // Current user management
+  // Get current user ID
   get currentUserId(): number {
     return this.currentUserSubject.value.id;
   }
 
-  // Fetch plant types 
+  // CRUD Operations
+  // Fetch plant types
   getPlantTypes(): Observable<PlantType[]> {
     console.log('Fetching plant types from:', `${this.baseUrl}/planttype`);
     return this.http.get<PlantType[]>(`${this.baseUrl}/planttype`).pipe(
       tap((types) => {
-        console.log('Raw plant types received:',types);
+        console.log('Raw plant types received:', types);
         if (!types || types.length === 0) {
           console.warn('No plant types returned from server');
         } else {
@@ -63,8 +69,10 @@ export class PlantService {
           ...type,
           commonName: type.CommonName || type.commonName,
           scientificName: type.ScientificName || type.scientificName,
-          wateringFrequencyDays: type.WateringFrequencyDays || type.wateringFrequencyDays,
-          fertilizingFrequencyDays: type.FertilizingFrequencyDays || type.fertilizingFrequencyDays,
+          wateringFrequencyDays:
+            type.WateringFrequencyDays || type.wateringFrequencyDays,
+          fertilizingFrequencyDays:
+            type.FertilizingFrequencyDays || type.fertilizingFrequencyDays,
           sunlightNeeds: type.SunlightNeeds || type.sunlightNeeds,
           id: type.Id || type.id,
         }))
@@ -101,64 +109,12 @@ export class PlantService {
       tap((type) => console.log('Plant type received:', type)),
       retry(1),
       catchError((error: HttpErrorResponse) => {
-        console.error('Error fetching plant type:', error);
         if (error.status === 0) {
           throw new Error(
             'Server is unreachable. Please ensure the server is running.'
           );
         } else if (error.status === 404) {
           throw new Error(`Plant type with ID ${id} not found.`);
-        } else {
-          throw new Error(error.error?.message || 'Unknown server error.');
-        }
-      })
-    );
-  }
-
-  // Fetch care logs for a plant
-  getPlantCareLogs(plantId: number): Observable<any[]> {
-    console.log('Fetching care logs for plant ID:', plantId);
-    return this.http
-      .get<any[]>(`${this.baseUrl}/carelog/plant/${plantId}`)
-      .pipe(
-        tap((logs) => console.log('Care logs received:', logs)),
-        catchError(this.handleError(`fetching care logs for plant ${plantId}`))
-      );
-  }
-
-  // Fetch full plant info: base + type + care logs
-  getPlantWithDetails(plantId: number): Observable<
-  {
-    plant: Plant;
-    plantType: PlantType;
-    careLogs: any[];
-  } | null> {
-    if (!plantId) {
-      console.error('No plant ID provided for getPlantWithDetails');
-      return of(null);
-    }
-
-    console.log('Fetching full plant details for ID:', plantId);
-    return this.getPlantById(plantId).pipe(
-      switchMap((plant) => {
-        const plantType$ = this.getPlantTypeById(plant.species);
-        const careLogs$ = this.getPlantCareLogs(plantId);
-
-        return forkJoin({
-          plant: of(plant),
-          plantType: plantType$,
-          careLogs: careLogs$,
-        }).pipe(
-          tap((result) => console.log('Full plant details received:', result))
-        );
-      }),
-      retry(1),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error fetching plant details:', error);
-        if (error.status === 0) {
-          throw new Error(
-            'Server is unreachable. Please ensure the server is running.'
-          );
         } else {
           throw new Error(error.error?.message || 'Unknown server error.');
         }
@@ -199,6 +155,7 @@ export class PlantService {
     );
   }
 
+  // Plant Statistics and Analytics
   // Get statistics for plants
   getPlantStatistics(userId: number): Observable<PlantStatistics> {
     return forkJoin({
@@ -216,14 +173,20 @@ export class PlantService {
 
         const plantsNeedingWater = plantsWithTypes.filter((plant) => {
           const lastWatering = careLogs
-            .filter((log) => log.plantId === plant.id && log.type?.toLowerCase() === 'water')
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+            .filter(
+              (log) =>
+                log.plantId === plant.id && log.type?.toLowerCase() === 'water'
+            )
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
 
           if (!lastWatering || !plant.plantType?.wateringFrequencyDays)
             return false;
 
           const daysSinceWatering = Math.floor(
-            (now.getTime() - new Date(lastWatering.date).getTime()) / (1000 * 60 * 60 * 24)
+            (now.getTime() - new Date(lastWatering.date).getTime()) /
+              (1000 * 60 * 60 * 24)
           );
 
           return daysSinceWatering >= plant.plantType.wateringFrequencyDays;
@@ -231,17 +194,26 @@ export class PlantService {
 
         const plantsNeedingFertilizer = plantsWithTypes.filter((plant) => {
           const lastFertilizing = careLogs
-            .filter((log) => log.plantId === plant.id && log.type?.toLowerCase() === 'fertilizer')
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+            .filter(
+              (log) =>
+                log.plantId === plant.id &&
+                log.type?.toLowerCase() === 'fertilizer'
+            )
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
 
           if (!lastFertilizing || !plant.plantType?.fertilizingFrequencyDays)
             return false;
 
           const daysSinceFertilizing = Math.floor(
-            (now.getTime() - new Date(lastFertilizing.date).getTime()) / (1000 * 60 * 60 * 24)
+            (now.getTime() - new Date(lastFertilizing.date).getTime()) /
+              (1000 * 60 * 60 * 24)
           );
 
-          return daysSinceFertilizing >= plant.plantType.fertilizingFrequencyDays;
+          return (
+            daysSinceFertilizing >= plant.plantType.fertilizingFrequencyDays
+          );
         });
 
         const issueCount = problems.reduce((acc, problem) => {
@@ -253,7 +225,8 @@ export class PlantService {
           ([, countA], [, countB]) => (countB as number) - (countA as number)
         );
 
-        const mostCommonIssue = sortedIssues.length > 0 ? sortedIssues[0][0] : null;
+        const mostCommonIssue =
+          sortedIssues.length > 0 ? sortedIssues[0][0] : null;
 
         return {
           totalPlants: plants.length,
@@ -261,6 +234,54 @@ export class PlantService {
           plantsNeedingFertilizer: plantsNeedingFertilizer.length,
           mostCommonIssue,
         };
+      })
+    );
+  }
+
+  // Care Log Management
+  // Fetch care logs for a plant
+  getPlantCareLogs(plantId: number): Observable<any[]> {
+    return this.http
+      .get<any[]>(`${this.baseUrl}/carelog/plant/${plantId}`)
+      .pipe(
+        catchError(this.handleError(`fetching care logs for plant ${plantId}`))
+      );
+  }
+
+  // Fetch full plant info: base + type + care logs
+  getPlantWithDetails(plantId: number): Observable<{
+    plant: Plant;
+    plantType: PlantType;
+    careLogs: any[];
+  } | null> {
+    if (!plantId) {
+      console.error('No plant ID provided for getPlantWithDetails');
+      return of(null);
+    }
+
+    console.log('Fetching full plant details for ID:', plantId);
+    return this.getPlantById(plantId).pipe(
+      switchMap((plant) => {
+        const plantType$ = this.getPlantTypeById(plant.species);
+        const careLogs$ = this.getPlantCareLogs(plantId);
+
+        return forkJoin({
+          plant: of(plant),
+          plantType: plantType$,
+          careLogs: careLogs$,
+        }).pipe(
+          tap((result) => console.log('Full plant details received:', result))
+        );
+      }),
+      retry(1),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 0) {
+          throw new Error(
+            'Server is unreachable. Please ensure the server is running.'
+          );
+        } else {
+          throw new Error(error.error?.message || 'Unknown server error.');
+        }
       })
     );
   }
@@ -281,15 +302,23 @@ export class PlantService {
           // Find the last watering log for this plant
           const lastWateringLog = careLogs
             .filter(
-              (log) => log.plantId === plant.id && log.type?.toLowerCase() === 'water')
+              (log) =>
+                log.plantId === plant.id && log.type?.toLowerCase() === 'water'
+            )
             .sort(
-              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
 
-          const lastWatering = lastWateringLog? new Date(lastWateringLog.date): null;
+          const lastWatering = lastWateringLog
+            ? new Date(lastWateringLog.date)
+            : null;
 
           // Calculate days since last watering
-          const daysSinceWatering = lastWatering? Math.floor(
-                (now.getTime() - lastWatering.getTime()) / (1000 * 60 * 60 * 24)) : null;
+          const daysSinceWatering = lastWatering
+            ? Math.floor(
+                (now.getTime() - lastWatering.getTime()) / (1000 * 60 * 60 * 24)
+              )
+            : null;
 
           // Determine if the plant needs watering
           const wateringFrequencyDays = plantType?.wateringFrequencyDays || 7; // Default to 7 days
@@ -312,6 +341,7 @@ export class PlantService {
     );
   }
 
+  // Helper Methods
   private getAllCareLogs(userId: number): Observable<any[]> {
     return this.http
       .get<any[]>(`${this.baseUrl}/carelog/user/${userId}`)
@@ -324,10 +354,18 @@ export class PlantService {
       .pipe(catchError(() => of([])));
   }
 
+  // Error handling
   private handleError(operation: string) {
     return (error: HttpErrorResponse) => {
-      console.error(`Error during ${operation}:`, error);
-      throw error;
+      if (error.status === 0) {
+        throw new Error(
+          'Server is unreachable. Please ensure the server is running.'
+        );
+      } else if (error.status === 404) {
+        throw new Error(`Resource not found.`);
+      } else {
+        throw new Error(error.error?.message || 'Unknown server error.');
+      }
     };
   }
 }

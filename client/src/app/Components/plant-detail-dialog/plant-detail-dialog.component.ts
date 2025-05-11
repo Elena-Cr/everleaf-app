@@ -34,15 +34,22 @@ import { filter, takeUntil } from 'rxjs/operators';
   ],
 })
 export class PlantDetailComponent implements OnInit, OnDestroy {
+  // Component state
   loading = true;
   plant!: Plant;
   plantType: any;
+
+  // Care logs data
   careLogs: any[] = [];
   lastWatering: any;
   lastFertilizing: any;
-  problems: ProblemReport[] = [];
   wateringLogs: any[] = [];
   fertilizerLogs: any[] = [];
+
+  // Problem reports
+  problems: ProblemReport[] = [];
+
+  // Lifecycle management
   private destroy$ = new Subject<void>();
   private currentPlantId: number | null = null;
 
@@ -56,6 +63,7 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
+  // Lifecycle hooks
   ngOnInit(): void {
     // Get initial plant ID
     this.currentPlantId = Number(this.route.snapshot.paramMap.get('id'));
@@ -109,6 +117,7 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  // Data loading methods
   private loadPlantData(plantId: number): void {
     this.loading = true;
     this.fetchPlantDetails(plantId);
@@ -116,7 +125,7 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Load problems for the plant */
-  loadProblems(plantId: number): void {
+  private loadProblems(plantId: number): void {
     this.problemService.getProblemsByPlant(plantId).subscribe({
       next: (problems) => {
         this.problems = problems;
@@ -132,7 +141,7 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
   }
 
   /** Load plant details from server */
-  fetchPlantDetails(plantId: number): void {
+  private fetchPlantDetails(plantId: number): void {
     this.loading = true;
 
     this.plantService.getPlantWithDetails(plantId).subscribe({
@@ -181,6 +190,56 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/plants']);
   }
 
+  // Care log actions
+  /** Quick action to add a watering log */
+  addWateringLog(): void {
+    if (!this.plant?.id) return;
+
+    const careLog = {
+      type: 'Water',
+      date: new Date().toISOString(),
+      plantId: this.plant.id,
+    };
+
+    this.careLogService.createCareLog(careLog).subscribe({
+      next: () => {
+        this.snackBar.open('✅ Watering logged!', 'Close', { duration: 3000 });
+        this.fetchPlantDetails(this.plant.id!);
+      },
+      error: (error) => {
+        this.snackBar.open('❌ Failed to log watering', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  /** Quick action to add a fertilizing log */
+  addFertilizingLog(): void {
+    if (!this.plant?.id) return;
+
+    const careLog = {
+      type: 'Fertilizer',
+      date: new Date().toISOString(),
+      plantId: this.plant.id,
+    };
+
+    this.careLogService.createCareLog(careLog).subscribe({
+      next: () => {
+        this.snackBar.open('✅ Fertilizing logged!', 'Close', {
+          duration: 3000,
+        });
+        this.fetchPlantDetails(this.plant.id!);
+      },
+      error: (error) => {
+        this.snackBar.open('❌ Failed to log fertilizing', 'Close', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+
+  // Problem management
   /** Open the Log Problem Form */
   openLogProblemDialog(): void {
     const dialogRef = this.dialog.open(ProblemFormComponent, {
@@ -190,7 +249,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.plant.id) {
-        console.log('Problem logged:', result);
         this.loadProblems(this.plant.id); // Refresh problems list
       }
     });
@@ -229,15 +287,13 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     this.problemService.deleteProblem(problem.id).subscribe({
       next: () => {
-        console.log('Problem deleted successfully.');
         this.snackBar.open('✅ Problem deleted', 'Close', { duration: 3000 });
         if (this.plant.id) {
           this.loadProblems(this.plant.id); // Refresh problems list
         }
       },
       error: (error: any) => {
-        // Added explicit type for error
-        console.error('Error deleting problem:', error);
+        //Added explicit type for error
         this.snackBar.open('❌ Failed to delete problem', 'Close', {
           duration: 3000,
         });
@@ -245,6 +301,7 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Plant management
   /** Edit Plant */
   editPlant(): void {
     const dialogRef = this.dialog.open(PlantFormComponent, {
@@ -280,56 +337,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error deleting plant:', error);
         this.snackBar.open('❌ Failed to delete plant', 'Close', {
-          duration: 3000,
-        });
-      },
-    });
-  }
-
-  /** Quick action to add a watering log */
-  addWateringLog(): void {
-    if (!this.plant?.id) return;
-
-    const careLog = {
-      type: 'Water',
-      date: new Date().toISOString(),
-      plantId: this.plant.id,
-    };
-
-    this.careLogService.createCareLog(careLog).subscribe({
-      next: () => {
-        this.snackBar.open('✅ Watering logged!', 'Close', { duration: 3000 });
-        this.fetchPlantDetails(this.plant.id!);
-      },
-      error: (error) => {
-        console.error('Error logging watering:', error);
-        this.snackBar.open('❌ Failed to log watering', 'Close', {
-          duration: 3000,
-        });
-      },
-    });
-  }
-
-  /** Quick action to add a fertilizing log */
-  addFertilizingLog(): void {
-    if (!this.plant?.id) return;
-
-    const careLog = {
-      type: 'Fertilizer',
-      date: new Date().toISOString(),
-      plantId: this.plant.id,
-    };
-
-    this.careLogService.createCareLog(careLog).subscribe({
-      next: () => {
-        this.snackBar.open('✅ Fertilizing logged!', 'Close', {
-          duration: 3000,
-        });
-        this.fetchPlantDetails(this.plant.id!);
-      },
-      error: (error) => {
-        console.error('Error logging fertilizing:', error);
-        this.snackBar.open('❌ Failed to log fertilizing', 'Close', {
           duration: 3000,
         });
       },
