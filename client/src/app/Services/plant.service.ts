@@ -72,7 +72,6 @@ export class PlantService {
   }
 
   getPlantById(id: number): Observable<Plant> {
-    console.log('Fetching plant details for ID:', id);
     return this.http.get<Plant>(`${this.baseUrl}/plant/${id}`).pipe(
       catchError(this.handleError(`fetching plant ${id}`))
     );
@@ -96,7 +95,6 @@ export class PlantService {
   }
 
   savePlant(plantData: any): Observable<any> {
-    console.log('Saving new plant:', plantData);
     return this.http.post(`${this.baseUrl}/plant`, plantData).pipe(
       catchError(this.handleError('saving plant'))
     );
@@ -114,7 +112,6 @@ export class PlantService {
   }
 
   deletePlant(id: number): Observable<any> {
-    console.log('Deleting plant ID:', id);
     return this.http.delete(`${this.baseUrl}/plant/${id}`).pipe(
       catchError(this.handleError(`deleting plant ${id}`))
     );

@@ -237,7 +237,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.plant.id) {
-        console.log('Problem updated:', result);
         this.loadProblems(this.plant.id);
       }
     });

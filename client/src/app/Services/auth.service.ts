@@ -27,9 +27,7 @@ export class AuthService {
         // Check if we have a valid user object before setting the current user
         if (user && user.id && user.username) {
           this._currentUser.next(user);
-          console.log('Auth state restored: User is authenticated');
         } else {
-          console.log('Invalid user data in storage, clearing auth state');
           this.logout();
         }
       } catch (error) {
@@ -37,7 +35,6 @@ export class AuthService {
         this.logout();
       }
     } else {
-      console.log('No stored authentication found');
       // Ensure we start with null user state
       this._currentUser.next(null);
     }
