@@ -21,6 +21,7 @@ Everleaf is a full-stack web application designed to help individuals manage the
     ├── server/               # ASP.NET Web API backend
     ├── Everleaf.Model/       # Class Library with Entities and Repositories
     ├── EverleafSystem.Tests  # C# Web API Controller Tests
+    ├── Postman               # Postman collection file of all available endpoints
     ├── PostreSQL             # SQL scripts required to create and populate the database
     ├── README.md
     └── everleaf-app.sln
@@ -81,3 +82,19 @@ Everleaf is a full-stack web application designed to help individuals manage the
 # The Angular frontend will be accessible at:
 
     http://localhost:4200
+
+## Testing
+
+# Backend Testing
+
+    Navigate to the TESTING tab in the side menu.
+    Refresh tests.
+    Run tests.
+
+# Frontend Testing
+
+    Once in the client/ folder, run the following command to perform the tests on the plant-form component:
+    ng test --include '**/plant-form.component.spec.ts'
+
+    Once in the client/ folder, run the following command to perform the tests on the plant service:
+    ng test --include '**/plant.service.spec.ts'
