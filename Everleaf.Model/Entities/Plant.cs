@@ -3,7 +3,7 @@ using System;
 public class Plant
 {
     public Plant() {} 
-    public int Id { get; set; } // Unique identifier for the plant
+    public int Id { get; set; } // PK
     public string? Name { get; set; } 
     public string? Nickname { get; set; }
 

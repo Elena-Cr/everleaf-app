@@ -18,9 +18,9 @@ export class ProblemService {
   getProblemsByPlant(plantId: number): Observable<ProblemReport[]> {
     return this.http.get<ProblemReport[]>(`${this.baseUrl}/plant/${plantId}`);
   }
-
   updateProblem(id: number, report: ProblemReport): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, report);
+    report.id = id;
+    return this.http.put(this.baseUrl, report);
   }
 
   deleteProblem(id: number): Observable<any> {
