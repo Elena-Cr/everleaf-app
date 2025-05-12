@@ -5,7 +5,6 @@
 
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
-  <!-- USERNAME -->
   <mat-form-field appearance="outline">
     <mat-label>Username</mat-label>
     <input matInput formControlName="username" />
@@ -17,7 +16,6 @@
     </mat-error>
   </mat-form-field>
 
-  <!-- PASSWORD -->
   <mat-form-field appearance="outline">
     <mat-label>Password</mat-label>
     <input matInput type="password" formControlName="password" />
@@ -29,7 +27,6 @@
     </mat-error>
   </mat-form-field>
 
-  <!-- EMAIL -->
   <mat-form-field appearance="outline">
     <mat-label>Email</mat-label>
     <input matInput type="email" formControlName="email" />
@@ -41,7 +38,6 @@
     </mat-error>
   </mat-form-field>
 
-  <!-- SUBMIT -->
   <button
     mat-raised-button
     color="primary"
@@ -51,7 +47,6 @@
     Register
   </button>
 
-  <!-- SWITCH TO LOGIN -->
   <p>
     <a routerLink="/login">Already have an account? Login</a>
   </p>

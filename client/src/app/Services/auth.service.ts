@@ -1,10 +1,8 @@
-// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { UserDTO, UserLoginDTO, UserRegisterDTO } from '../Models/user';
-// import { btoa } from 'buffer'; // Use built-in btoa for browsers
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -41,15 +39,13 @@ export class AuthService {
     // clear both BehaviorSubject and localStorage
     this._currentUser.next(null);
     localStorage.removeItem('currentUser');
-    localStorage.removeItem(this.AUTH_CREDENTIALS_KEY); // Clear credentials
+    localStorage.removeItem(this.AUTH_CREDENTIALS_KEY); 
   }
 
-  /** helper: get current ID or null */
   get currentUserId(): number | null {
     return this._currentUser.value?.id ?? null;
   }
 
-  /** helper: get stored basic auth credentials or null */
   get currentAuthCredentials(): string | null {
     return localStorage.getItem(this.AUTH_CREDENTIALS_KEY);
   }

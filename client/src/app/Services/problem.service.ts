@@ -6,6 +6,7 @@ import { ProblemReport } from '../Models/problem-reports';
 @Injectable({
   providedIn: 'root',
 })
+
 export class ProblemService {
   private baseUrl = 'http://localhost:5234/api/ProblemReport';
 

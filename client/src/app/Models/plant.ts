@@ -6,5 +6,5 @@ export interface Plant {
   imageUrl?: string;
   dateAdded: Date;
   userId: number;
-  status?: string; //newly added property
+  status?: string; 
 }

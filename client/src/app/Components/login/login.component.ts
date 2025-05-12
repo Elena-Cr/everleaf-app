@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule,} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,6 +23,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
+
 export class LoginComponent {
   username = new FormControl('', [Validators.required]);
   password = new FormControl('', [Validators.required]);
@@ -46,9 +42,7 @@ export class LoginComponent {
   onSubmit() {
     if (!this.loginForm.valid) {
       this.loginForm.markAllAsTouched();
-      this.snackBar.open('❌ Please fix the errors in the form.', 'Close', {
-        duration: 3000,
-      });
+      this.snackBar.open('❌ Please fix the errors in the form.', 'Close', {duration: 3000});
       return;
     }
 
@@ -59,9 +53,7 @@ export class LoginComponent {
 
     this.auth.login(creds).subscribe({
       next: (user) => {
-        this.snackBar.open(`✅ Welcome back, ${user.username}!`, 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open(`✅ Welcome back, ${user.username}!`, 'Close', {duration: 3000});
         this.router.navigate(['/plants']);
       },
       error: (err) => {

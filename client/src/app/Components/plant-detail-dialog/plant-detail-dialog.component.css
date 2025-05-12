@@ -11,14 +11,12 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* --- Top Header (Back + Log Problem Buttons) --- */
 .plant-details-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* --- Main Plant Content (Image + Info) --- */
 .plant-main-content {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -29,7 +27,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Left: Plant Image --- */
 .plant-image-wrapper {
   background-color: #e9f7ec;
   display: flex;
@@ -46,7 +43,6 @@
   object-fit: contain;
 }
 
-/* --- Right: Plant Info --- */
 .plant-info-wrapper {
   display: flex;
   flex-direction: column;
@@ -90,7 +86,6 @@
   align-items: center;
 }
 
-/* --- Loading State --- */
 .loading-state {
   display: flex;
   justify-content: center;
@@ -98,14 +93,12 @@
   min-height: 200px;
 }
 
-/* --- Error State --- */
 .error-state {
   text-align: center;
   padding: 2rem;
   color: var(--warn-color);
 }
 
-/* --- Problems Section --- */
 .problems-section {
   margin-top: 2rem;
   background: white;
@@ -116,9 +109,8 @@
 
 .problem-list {
   display: grid;
-  /* Updated grid columns: Severity, Problem, Date, Actions */
   grid-template-columns: 1fr 3fr 1fr 1fr;
-  gap: 0.25rem; /* Reduced gap to decrease whitespace between rows */
+  gap: 0.25rem; 
   align-items: center;
 }
 
@@ -132,7 +124,7 @@
 
 .problem-cell {
   background: rgba(200, 230, 201, 0.15);
-  padding: 0.75rem; /* Adjusted padding slightly */
+  padding: 0.75rem;
   border-radius: 8px;
 
   display: flex;
@@ -140,7 +132,6 @@
   gap: 8px;
 }
 
-/* Style for the actions cell */
 .problem-cell.actions {
   justify-content: center;
   gap: 0.5rem;
@@ -164,7 +155,6 @@
   line-height: 18px;
 }
 
-/* Severity Coloring */
 .severity.low mat-icon,
 .severity.low {
   color: green;
@@ -180,7 +170,6 @@
   color: red;
 }
 
-/* Hover Effect */
 .problem-cell:hover {
   background: rgba(200, 230, 201, 0.25);
   cursor: default;
@@ -203,7 +192,7 @@
   text-transform: none;
   font-weight: 600;
 }
-/* --- Care Logs Section --- */
+
 .carelogs-section {
   margin-top: 2rem;
   border-top: 1px solid #e0e0e0;

@@ -39,17 +39,13 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
   plant!: Plant;
   plantType: any;
 
-  // Care logs data
   careLogs: any[] = [];
   lastWatering: any;
   lastFertilizing: any;
   wateringLogs: any[] = [];
   fertilizerLogs: any[] = [];
-
-  // Problem reports
   problems: ProblemReport[] = [];
 
-  // Lifecycle management
   private destroy$ = new Subject<void>();
   private currentPlantId: number | null = null;
 
@@ -63,7 +59,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  // Lifecycle hooks
   ngOnInit(): void {
     // Get initial plant ID
     this.currentPlantId = Number(this.route.snapshot.paramMap.get('id'));
@@ -80,14 +75,11 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
           this.plantService.getPlantById(this.currentPlantId).subscribe({
             next: (plant) => {
               if (plant.userId !== user.id) {
-                // Only navigate away if the plant doesn't belong to the new user
+                // Navigate away if the plant doesn't belong to the new user
                 this.router.navigate(['/plants']);
               }
             },
-            error: () => {
-              // If there's an error fetching the plant, navigate back
-              this.router.navigate(['/plants']);
-            },
+            error: () => { this.router.navigate(['/plants']);},
           });
         }
       },
@@ -96,7 +88,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
       },
     });
 
-    // Subscribe to route parameter changes
     this.route.params
       .pipe(
         takeUntil(this.destroy$),
@@ -107,8 +98,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
         this.currentPlantId = plantId;
         this.loadPlantData(plantId);
       });
-
-    // Initial load
     this.loadPlantData(this.currentPlantId);
   }
 
@@ -124,23 +113,17 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     this.loadProblems(plantId);
   }
 
-  /** Load problems for the plant */
   private loadProblems(plantId: number): void {
     this.problemService.getProblemsByPlant(plantId).subscribe({
       next: (problems) => {
         this.problems = problems;
       },
-      error: (error) => {
-        console.error('Error loading problems:', error);
-        // Optionally show a snackbar message
-        this.snackBar.open('❌ Failed to load problems', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('❌ Failed to load problems', 'Close', {duration: 3000});
       },
     });
   }
 
-  /** Load plant details from server */
   private fetchPlantDetails(plantId: number): void {
     this.loading = true;
 
@@ -156,7 +139,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
         this.plantType = data.plantType;
         this.careLogs = data.careLogs;
 
-        // Find last watering log
         const waterLogs = this.careLogs
           ?.filter((log) => log.type?.toLowerCase() === 'water')
           ?.sort(
@@ -164,7 +146,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
           );
         this.lastWatering = waterLogs?.[0];
 
-        // Find last fertilizing log
         const fertilizerLogs = this.careLogs
           ?.filter((log) => log.type?.toLowerCase() === 'fertilizer')
           ?.sort(
@@ -175,7 +156,6 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
         // Separate logs by type for display
         this.wateringLogs = waterLogs || [];
         this.fertilizerLogs = fertilizerLogs || [];
-
         this.loading = false;
       },
       error: (error) => {
@@ -185,13 +165,12 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  /** Navigate back to plant list */
+  // Navigate back to plant list
   close(): void {
     this.router.navigate(['/plants']);
   }
 
   // Care log actions
-  /** Quick action to add a watering log */
   addWateringLog(): void {
     if (!this.plant?.id) return;
 
@@ -203,18 +182,15 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     this.careLogService.createCareLog(careLog).subscribe({
       next: () => {
-        this.snackBar.open('✅ Watering logged!', 'Close', { duration: 3000 });
+        this.snackBar.open('✅ Watering logged!', 'Close', {duration: 3000});
         this.fetchPlantDetails(this.plant.id!);
       },
-      error: (error) => {
-        this.snackBar.open('❌ Failed to log watering', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('❌ Failed to log watering', 'Close', {duration: 3000});
       },
     });
   }
 
-  /** Quick action to add a fertilizing log */
   addFertilizingLog(): void {
     if (!this.plant?.id) return;
 
@@ -226,54 +202,47 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     this.careLogService.createCareLog(careLog).subscribe({
       next: () => {
-        this.snackBar.open('✅ Fertilizing logged!', 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open('✅ Fertilizing logged!', 'Close', {duration: 3000});
         this.fetchPlantDetails(this.plant.id!);
       },
-      error: (error) => {
-        this.snackBar.open('❌ Failed to log fertilizing', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('❌ Failed to log fertilizing', 'Close', {duration: 3000});
       },
     });
   }
 
   // Problem management
-  /** Open the Log Problem Form */
   openLogProblemDialog(): void {
     const dialogRef = this.dialog.open(ProblemFormComponent, {
       width: '500px',
-      data: { plantId: this.plant.id }, // Pass plantId in data object
+      data: { plantId: this.plant.id },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.plant.id) {
-        this.loadProblems(this.plant.id); // Refresh problems list
+        this.loadProblems(this.plant.id); 
       }
     });
   }
 
-  /** Open the Problem Form in Edit Mode */
   editProblem(problem: ProblemReport): void {
     const dialogRef = this.dialog.open(ProblemFormComponent, {
       width: '500px',
       data: {
         mode: 'edit',
         problemData: problem,
-        plantId: this.plant.id, // Pass plantId as well
+        plantId: this.plant.id, 
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.plant.id) {
         console.log('Problem updated:', result);
-        this.loadProblems(this.plant.id); // Refresh problems list
+        this.loadProblems(this.plant.id);
       }
     });
   }
 
-  /** Delete a Problem Report */
   deleteProblem(problem: ProblemReport): void {
     const dateString = problem.dateReported
       ? new Date(problem.dateReported).toLocaleDateString()
@@ -289,20 +258,16 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
       next: () => {
         this.snackBar.open('✅ Problem deleted', 'Close', { duration: 3000 });
         if (this.plant.id) {
-          this.loadProblems(this.plant.id); // Refresh problems list
+          this.loadProblems(this.plant.id);
         }
       },
-      error: (error: any) => {
-        //Added explicit type for error
-        this.snackBar.open('❌ Failed to delete problem', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('❌ Failed to delete problem', 'Close', {duration: 3000});
       },
     });
   }
 
   // Plant management
-  /** Edit Plant */
   editPlant(): void {
     const dialogRef = this.dialog.open(PlantFormComponent, {
       width: '500px',
@@ -314,13 +279,12 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && this.plant?.id) {
-        console.log('Plant updated:', result);
+        this.snackBar.open('✅ Plant updated!', 'Close', { duration: 3000 });
         this.loadPlantData(this.plant.id);
       }
     });
   }
 
-  /** Delete Plant */
   deletePlant(): void {
     if (
       !this.plant?.id ||
@@ -331,14 +295,11 @@ export class PlantDetailComponent implements OnInit, OnDestroy {
 
     this.plantService.deletePlant(this.plant.id).subscribe({
       next: () => {
-        console.log('Plant deleted successfully.');
+        this.snackBar.open('✅ Plant deleted successfully', 'Close', { duration: 3000 });
         this.router.navigate(['/plants']);
       },
-      error: (error) => {
-        console.error('Error deleting plant:', error);
-        this.snackBar.open('❌ Failed to delete plant', 'Close', {
-          duration: 3000,
-        });
+      error: () => {
+        this.snackBar.open('❌ Failed to delete plant', 'Close', {duration: 3000});
       },
     });
   }

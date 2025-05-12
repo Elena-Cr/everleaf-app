@@ -57,7 +57,9 @@
   padding: 0 2.4rem;
 }
 
-/* Responsive adjustments */
+/* ---------------------------- */
+/*        RESPONSIVE ZONE       */
+/* ---------------------------- */
 @media (max-width: 600px) {
   .navbar {
     padding: 0.8rem 1.6rem;
