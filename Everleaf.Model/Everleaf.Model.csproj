@@ -1,14 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <!-- Target framework for the project -->
     <TargetFramework>net9.0</TargetFramework>
+    
+    <!-- Enable common namespaces and nullable reference types -->
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- AutoMapper for object mapping -->
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    
+    <!-- Configuration management -->
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
+    
+    <!-- PostgreSQL database support -->
     <PackageReference Include="Npgsql" Version="9.0.3" />
   </ItemGroup>
 
