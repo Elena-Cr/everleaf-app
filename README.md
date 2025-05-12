@@ -1,6 +1,6 @@
 # Everleaf
 
-Everleaf is a full-stack web application designed to help students manage their plants, track care routines, and report issues. The project is built using Angular for the frontend, ASP.NET Web API for the backend, and PostgreSQL for persistent storage.
+Everleaf is a full-stack web application designed to help individuals manage their plants, track care routines, and report issues. The project is built using Angular for the frontend, ASP.NET Web API for the backend, and PostgreSQL for persistent storage.
 
 # Project Structure
 

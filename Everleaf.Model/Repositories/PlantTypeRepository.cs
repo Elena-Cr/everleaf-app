@@ -2,12 +2,10 @@ using Everleaf.Model.Entities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-using System;
-using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    public class PlantTypeRepository : BaseRepository
+    public class PlantTypeRepository : BaseRepository, IPlantTypeRepository
     {
         public PlantTypeRepository(IConfiguration configuration) : base(configuration)
         {
@@ -15,7 +13,6 @@ namespace Everleaf.Model.Repositories
 
         public PlantType? GetPlantTypeById(int id)
         {
-            Console.WriteLine($"Getting plant type with ID: {id}");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = "SELECT * FROM PlantType WHERE id = @id";
@@ -32,17 +29,13 @@ namespace Everleaf.Model.Repositories
                     FertilizingFrequencyDays = Convert.ToInt32(data["fertilizingfrequencydays"]),
                     SunlightNeeds = data["sunlightneeds"].ToString()
                 };
-                Console.WriteLine($"Found plant type: {plantType.CommonName} (ID: {plantType.Id})");
                 return plantType;
             }
-
-            Console.WriteLine($"No plant type found with ID: {id}");
             return null;
         }
 
         public List<PlantType> GetAllPlantType()
         {
-            Console.WriteLine("Getting all plant types from database");
             var types = new List<PlantType>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
@@ -59,11 +52,9 @@ namespace Everleaf.Model.Repositories
                     FertilizingFrequencyDays = Convert.ToInt32(data["fertilizingfrequencydays"]),
                     SunlightNeeds = data["sunlightneeds"].ToString()
                 };
-                Console.WriteLine($"Found plant type in DB: ID={plantType.Id}, CommonName={plantType.CommonName}, ScientificName={plantType.ScientificName}");
                 types.Add(plantType);
             }
 
-            Console.WriteLine($"Total plant types found in DB: {types.Count}");
             return types;
         }
 

@@ -1,13 +1,13 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using AutoMapper;
-using Everleaf.API.Controllers; // Assuming this is the namespace for PlantController
+using Everleaf.API.Controllers; 
 using Everleaf.Model.Repositories;
 using Everleaf.Model.Entities;
 using Everleaf.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq; // Added for Count()
+using System.Linq; 
 
 namespace EverleafSystem.Tests
 {
@@ -19,7 +19,7 @@ namespace EverleafSystem.Tests
         private Mock<IMapper>? _mockMapper;
         private PlantController? _controller;
 
-        [TestInitialize] // This runs before each test
+        [TestInitialize] 
         public void Setup()
         {
             // Mock the interface

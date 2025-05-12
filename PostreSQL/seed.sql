@@ -37,32 +37,32 @@ INSERT INTO PlantType (Id, CommonName, ScientificName, WateringFrequencyDays, Fe
 -- PLANTS (18 records)
 -- Distribution: User1: 3, User2: 4, User3: 6, User4: 5
 -------------------------
-INSERT INTO Plant (Id, Name, Nickname, Species, ImageUrl, DateAdded, UserId) VALUES
+INSERT INTO Plant (Id, Name, Nickname, Species, DateAdded, UserId) VALUES
 -- User 1's plants
-(1, 'Snake Plant', 'Snakey', 1, 'https://example.com/snake1.jpg', NOW(), 1),
-(2, 'Spider Plant', 'Webby', 2, 'https://example.com/spider1.jpg', NOW(), 1),
-(3, 'Peace Lily', 'Lily', 3, 'https://example.com/peacelily1.jpg', NOW(), 1),
+(1, 'Snake Plant', 'Snakey', 1, NOW(), 1),
+(2, 'Spider Plant', 'Webby', 2, NOW(), 1),
+(3, 'Peace Lily', 'Lily', 3, NOW(), 1),
 
 -- User 2's plants
-(4, 'Aloe Vera', 'Aloe', 4, 'https://example.com/aloe1.jpg', NOW(), 2),
-(5, 'Fiddle Leaf Fig', 'Fiddle', 5, 'https://example.com/fiddle1.jpg', NOW(), 2),
-(6, 'Pothos', 'Pothosie', 6, 'https://example.com/pothos1.jpg', NOW(), 2),
-(7, 'ZZ Plant', 'Zee', 7, 'https://example.com/zz1.jpg', NOW(), 2),
+(4, 'Aloe Vera', 'Aloe', 4, NOW(), 2),
+(5, 'Fiddle Leaf Fig', 'Fiddle', 5, NOW(), 2),
+(6, 'Pothos', 'Pothosie', 6, NOW(), 2),
+(7, 'ZZ Plant', 'Zee', 7, NOW(), 2),
 
 -- User 3's plants
-(8, 'Boston Fern', 'Fernie', 8, 'https://example.com/bostonfern1.jpg', NOW(), 3),
-(9, 'Rubber Plant', 'Rubby', 9, 'https://example.com/rubber1.jpg', NOW(), 3),
-(10, 'Orchid', 'Orchy', 10, 'https://example.com/orchid1.jpg', NOW(), 3),
-(11, 'Snake Plant', 'Slick', 1, 'https://example.com/snake2.jpg', NOW(), 3),
-(12, 'Spider Plant', 'Spidey', 2, 'https://example.com/spider2.jpg', NOW(), 3),
-(13, 'Peace Lily', 'Peaceful', 3, 'https://example.com/peacelily2.jpg', NOW(), 3),
+(8, 'Boston Fern', 'Fernie', 8, NOW(), 3),
+(9, 'Rubber Plant', 'Rubby', 9, NOW(), 3),
+(10, 'Orchid', 'Orchy', 10, NOW(), 3),
+(11, 'Snake Plant', 'Slick', 1, NOW(), 3),
+(12, 'Spider Plant', 'Spidey', 2, NOW(), 3),
+(13, 'Peace Lily', 'Peaceful', 3, NOW(), 3),
 
 -- User 4's plants
-(14, 'Aloe Vera', 'Vera', 4, 'https://example.com/aloe2.jpg', NOW(), 4),
-(15, 'Fiddle Leaf Fig', 'Figgy', 5, 'https://example.com/fiddle2.jpg', NOW(), 4),
-(16, 'Pothos', 'Green', 6, 'https://example.com/pothos2.jpg', NOW(), 4),
-(17, 'ZZ Plant', 'Zester', 7, 'https://example.com/zz2.jpg', NOW(), 4),
-(18, 'Boston Fern', 'Ferna', 8, 'https://example.com/bostonfern2.jpg', NOW(), 4);
+(14, 'Aloe Vera', 'Vera', 4, NOW(), 4),
+(15, 'Fiddle Leaf Fig', 'Figgy', 5, NOW(), 4),
+(16, 'Pothos', 'Green', 6, NOW(), 4),
+(17, 'ZZ Plant', 'Zester', 7, NOW(), 4),
+(18, 'Boston Fern', 'Ferna', 8, NOW(), 4);
 
 -------------------------
 -- CARE LOGS
