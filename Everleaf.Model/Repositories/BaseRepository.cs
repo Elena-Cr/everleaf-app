@@ -1,8 +1,5 @@
-using System;
-using Everleaf.Model;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using NpgsqlTypes;
 
 public class BaseRepository(IConfiguration configuration)
 {

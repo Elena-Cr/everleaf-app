@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    public class ProblemReportRepository : BaseRepository
+    public class ProblemReportRepository : BaseRepository, IProblemReportRepository
     {
         public ProblemReportRepository(IConfiguration configuration) : base(configuration)
         {

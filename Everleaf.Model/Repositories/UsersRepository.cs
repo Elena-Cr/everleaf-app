@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    public class UserRepository : BaseRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
         public UserRepository(IConfiguration configuration) : base(configuration)
         {

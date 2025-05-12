@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    // Implement the IPlantRepository interface
+    
     public class PlantRepository : BaseRepository, IPlantRepository
     {
         public PlantRepository(IConfiguration configuration) : base(configuration)
@@ -31,7 +31,6 @@ namespace Everleaf.Model.Repositories
                     Name = data["name"].ToString(),
                     Nickname = data["nickname"].ToString(),
                     Species = Convert.ToInt32(data["species"]),
-                    ImageUrl = data["imageurl"].ToString(),
                     DateAdded = Convert.ToDateTime(data["dateadded"]),
                     UserId = Convert.ToInt32(data["userid"])
                 };
@@ -63,7 +62,6 @@ namespace Everleaf.Model.Repositories
                     Name = data["name"].ToString(),
                     Nickname = data["nickname"].ToString(),
                     Species = Convert.ToInt32(data["species"]),
-                    ImageUrl = data["imageurl"].ToString(),
                     DateAdded = Convert.ToDateTime(data["dateadded"]),
                     UserId = Convert.ToInt32(data["userid"])
                 };
@@ -97,7 +95,6 @@ namespace Everleaf.Model.Repositories
                     Name = data["name"].ToString(),
                     Nickname = data["nickname"].ToString(),
                     Species = Convert.ToInt32(data["species"]),
-                    ImageUrl = data["imageurl"].ToString(),
                     DateAdded = Convert.ToDateTime(data["dateadded"]),
                     UserId = Convert.ToInt32(data["userid"])
                 };
@@ -121,7 +118,6 @@ namespace Everleaf.Model.Repositories
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, plant.Name ?? "");
             cmd.Parameters.AddWithValue("@nickname", NpgsqlDbType.Text, plant.Nickname ?? "");
             cmd.Parameters.AddWithValue("@species", NpgsqlDbType.Integer, plant.Species);
-            cmd.Parameters.AddWithValue("@imageurl", NpgsqlDbType.Text, plant.ImageUrl ?? "");
             cmd.Parameters.AddWithValue("@dateadded", NpgsqlDbType.Timestamp, plant.DateAdded);
             cmd.Parameters.AddWithValue("@userid", NpgsqlDbType.Integer, plant.UserId);
 
@@ -148,7 +144,6 @@ namespace Everleaf.Model.Repositories
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, plant.Name ?? "");
             cmd.Parameters.AddWithValue("@nickname", NpgsqlDbType.Text, plant.Nickname ?? "");
             cmd.Parameters.AddWithValue("@species", NpgsqlDbType.Integer, plant.Species);
-            cmd.Parameters.AddWithValue("@imageurl", NpgsqlDbType.Text, plant.ImageUrl ?? "");
             cmd.Parameters.AddWithValue("@dateadded", NpgsqlDbType.Timestamp, plant.DateAdded);
             cmd.Parameters.AddWithValue("@userid", NpgsqlDbType.Integer, plant.UserId);
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, plant.Id);
