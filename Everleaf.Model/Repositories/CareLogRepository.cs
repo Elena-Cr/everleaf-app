@@ -7,7 +7,7 @@ namespace Everleaf.Model.Repositories
 {
     public class CareLogRepository(IConfiguration configuration) : BaseRepository(configuration), ICareLogRepository
     {
-        public CareLog GetCareLogById(int id)
+        public CareLog? GetCareLogById(int id)
         {
             NpgsqlConnection? dbConn = null;
             try

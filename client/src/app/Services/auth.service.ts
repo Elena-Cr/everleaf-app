@@ -17,7 +17,6 @@ export class AuthService {
   constructor(private http: HttpClient) {
     this.checkExistingAuth();
   }
-
   private checkExistingAuth(): void {
     const storedUser = localStorage.getItem('currentUser');
     const storedCredentials = localStorage.getItem(this.AUTH_CREDENTIALS_KEY);
@@ -25,10 +24,22 @@ export class AuthService {
     if (storedUser && storedCredentials) {
       try {
         const user = JSON.parse(storedUser);
-        this._currentUser.next(user);
+        // Check if we have a valid user object before setting the current user
+        if (user && user.id && user.username) {
+          this._currentUser.next(user);
+          console.log('Auth state restored: User is authenticated');
+        } else {
+          console.log('Invalid user data in storage, clearing auth state');
+          this.logout();
+        }
       } catch (error) {
+        console.error('Error parsing stored user data:', error);
         this.logout();
       }
+    } else {
+      console.log('No stored authentication found');
+      // Ensure we start with null user state
+      this._currentUser.next(null);
     }
   }
 
