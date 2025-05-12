@@ -148,7 +148,7 @@
   </div>
 
   <!-- Care Logs Section -->
-  <div class="carelogs-section" *ngIf="careLogs && careLogs.length > 0">
+  <div class="carelogs-section">
     <h2>Care Logs</h2>
 
     <div class="carelog-grid">
@@ -205,14 +205,4 @@
       </div>
     </div>
   </div>
-
-  <!-- No Care Logs -->
-  <div class="no-carelogs" *ngIf="careLogs && careLogs.length === 0">
-    <p>No care actions logged yet 🌱</p>
-  </div>
-
-  <!-- Add Care Log Button -->
-  <!-- <button mat-raised-button color="primary" (click)="openAddCareLogDialog()">
-    ➕ Add Care Log
-  </button> -->
 </div>

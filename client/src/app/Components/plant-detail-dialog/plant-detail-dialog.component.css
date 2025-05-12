@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
 /* --- Full Page Layout --- */
 .plant-details-page {
@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 /* --- Top Header (Back + Log Problem Buttons) --- */
@@ -57,11 +57,11 @@
   font-size: 3.5rem;
   font-weight: 700;
   color: var(--primary-color);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .plant-subtitle {
-  font-size: 2.0rem;
+  font-size: 2rem;
   color: gray;
   margin-bottom: 1.5rem;
 }
@@ -256,6 +256,24 @@
   padding: 2rem;
   color: #666;
   font-style: italic;
+}
+
+.no-carelogs-message {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: rgba(200, 230, 201, 0.15);
+  border-radius: 8px;
+  color: #666;
+  margin-top: 1.5rem;
+}
+
+.no-carelogs-message p {
+  margin: 0.5rem 0;
+}
+
+.no-carelogs-message p:last-child {
+  font-size: 0.9rem;
+  color: #888;
 }
 
 .carelog-header {

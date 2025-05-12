@@ -92,15 +92,14 @@ namespace Everleaf.Model.Repositories
                 plants.Add(plant);
             }
             return plants;
-        }
-
-        public bool InsertPlant(Plant plant)
+        }        public bool InsertPlant(Plant plant)
         {
+            Console.WriteLine($"Inserting new plant: {plant.Name} (Species: {plant.Species})");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
-                INSERT INTO Plant (name, nickname, species, imageurl, dateadded, userid)
-                VALUES (@name, @nickname, @species, @imageurl, @dateadded, @userid)";
+                INSERT INTO Plant (name, nickname, species, dateadded, userid)
+                VALUES (@name, @nickname, @species, @dateadded, @userid)";
 
             cmd.Parameters.AddWithValue("@name", NpgsqlDbType.Text, plant.Name ?? "");
             cmd.Parameters.AddWithValue("@nickname", NpgsqlDbType.Text, plant.Nickname ?? "");
@@ -121,7 +120,6 @@ namespace Everleaf.Model.Repositories
                     name = @name,
                     nickname = @nickname,
                     species = @species,
-                    imageurl = @imageurl,
                     dateadded = @dateadded,
                     userid = @userid
                 WHERE id = @id";

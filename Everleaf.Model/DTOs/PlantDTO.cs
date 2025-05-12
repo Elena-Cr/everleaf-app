@@ -17,8 +17,6 @@ namespace Everleaf.Model.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Please select a valid species")]
         public int Species { get; set; }
 
-        [Url(ErrorMessage = "Please provide a valid URL for the image")]
-        public string? ImageUrl { get; set; }
 
         public DateTime DateAdded { get; set; }
 
@@ -40,8 +38,6 @@ namespace Everleaf.Model.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Please select a valid species")]
         public int Species { get; set; }
 
-        [Url(ErrorMessage = "Please provide a valid URL for the image")]
-        public string? ImageUrl { get; set; }
 
         [Required(ErrorMessage = "User ID is required")]
         [Range(1, int.MaxValue, ErrorMessage = "Please provide a valid user ID")]
