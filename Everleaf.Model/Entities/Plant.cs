@@ -2,7 +2,9 @@ namespace Everleaf.Model.Entities;
 using System;
 public class Plant
 {
+    //Constructors
     public Plant() {} 
+    // Properties
     public int Id { get; set; } 
     public string? Name { get; set; } 
     public string? Nickname { get; set; }

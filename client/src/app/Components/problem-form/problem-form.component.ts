@@ -72,7 +72,7 @@ export class ProblemFormComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.minLength(5),
+          Validators.minLength(10),
           Validators.maxLength(1000),
         ],
       ],

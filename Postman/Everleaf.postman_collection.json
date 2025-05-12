@@ -13,6 +13,21 @@
 				{
 					"name": "Get plant by id",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -34,6 +49,21 @@
 				{
 					"name": "Get all plants for a user",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -150,11 +180,26 @@
 				{
 					"name": "Get User Login",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"alice\",\r\n  \"passwordHash\": \"hashed_pw_1\"\r\n}\r\n",
+							"raw": "{\r\n  \"username\": \"Alice\",\r\n  \"password\": \"alice.pw\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -180,6 +225,21 @@
 				{
 					"name": "Get User by Id",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -201,6 +261,21 @@
 				{
 					"name": "Get All users",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bob.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Bob",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -221,11 +296,26 @@
 				{
 					"name": "Create a User",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bob.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Bob",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"john_doe\",\r\n  \"email\": \"john@example.com\",\r\n  \"passwordHash\": \"123456\" // only if used here\r\n}",
+							"raw": "{\r\n  \"username\": \"john_doe\",\r\n  \"email\": \"john@example.com\",\r\n  \"password\": \"123456\" // only if used here\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -254,7 +344,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"username\": \"len\",\r\n  \"passwordHash\": \"123456\",\r\n  \"email\": \"len@example.com\"\r\n}\r\n",
+							"raw": "{\r\n  \"username\": \"len\",\r\n  \"password\": \"123456\",\r\n  \"email\": \"len@example.com\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -280,11 +370,26 @@
 				{
 					"name": "Update user",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": 1,\r\n  \"username\": \"john_doe_updated\",\r\n  \"email\": \"updated@example.com\"\r\n  // No passwordHash expected here\r\n}\r\n",
+							"raw": "{\r\n  \"id\": 1,\r\n  \"username\": \"john_doe_updated\",\r\n  \"email\": \"updated@example.com\"\r\n \r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -309,6 +414,21 @@
 				{
 					"name": "Delete a user",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -335,6 +455,21 @@
 				{
 					"name": "Get all Problems for User 2",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "alice.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Alice",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -378,6 +513,21 @@
 				{
 					"name": "Get all problem reports",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bob.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Bob",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -503,6 +653,21 @@
 				{
 					"name": "Get all careLogs",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bob.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Bob",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -650,6 +815,21 @@
 				{
 					"name": "Get all PlantTypes",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "bob.pw",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "Bob",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
