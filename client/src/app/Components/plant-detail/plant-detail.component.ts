@@ -19,8 +19,8 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-plant-detail',
-  templateUrl: './plant-detail-dialog.component.html',
-  styleUrls: ['./plant-detail-dialog.component.css'],
+  templateUrl: './plant-detail.component.html',
+  styleUrls: ['./plant-detail.component.css'],
   standalone: true,
   imports: [
     CommonModule,

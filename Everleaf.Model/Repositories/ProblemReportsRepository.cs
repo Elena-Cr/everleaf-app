@@ -2,12 +2,10 @@ using Everleaf.Model.Entities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-using System;
-using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    public class ProblemReportRepository : BaseRepository
+    public class ProblemReportRepository : BaseRepository, IProblemReportRepository
     {
         public ProblemReportRepository(IConfiguration configuration) : base(configuration)
         {

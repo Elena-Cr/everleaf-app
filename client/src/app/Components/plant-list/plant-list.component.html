@@ -81,7 +81,7 @@
           <mat-card-subtitle>{{ plant.name }}</mat-card-subtitle>
         </mat-card-header>
 
-        <!-- Card Content (date and watering status) -->
+        <!-- Card Content (date, watering status, and fertilizing status) -->
         <mat-card-content>
           <small>Added: {{ plant.dateAdded | date }}</small>
           <p
@@ -92,6 +92,15 @@
             }"
           >
             <mat-icon>water_drop</mat-icon> {{ plant.status }}
+          </p>
+          <p
+            class="fertilizing-status"
+            [ngClass]="{
+              'needs-fertilizing': plant.fertilizingStatus === 'Needs fertilizing!',
+              'due-soon': plant.fertilizingStatus?.startsWith('Due in')
+            }"
+          >
+            <mat-icon>spa</mat-icon> {{ plant.fertilizingStatus }}
           </p>
         </mat-card-content>
 

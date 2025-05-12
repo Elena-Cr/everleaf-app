@@ -3,8 +3,8 @@ export interface Plant {
   name: string;
   nickname?: string;
   species: number;
-  imageUrl?: string;
   dateAdded: Date;
   userId: number;
-  status?: string; 
+  status?: string; //for watering status
+  fertilizingStatus?: string; // For fertilizing status
 }

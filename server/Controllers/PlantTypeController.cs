@@ -29,14 +29,12 @@ namespace Everleaf.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<PlantType>> GetPlantType()
         {
-            Console.WriteLine("GET /api/planttype called");
             var types = Repository.GetAllPlantType();
             if (types == null || !types.Any())
             {
-                Console.WriteLine("No plant types found in database");
                 return NotFound("No plant types found");
             }
-            Console.WriteLine($"Returning {types.Count} plant types");
+
             return Ok(types);
         }
 
