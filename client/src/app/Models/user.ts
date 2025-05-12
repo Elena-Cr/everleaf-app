@@ -1,4 +1,3 @@
-// src/app/models/user.ts
 export interface UserDTO {
   id: number;
   username: string;

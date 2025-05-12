@@ -11,13 +11,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Plant } from '../../Models/plant';
 import { PlantFormComponent } from '../plant-form/plant-form.component';
 import { CareLogFormComponent } from '../care-log-form/care-log-form.component';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, state, style, transition, trigger} from '@angular/animations';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PlantDashboardComponent } from '../plant-dashboard/plant-dashboard.component';
@@ -38,7 +32,8 @@ import { PlantDashboardComponent } from '../plant-dashboard/plant-dashboard.comp
     PlantDashboardComponent,
   ],
   animations: [
-    trigger('fadeIn', [
+    trigger('fadeIn', 
+      [
       state('void', style({ opacity: 0 })),
       transition(':enter', [animate('300ms ease-in')]),
     ]),
@@ -51,11 +46,9 @@ export class PlantListComponent implements OnInit, OnDestroy {
   error: string | null = null;
   currentUserName: string = '';
 
-  // Pagination
   currentPage = 0;
   pageSize = 3;
 
-  // Lifecycle management
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -66,9 +59,8 @@ export class PlantListComponent implements OnInit, OnDestroy {
     private router: Router
   ) {}
 
-  // Lifecycle hooks
   ngOnInit(): void {
-    // Listen to user changes and reload plants
+    // Listen to user changes and (re)load plants
     this.plantService.currentUser$.pipe(takeUntil(this.destroy$)).subscribe({
       next: (user: { id: number; name: string }) => {
         this.currentUserName = user.name;
@@ -86,7 +78,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // Plant management actions
   openAddPlantDialog(): void {
     const dialogRef = this.dialog.open(PlantFormComponent, {
       width: '500px',
@@ -124,51 +115,44 @@ export class PlantListComponent implements OnInit, OnDestroy {
       console.error('Invalid plant for navigation');
       return;
     }
-
     this.router.navigate(['/plants', plant.id]);
   }
 
-  // Data loading
   loadPlants(userId: number): void {
     this.loading = true;
     this.error = null;
 
     this.plantService.getPlantsWithWateringData(userId).subscribe({
       next: (plants) => {
-        this.plants = plants
-          .map((plant) => {
-            // Format the status for display
-            const status = plant.needsWatering
-              ? 'Needs watering!'
-              : `Due in ${
-                  plant.wateringFrequencyDays - plant.daysSinceWatering
-                } day${
-                  plant.wateringFrequencyDays - plant.daysSinceWatering > 1
-                    ? 's'
-                    : ''
-                }`;
+        this.plants = plants.map((plant) => {
+          // Calculate watering status
+          const wateringStatus = plant.needsWatering
+            ? 'Needs watering!'
+            : `Due in ${
+                plant.wateringFrequencyDays - plant.daysSinceWatering
+              } day${
+                plant.wateringFrequencyDays - plant.daysSinceWatering > 1
+                  ? 's'
+                  : ''
+              }`;
 
-            return {
-              ...plant,
-              status,
-            };
-          })
-          .sort((a, b) => {
-            // Sort plants: "Needs watering!" first, then "Due in X days"
-            if (
-              a.status === 'Needs watering!' &&
-              b.status !== 'Needs watering!'
-            ) {
-              return -1;
-            }
-            if (
-              a.status !== 'Needs watering!' &&
-              b.status === 'Needs watering!'
-            ) {
-              return 1;
-            }
-            return 0; // Keep the same order for plants with the same status
-          });
+          // Calculate fertilizing status
+          const fertilizingStatus = plant.needsFertilizing
+            ? 'Needs fertilizing!'
+            : `Due in ${
+                plant.fertilizingFrequencyDays - plant.daysSinceFertilizing
+              } day${
+                plant.fertilizingFrequencyDays - plant.daysSinceFertilizing > 1
+                  ? 's'
+                  : ''
+              }`;
+
+          return {
+            ...plant,
+            status: wateringStatus,
+            fertilizingStatus, // Add fertilizing status here
+          };
+        });
 
         this.loading = false;
         this.currentPage = 0;
@@ -184,7 +168,6 @@ export class PlantListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Pagination helpers
   get currentPagePlants(): Plant[] {
     const start = this.currentPage * this.pageSize;
     const end = start + this.pageSize;

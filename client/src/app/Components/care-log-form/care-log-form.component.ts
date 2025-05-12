@@ -1,20 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
+import { trigger, state, style, transition, animate} from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -70,11 +56,10 @@ export class CareLogFormComponent implements OnInit {
       type: ['', [Validators.required]],
       date: ['', [Validators.required, this.dateNotInFutureValidator()]],
       plantId: [this.data.plantId, Validators.required],
-      notes: ['', [Validators.maxLength(500)]], // Optional notes field with max length
+      notes: ['', [Validators.maxLength(500)]],
     });
   }
 
-  // Custom validator for date not in future
   private dateNotInFutureValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
@@ -104,15 +89,11 @@ export class CareLogFormComponent implements OnInit {
 
       this.careLogService.createCareLog(payload).subscribe({
         next: () => {
-          this.snackBar.open('✅ Care log submitted!', 'Close', {
-            duration: 3000,
-          });
+          this.snackBar.open('✅ Care log submitted!', 'Close', {duration: 3000});
           this.dialogRef.close(true);
         },
         error: () => {
-          this.snackBar.open('❌ Failed to submit care log.', 'Close', {
-            duration: 3000,
-          });
+          this.snackBar.open('❌ Failed to submit care log.', 'Close', {duration: 3000});
         },
       });
     }

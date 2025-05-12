@@ -9,8 +9,7 @@ CREATE TABLE Plant (
     Id SERIAL PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     Nickname VARCHAR(255),
-    Species INT, -- Changed to INT for FK reference to PlantType
-    ImageUrl VARCHAR(2083),
+    Species INT,
     DateAdded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UserId INT NOT NULL,
     FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE

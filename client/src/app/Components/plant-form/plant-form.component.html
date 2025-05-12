@@ -75,8 +75,7 @@
             Planting date is required
           </mat-error>
           <mat-error
-            *ngIf="plantForm.get('plantedDate')?.hasError('futureDate')"
-          >
+            *ngIf="plantForm.get('plantedDate')?.hasError('futureDate')">
             Planting date cannot be in the future
           </mat-error>
         </mat-form-field>

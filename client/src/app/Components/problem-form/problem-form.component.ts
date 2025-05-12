@@ -1,20 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors,
-} from '@angular/forms';
-import {
-  trigger,
-  state,
-  style,
-  transition,
-  animate,
-} from '@angular/animations';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors,} from '@angular/forms';
+import { trigger, state, style, transition, animate,} from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -29,7 +15,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogModule } from '@angular/material/dialog';
 
-// Define an interface for the data passed to the dialog
 export interface ProblemDialogData {
   mode: 'add' | 'edit';
   plantId: number;
@@ -62,11 +47,12 @@ export interface ProblemDialogData {
     ]),
   ],
 })
+
 export class ProblemFormComponent implements OnInit {
   problemForm!: FormGroup;
   statusMessage: string = '';
   mode: 'add' | 'edit' = 'add'; // Default to add mode
-  private problemId: number | null = null; // To store the ID when editing
+  private problemId: number | null = null; // To store the Id when editing
 
   constructor(
     private fb: FormBuilder,
@@ -78,7 +64,7 @@ export class ProblemFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.mode = this.data.mode; // Set the mode from injected data
+    this.mode = this.data.mode;
 
     this.problemForm = this.fb.group({
       severity: ['', [Validators.required]],
@@ -93,18 +79,14 @@ export class ProblemFormComponent implements OnInit {
       dateReported: [
         '',
         [Validators.required, this.dateNotInFutureValidator()],
-      ],
-      // plantId is part of the data, not directly in the form for edit mode
-      // It will be included in the payload construction
+      ]
     });
 
-    // If in edit mode, patch the form with existing data
     if (this.mode === 'edit' && this.data.problemData) {
       this.problemId = this.data.problemData.id ?? null;
       this.problemForm.patchValue({
         severity: this.data.problemData.severity,
         description: this.data.problemData.description,
-        // Convert date string back to Date object for the datepicker
         dateReported: this.data.problemData.dateReported
           ? new Date(this.data.problemData.dateReported)
           : '',
@@ -112,14 +94,12 @@ export class ProblemFormComponent implements OnInit {
     }
   }
 
-  // Custom validator for date not in future
   private dateNotInFutureValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
         return null;
       }
       const today = new Date();
-      // Reset time part for accurate date comparison
       today.setHours(0, 0, 0, 0);
       const inputDate = new Date(control.value);
       inputDate.setHours(0, 0, 0, 0);
@@ -139,51 +119,39 @@ export class ProblemFormComponent implements OnInit {
     if (this.problemForm.valid) {
       const formValue = this.problemForm.value;
 
-      // Construct the payload, always include plantId from the injected data
+      // Construct the payload, include plantId from the injected data
       const payload: Omit<ProblemReport, 'id'> & { id?: number } = {
         severity: formValue.severity,
         description: formValue.description,
         dateReported: this.toLocalDate(formValue.dateReported),
-        plantId: this.data.plantId, // Use plantId from injected data
+        plantId: this.data.plantId 
       };
 
       if (this.mode === 'edit' && this.problemId !== null) {
-        // --- EDIT MODE ---
         this.problemService
           .updateProblem(this.problemId, payload as ProblemReport)
           .subscribe({
             next: () => {
-              this.snackBar.open('✅ Problem updated!', 'Close', {
-                duration: 3000,
-              });
-              this.dialogRef.close(true); // Close dialog indicating success
+              this.snackBar.open('✅ Problem updated!', 'Close', {duration: 3000});
+              this.dialogRef.close(true); 
             },
-            error: (err) => {
-              console.error('Error updating problem:', err);
-              this.snackBar.open('❌ Failed to update problem.', 'Close', {
-                duration: 3000,
-              });
+            error: () => {
+              this.snackBar.open('❌ Failed to update problem.', 'Close', {duration: 3000});
             },
           });
-      } else {
-        // --- ADD MODE ---
+      } else // add new problem
+        {
         this.problemService.createProblem(payload as ProblemReport).subscribe({
           next: () => {
-            this.snackBar.open('✅ Problem reported!', 'Close', {
-              duration: 3000,
-            });
-            this.dialogRef.close(true); // Close dialog indicating success
+            this.snackBar.open('✅ Problem reported!', 'Close', {duration: 3000});
+            this.dialogRef.close(true); 
           },
-          error: (err) => {
-            console.error('Error creating problem:', err);
-            this.snackBar.open('❌ Failed to submit problem.', 'Close', {
-              duration: 3000,
-            });
+          error: () => {
+            this.snackBar.open('❌ Failed to submit problem.', 'Close', {duration: 3000});
           },
         });
       }
     } else {
-      // Mark all fields as touched to trigger validation messages
       Object.keys(this.problemForm.controls).forEach((key) => {
         const control = this.problemForm.get(key);
         control?.markAsTouched();

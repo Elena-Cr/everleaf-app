@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
-import {
-  FormControl,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import { switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,6 +24,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })
+
 export class RegisterComponent implements OnInit {
   username = new FormControl('', [
     Validators.required,
@@ -53,16 +49,12 @@ export class RegisterComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
-  ngOnInit() {
-    // nothing extra
-  }
+  ngOnInit() {}
 
   onSubmit() {
     if (!this.registerForm.valid) {
       this.registerForm.markAllAsTouched();
-      this.snackBar.open('❌ Please fix the errors in the form.', 'Close', {
-        duration: 3000,
-      });
+      this.snackBar.open('❌ Please fix the errors in the form.', 'Close', {duration: 3000});
       return;
     }
 
@@ -84,9 +76,7 @@ export class RegisterComponent implements OnInit {
       )
       .subscribe({
         next: (userDto) => {
-          this.snackBar.open(`✅ Welcome, ${userDto.username}!`, 'Close', {
-            duration: 3500,
-          });
+          this.snackBar.open(`✅ Welcome, ${userDto.username}!`, 'Close', {duration: 3500});
           this.router.navigate(['/plants']);
         },
         error: (err) => {

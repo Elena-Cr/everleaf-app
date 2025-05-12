@@ -1,23 +1,7 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  OnInit,
-  Optional,
-  Output,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
+import { Component, EventEmitter, Inject, OnInit, Optional, Output} from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 import { PlantService } from '../../Services/plant.service';
-import { CareLogService } from '../../Services/carelog.service';
-import { Observable, BehaviorSubject, finalize, tap } from 'rxjs';
+import { BehaviorSubject, finalize, tap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -57,6 +41,7 @@ import { MatIconModule } from '@angular/material/icon';
     A11yModule,
   ],
 })
+
 export class PlantFormComponent implements OnInit {
   plantForm: FormGroup;
   private plantTypesSubject = new BehaviorSubject<PlantType[]>([]);
@@ -71,7 +56,6 @@ export class PlantFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private plantService: PlantService,
-    private careLogService: CareLogService,
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<PlantFormComponent>,
     @Optional()
@@ -122,17 +106,13 @@ export class PlantFormComponent implements OnInit {
     }
   }
 
-  /** Load plant types */
   loadPlantTypes(): void {
     this.loading = true;
     this.error = null;
 
     this.plantService
       .getPlantTypes()
-      .pipe(
-        tap((types) => console.log('Plant types loaded:', types)),
-        finalize(() => (this.loading = false))
-      )
+      .pipe(finalize(() => (this.loading = false)))
       .subscribe({
         next: (types) => {
           if (!types || types.length === 0) {
@@ -148,7 +128,6 @@ export class PlantFormComponent implements OnInit {
       });
   }
 
-  /** Convert date to local format */
   toLocalDate(date: Date): string {
     const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
       .toISOString()
@@ -156,7 +135,6 @@ export class PlantFormComponent implements OnInit {
     return `${localISO}T00:00:00`;
   }
 
-  /** Submit form */
   onSubmit(): void {
     if (this.plantForm.valid) {
       const formValues = this.plantForm.value;
@@ -180,14 +158,11 @@ export class PlantFormComponent implements OnInit {
       };
 
       if (this.data?.mode === 'edit' && this.data?.plant?.id) {
-        // ✨ EDIT MODE
         this.plantService
           .updatePlant(this.data.plant.id, transformedData)
           .subscribe({
-            next: (response) => {
-              this.snackBar.open('✅ Plant updated successfully!', 'Close', {
-                duration: 3000,
-              });
+            next: () => {
+              this.snackBar.open('✅ Plant updated successfully!', 'Close', {duration: 3000});
               this.dialogRef.close(true);
             },
             error: (error: HttpErrorResponse) => {
@@ -196,13 +171,9 @@ export class PlantFormComponent implements OnInit {
             },
           });
       } else {
-        // ✨ ADD MODE
         this.plantService.savePlant(transformedData).subscribe({
-          next: (response) => {
-            this.snackBar.open('✅ Plant added successfully!', 'Close', {
-              duration: 3000,
-            });
-            this.plantAdded.emit();
+          next: () => {
+            this.snackBar.open('✅ Plant added successfully!', 'Close', {duration: 3000});
             this.dialogRef.close(true);
           },
           error: (error: HttpErrorResponse) => {
@@ -211,8 +182,6 @@ export class PlantFormComponent implements OnInit {
           },
         });
       }
-    } else {
-      console.warn('Form is invalid:', this.plantForm.errors);
-    }
+    } 
   }
 }

@@ -2,14 +2,12 @@ using Everleaf.Model.Entities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-using System;
-using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
-    public class CareLogRepository(IConfiguration configuration) : BaseRepository(configuration)
+    public class CareLogRepository(IConfiguration configuration) : BaseRepository(configuration), ICareLogRepository
     {
-        public CareLog GetCareLogById(int id)
+        public CareLog? GetCareLogById(int id)
         {
             NpgsqlConnection? dbConn = null;
             try
@@ -29,7 +27,7 @@ namespace Everleaf.Model.Repositories
                         Type = data["type"].ToString()
                     };
                 }
-                return null;
+                return null; 
             }
             finally
             {
@@ -124,7 +122,7 @@ namespace Everleaf.Model.Repositories
                 VALUES (@plantid, @date, @type)";
             _ = cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, log.PlantId);
             _ = cmd.Parameters.AddWithValue("@date", NpgsqlDbType.Date, log.Date);
-            _ = cmd.Parameters.AddWithValue("@type", NpgsqlDbType.Text, log.Type);
+            _ = cmd.Parameters.AddWithValue("@type", NpgsqlDbType.Text, log.Type ?? (object)DBNull.Value);
 
             return InsertData(dbConn, cmd);
         }
@@ -139,7 +137,7 @@ namespace Everleaf.Model.Repositories
                 WHERE id = @id";
             _ = cmd.Parameters.AddWithValue("@plantid", NpgsqlDbType.Integer, log.PlantId);
             _ = cmd.Parameters.AddWithValue("@date", NpgsqlDbType.Date, log.Date);
-            _ = cmd.Parameters.AddWithValue("@type", NpgsqlDbType.Text, log.Type);
+            _ = cmd.Parameters.AddWithValue("@type", NpgsqlDbType.Text, log.Type ?? (object)DBNull.Value);
             _ = cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, log.Id);
 
             return UpdateData(dbConn, cmd);

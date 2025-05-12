@@ -6,6 +6,7 @@
       Back to Plants
     </button>
   </div>
+
   <div class="plant-actions">
     <button mat-stroked-button color="primary" (click)="editPlant()">
       ✏️ Edit Plant
@@ -18,7 +19,7 @@
 
   <!-- Main Plant Content -->
   <div class="plant-main-content">
-    <!-- Left: Image -->
+    <!-- Left: Plant Image -->
     <div class="plant-image-wrapper">
       <img
         src="assets/images/plant_picture.png"
@@ -27,7 +28,7 @@
       />
     </div>
 
-    <!-- Right: Info -->
+    <!-- Right: Plant Info -->
     <div class="plant-info-wrapper">
       <h1 class="plant-title">{{ plant.nickname || plant.name }}</h1>
       <h3 class="plant-subtitle" *ngIf="plant.nickname && plant.name">
@@ -97,15 +98,16 @@
       </button>
     </div>
 
+    <div *ngIf="problems && problems.length === 0" class="no-problems">
+      <p>No problems logged yet 🌱</p>
+    </div>
+
     <div *ngIf="problems && problems.length > 0" class="problem-list">
-      <!-- Table Headers -->
       <div class="problem-header">Severity</div>
       <div class="problem-header">Problem</div>
       <div class="problem-header">Date</div>
       <div class="problem-header">Actions</div>
-      <!-- Added Actions Header -->
 
-      <!-- Problems -->
       <ng-container *ngFor="let problem of problems">
         <div
           class="problem-cell severity"
@@ -113,14 +115,13 @@
         >
           {{ problem.severity }}
         </div>
-        <div class="problem-cell">
+        <div class="problem-cell description">
           {{ problem.description }}
         </div>
-        <div class="problem-cell">
+        <div class="problem-cell date">
           {{ problem.dateReported | date }}
         </div>
         <div class="problem-cell actions">
-          <!-- Added Actions Cell -->
           <button
             mat-icon-button
             color="primary"
@@ -140,19 +141,13 @@
         </div>
       </ng-container>
     </div>
-
-    <!-- No Problems -->
-    <div *ngIf="problems && problems.length === 0" class="no-problems">
-      <p>No problems logged yet 🌱</p>
-    </div>
   </div>
 
   <!-- Care Logs Section -->
-  <div class="carelogs-section" *ngIf="careLogs && careLogs.length > 0">
+  <div class="carelogs-section">
     <h2>Care Logs</h2>
 
     <div class="carelog-grid">
-      <!-- Watering Logs -->
       <div class="carelog-category">
         <div class="carelog-header">
           <h3>💧 Watering Log</h3>
@@ -166,19 +161,18 @@
           </button>
         </div>
 
+        <ng-template #noWaterLogs>
+          <p class="no-logs-text">No watering logs yet</p>
+        </ng-template>
+
         <div *ngIf="wateringLogs.length > 0; else noWaterLogs">
           <div *ngFor="let log of wateringLogs" class="carelog-item">
             <mat-icon color="primary">water_drop</mat-icon>
             {{ log.date | date }}
           </div>
         </div>
-
-        <ng-template #noWaterLogs>
-          <p class="no-logs-text">No watering logs yet</p>
-        </ng-template>
       </div>
 
-      <!-- Fertilizing Logs -->
       <div class="carelog-category">
         <div class="carelog-header">
           <h3>🌿 Fertilizing Log</h3>
@@ -192,27 +186,17 @@
           </button>
         </div>
 
+        <ng-template #noFertilizeLogs>
+          <p class="no-logs-text">No fertilizing logs yet</p>
+        </ng-template>
+
         <div *ngIf="fertilizerLogs.length > 0; else noFertilizeLogs">
           <div *ngFor="let log of fertilizerLogs" class="carelog-item">
             <mat-icon color="accent">local_florist</mat-icon>
             {{ log.date | date }}
           </div>
         </div>
-
-        <ng-template #noFertilizeLogs>
-          <p class="no-logs-text">No fertilizing logs yet</p>
-        </ng-template>
       </div>
     </div>
   </div>
-
-  <!-- No Care Logs -->
-  <div class="no-carelogs" *ngIf="careLogs && careLogs.length === 0">
-    <p>No care actions logged yet 🌱</p>
-  </div>
-
-  <!-- Add Care Log Button -->
-  <!-- <button mat-raised-button color="primary" (click)="openAddCareLogDialog()">
-    ➕ Add Care Log
-  </button> -->
 </div>
