@@ -5,7 +5,7 @@ public class PlantType
     public PlantType(int id)
     {
         Id = id;
-    }
+    } // Constructor to initialize the PlantType with an ID
 
     public int Id { get; set; }
     public string? CommonName { get; set; }
