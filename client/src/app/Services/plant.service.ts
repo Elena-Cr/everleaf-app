@@ -327,6 +327,37 @@ export class PlantService {
               ? daysSinceWatering >= wateringFrequencyDays
               : false;
 
+          // Find the last fertilizing log for this plant
+          const lastFertilizingLog = careLogs
+            .filter(
+              (log) =>
+                log.plantId === plant.id &&
+                log.type?.toLowerCase() === 'fertilizer'
+            )
+            .sort(
+              (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+            )[0];
+
+          const lastFertilizing = lastFertilizingLog
+            ? new Date(lastFertilizingLog.date)
+            : null;
+
+          // Calculate days since last fertilizing
+          const daysSinceFertilizing = lastFertilizing
+            ? Math.floor(
+                (now.getTime() - lastFertilizing.getTime()) /
+                (1000 * 60 * 60 * 24)
+              )
+            : null;
+
+          // Determine if the plant needs fertilizing
+          const fertilizingFrequencyDays =
+            plantType?.fertilizingFrequencyDays || 30; // Default to 30 days
+          const needsFertilizing =
+            lastFertilizing && daysSinceFertilizing !== null
+              ? daysSinceFertilizing >= fertilizingFrequencyDays
+              : false;
+
           // Return enriched plant data
           return {
             ...plant,
@@ -335,6 +366,10 @@ export class PlantService {
             wateringFrequencyDays,
             daysSinceWatering,
             needsWatering,
+            lastFertilizing,
+            fertilizingFrequencyDays,
+            daysSinceFertilizing,
+            needsFertilizing,
           };
         });
       })

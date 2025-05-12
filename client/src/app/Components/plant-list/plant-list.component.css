@@ -362,6 +362,7 @@ mat-icon {
   border-radius: 20px; /* Rounded corners for the pill shape */
   padding: 5px 10px; /* Add some padding for spacing */
   font-size: 14px; /* Adjust font size */
+  margin-right: 10px; /* Add space between watering and fertilizing pills */
   font-size:1.3 rem;
   color: #4caf50;
   margin-top: 10px;
@@ -389,9 +390,36 @@ mat-icon {
 
 /* Style for the water drop icon inside the pill */
 .due-soon mat-icon {
-
   color: #4caf50 !important; /* Force the green color */
   vertical-align: middle; /* Align the icon with the text */
   margin-right: 5px; /* Add spacing between the icon and the text */
-  }
+}
+
+/* Fertilizing Status */
+.fertilizing-status {
+  display: inline-flex; /* Align icon and text horizontally */
+  align-items: center; /* Vertically center the content */
+  background-color: #eff7f0; /* Light grey background */
+  border-radius: 20px; /* Rounded corners for the pill shape */
+  padding: 5px 10px; /* Add some padding for spacing */
+  font-size: 14px; /* Adjust font size */
+  font-size:1.3 rem;
+  color: #4caf50;
+  margin-top: 10px;
+  font-weight: bold;
+  font-family: Poppins;
+}
+
+.needs-fertilizing {
+  background-color: #fbf2e3; 
+  color: #d38c2f; 
+}
+
+.needs-fertilizing mat-icon {
+  color: #d38c2f !important; /* Force the orange color */
+  vertical-align: middle; /* Align the icon with the text */
+  margin-right: 5px; /* Add spacing between the icon and the text */
+}
+
+
 

@@ -5,5 +5,7 @@ export interface Plant {
   species: number;
   dateAdded: Date;
   userId: number;
-  status?: string; 
+  status?: string; //for watering status
+  fertilizingStatus?: string; // For fertilizing status
+
 }

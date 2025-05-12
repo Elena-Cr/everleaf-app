@@ -135,40 +135,35 @@ export class PlantListComponent implements OnInit, OnDestroy {
 
     this.plantService.getPlantsWithWateringData(userId).subscribe({
       next: (plants) => {
-        this.plants = plants
-          .map((plant) => {
-            // Format the status for display
-            const status = plant.needsWatering
-              ? 'Needs watering!'
-              : `Due in ${
-                  plant.wateringFrequencyDays - plant.daysSinceWatering
-                } day${
-                  plant.wateringFrequencyDays - plant.daysSinceWatering > 1
-                    ? 's'
-                    : ''
-                }`;
+        this.plants = plants.map((plant) => {
+          // Calculate watering status
+          const wateringStatus = plant.needsWatering
+            ? 'Needs watering!'
+            : `Due in ${
+                plant.wateringFrequencyDays - plant.daysSinceWatering
+              } day${
+                plant.wateringFrequencyDays - plant.daysSinceWatering > 1
+                  ? 's'
+                  : ''
+              }`;
 
-            return {
-              ...plant,
-              status,
-            };
-          })
-          .sort((a, b) => {
-            // Sort plants: "Needs watering!" first, then "Due in X days"
-            if (
-              a.status === 'Needs watering!' &&
-              b.status !== 'Needs watering!'
-            ) {
-              return -1;
-            }
-            if (
-              a.status !== 'Needs watering!' &&
-              b.status === 'Needs watering!'
-            ) {
-              return 1;
-            }
-            return 0; // Keep the same order for plants with the same status
-          });
+          // Calculate fertilizing status
+          const fertilizingStatus = plant.needsFertilizing
+            ? 'Needs fertilizing!'
+            : `Due in ${
+                plant.fertilizingFrequencyDays - plant.daysSinceFertilizing
+              } day${
+                plant.fertilizingFrequencyDays - plant.daysSinceFertilizing > 1
+                  ? 's'
+                  : ''
+              }`;
+
+          return {
+            ...plant,
+            status: wateringStatus,
+            fertilizingStatus, // Add fertilizing status here
+          };
+        });
 
         this.loading = false;
         this.currentPage = 0;
