@@ -15,17 +15,16 @@ public class BasicAuthenticationMiddleware
 
     public async Task InvokeAsync(HttpContext context, IServiceProvider serviceProvider)
     {
-        // Bypass authentication for [AllowAnonymous]
+        // Skip authentication for endpoints marked with [AllowAnonymous]
         if (context.GetEndpoint()?.Metadata.GetMetadata<IAllowAnonymous>() != null)
         {
             await _next(context);
             return;
         }
 
-        // 1. Try to retrieve the Request Header containing our secret value
+        // Get Authorization header
         string? authHeader = context.Request.Headers["Authorization"];
 
-        // 2. If not found, then return with Unauthrozied response
         if (authHeader == null || !authHeader.StartsWith("Basic "))
         {
             context.Response.StatusCode = 401;
@@ -35,45 +34,33 @@ public class BasicAuthenticationMiddleware
 
         try
         {
-            // 3. Extract the Base64 encoded credentials
+            // Decode Basic auth credentials
             var authBase64 = authHeader.Substring("Basic ".Length).Trim();
-
-            // 4. Convert it from Base64 encoded text, back to normal text
             var credentialBytes = Convert.FromBase64String(authBase64);
             var credentials = Encoding.UTF8.GetString(credentialBytes);
 
-            // 5. Extract username and password, which are separated by a colon
+            // Parse username and password
             var parts = credentials.Split(':', 2);
             if (parts.Length != 2)
             {
                 throw new FormatException("Invalid Basic authentication header format");
             }
             var username = parts[0];
-            var password = parts[1]; // This is the plain text password sent by the client
+            var password = parts[1];
 
-            // 6. Resolve UserRepository and check credentials
-            // We resolve it here because middleware is singleton but repository is scoped
+            // Validate credentials using scoped UserRepository
             using (var scope = serviceProvider.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<UserRepository>();
                 var user = userRepository.GetUserByUsername(username);
 
-                // IMPORTANT: You MUST compare the provided password with the stored HASH.
-                // Assuming your stored password is the actual hash and you have a way to verify it.
-                // For this example, I'll assume direct comparison, but you SHOULD use a proper hash verification method (e.g., BCrypt.Net, ASP.NET Core Identity hasher).
-                // Replace this check with your actual password hashing verification logic.
-                if (user != null && user.password == password) // <-- *** REPLACE THIS WITH ACTUAL HASH VERIFICATION ***
+                // TODO: Should be replaced with secure password hash verification if project is produced further
+                if (user != null && user.password == password)
                 {
-                    // TODO: Optionally attach user principal to context if needed downstream
-                    // var claims = new[] { new Claim(ClaimTypes.Name, user.Username) };
-                    // var identity = new ClaimsIdentity(claims, "Basic");
-                    // context.User = new ClaimsPrincipal(identity);
-
                     await _next(context);
                 }
                 else
                 {
-                    // If not, then send Unauthorized response
                     context.Response.StatusCode = 401;
                     await context.Response.WriteAsync("Incorrect credentials provided");
                     return;
@@ -86,9 +73,8 @@ public class BasicAuthenticationMiddleware
             await context.Response.WriteAsync("Invalid Authorization Header format");
             return;
         }
-        catch (Exception ex) // Catch other potential errors
+        catch (Exception)
         {
-            // Log the exception ex
             context.Response.StatusCode = 500;
             await context.Response.WriteAsync("An internal server error occurred.");
             return;
@@ -96,6 +82,7 @@ public class BasicAuthenticationMiddleware
     }
 }
 
+// Extension method for middleware registration
 public static class BasicAuthenticationMiddlewareExtensions
 {
     public static IApplicationBuilder UseBasicAuthenticationMiddleware(this IApplicationBuilder builder)
