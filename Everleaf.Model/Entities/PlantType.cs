@@ -2,11 +2,12 @@ namespace Everleaf.Model.Entities;
 
 public class PlantType
 {
+    //Constructors
     public PlantType(int id)
     {
         Id = id;
-    } // Constructor to initialize the PlantType with an ID
-
+    } 
+    // Properties
     public int Id { get; set; }
     public string? CommonName { get; set; }
     public string? ScientificName { get; set; }
