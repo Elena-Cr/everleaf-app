@@ -14,7 +14,6 @@ namespace Everleaf.Model.Repositories
 
         public Plant? GetPlantById(int id)
         {
-            Console.WriteLine($"Getting plant with ID: {id}");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = "SELECT * FROM Plant WHERE id = @id";
@@ -94,7 +93,6 @@ namespace Everleaf.Model.Repositories
             return plants;
         }        public bool InsertPlant(Plant plant)
         {
-            Console.WriteLine($"Inserting new plant: {plant.Name} (Species: {plant.Species})");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
