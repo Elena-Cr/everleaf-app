@@ -1,6 +1,4 @@
 using Everleaf.Model.Entities;
-using System.Collections.Generic;
-
 namespace Everleaf.Model.Repositories
 {
     public interface IProblemReportRepository

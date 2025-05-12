@@ -2,8 +2,6 @@ using Everleaf.Model.Entities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-using System;
-using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {

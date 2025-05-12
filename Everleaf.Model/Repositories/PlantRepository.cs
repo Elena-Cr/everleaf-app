@@ -2,8 +2,6 @@ using Everleaf.Model.Entities;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-using System;
-using System.Collections.Generic;
 
 namespace Everleaf.Model.Repositories
 {
@@ -34,17 +32,14 @@ namespace Everleaf.Model.Repositories
                     DateAdded = Convert.ToDateTime(data["dateadded"]),
                     UserId = Convert.ToInt32(data["userid"])
                 };
-                Console.WriteLine($"Found plant: {plant.Name} (ID: {plant.Id}, Species: {plant.Species})");
                 return plant;
             }
 
-            Console.WriteLine($"No plant found with ID: {id}");
             return null;
         }
 
         public List<Plant> GetAllPlants()
         {
-            Console.WriteLine("Getting all plants");
             var plants = new List<Plant>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
@@ -65,17 +60,13 @@ namespace Everleaf.Model.Repositories
                     DateAdded = Convert.ToDateTime(data["dateadded"]),
                     UserId = Convert.ToInt32(data["userid"])
                 };
-                Console.WriteLine($"Found plant: {plant.Name} (ID: {plant.Id}, Species: {plant.Species}, SpeciesName: {data["species_name"]})");
                 plants.Add(plant);
             }
-
-            Console.WriteLine($"Total plants found: {plants.Count}");
             return plants;
         }
 
         public List<Plant> GetPlantsByUserId(int userId)
         {
-            Console.WriteLine($"Getting plants for user ID: {userId}");
             var plants = new List<Plant>();
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
@@ -98,17 +89,13 @@ namespace Everleaf.Model.Repositories
                     DateAdded = Convert.ToDateTime(data["dateadded"]),
                     UserId = Convert.ToInt32(data["userid"])
                 };
-                Console.WriteLine($"Found plant: {plant.Name} (ID: {plant.Id}, Species: {plant.Species}, SpeciesName: {data["species_name"]})");
                 plants.Add(plant);
             }
-
-            Console.WriteLine($"Total plants found for user {userId}: {plants.Count}");
             return plants;
         }
 
         public bool InsertPlant(Plant plant)
         {
-            Console.WriteLine($"Inserting new plant: {plant.Name} (Species: {plant.Species})");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
@@ -122,13 +109,11 @@ namespace Everleaf.Model.Repositories
             cmd.Parameters.AddWithValue("@userid", NpgsqlDbType.Integer, plant.UserId);
 
             var result = InsertData(dbConn, cmd);
-            Console.WriteLine($"Plant insert result: {result}");
             return result;
         }
 
         public bool UpdatePlant(Plant plant)
         {
-            Console.WriteLine($"Updating plant ID {plant.Id}: {plant.Name} (Species: {plant.Species})");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = @"
@@ -149,20 +134,17 @@ namespace Everleaf.Model.Repositories
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, plant.Id);
 
             var result = UpdateData(dbConn, cmd);
-            Console.WriteLine($"Plant update result: {result}");
             return result;
         }
 
         public bool DeletePlant(int id)
         {
-            Console.WriteLine($"Deleting plant with ID: {id}");
             using var dbConn = new NpgsqlConnection(ConnectionString);
             var cmd = dbConn.CreateCommand();
             cmd.CommandText = "DELETE FROM Plant WHERE id = @id";
             cmd.Parameters.AddWithValue("@id", NpgsqlDbType.Integer, id);
 
             var result = DeleteData(dbConn, cmd);
-            Console.WriteLine($"Plant delete result: {result}");
             return result;
         }
     }
