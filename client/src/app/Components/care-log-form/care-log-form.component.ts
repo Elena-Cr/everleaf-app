@@ -71,6 +71,7 @@ export class CareLogFormComponent implements OnInit {
     };
   }
 
+  // Convert UTC date to local date string in ISO format - ensures consistent data storage and display
   toLocalDate(date: Date): string {
     const localISO = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
       .toISOString()

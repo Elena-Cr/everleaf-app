@@ -75,8 +75,8 @@ export class RegisterComponent implements OnInit {
         )
       )
       .subscribe({
-        next: (userDto) => {
-          this.snackBar.open(`✅ Welcome, ${userDto.username}!`, 'Close', {duration: 3500});
+        next: (user) => {
+          this.snackBar.open(`✅ Welcome, ${user.username}!`, 'Close', {duration: 3500});
           this.router.navigate(['/plants']);
         },
         error: (err) => {
